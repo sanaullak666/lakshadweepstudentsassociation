@@ -87,6 +87,11 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/committee', committeeRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Fallback API route mounts for proxy path variations
+app.use('/admin/api', adminRoutes);
+app.use('/committee/api', committeeRoutes);
+app.use('/membership/api', membershipRoutes);
+
 // Health Check API
 app.get('/api/health', (req, res) => {
   res.json({
@@ -105,14 +110,17 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
 
-// Fallback for HTML routing
-app.get('/admin/*', (req, res) => {
+// Fallback for HTML routing (bypasses API calls and JSON requests)
+app.get('/admin/*', (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.includes('/api/') || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+    return next();
+  }
   res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
 
-// Global 404 Handler
+// Global 404 Handler for API & Unmatched Routes
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'API Endpoint Not Found' });
+  res.status(404).json({ success: false, message: `Endpoint Not Found: ${req.originalUrl}` });
 });
 
 module.exports = app;

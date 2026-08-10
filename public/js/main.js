@@ -70,7 +70,9 @@ function showToast(message, type = 'info') {
 // Universal API Fetch Wrapper
 async function apiFetch(url, options = {}) {
   try {
-    const defaultHeaders = {};
+    const defaultHeaders = {
+      'Accept': 'application/json'
+    };
     if (!(options.body instanceof FormData)) {
       defaultHeaders['Content-Type'] = 'application/json';
     }
@@ -89,7 +91,15 @@ async function apiFetch(url, options = {}) {
       }
     });
 
-    const data = await response.json();
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+    if (contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 100)}`);
+    }
+
     if (!response.ok) {
       throw new Error(data.message || `Request failed with status ${response.status}`);
     }
