@@ -21,7 +21,7 @@ function getDbConnectionParams() {
         user: decodeURIComponent(parsed.username),
         password: decodeURIComponent(parsed.password),
         database: dbName,
-        ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
+        ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: false }
       };
     } catch (err) {
       console.warn('[DB URL Warning] Failed to parse DATABASE_URL, using individual env variables.');
@@ -34,7 +34,7 @@ function getDbConnectionParams() {
     user: process.env.DB_USER || '2wE8pt6cEdhXT96.root',
     password: process.env.DB_PASSWORD || 'AkSCcQC0MGCq1EpV',
     database: process.env.DB_NAME || 'lsa_membership',
-    ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
+    ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: false }
   };
 }
 
@@ -245,19 +245,33 @@ async function seedDefaultAdminAndCommittee() {
 
 async function executeQuery(sql, params = []) {
   if (dbType === 'mysql' && pool) {
-    const [rows, fields] = await pool.execute(sql, params);
-    return {
-      rows,
-      insertId: rows.insertId,
-      affectedRows: rows.affectedRows
-    };
+    try {
+      const [rows] = await pool.query(sql, params);
+      return {
+        rows: Array.isArray(rows) ? rows : [],
+        insertId: rows ? rows.insertId : null,
+        affectedRows: rows ? rows.affectedRows : 0
+      };
+    } catch (err) {
+      if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT') {
+        console.warn('[DB Connection Warning] Re-initializing pool due to stale connection...');
+        await initDatabase();
+        const [rows] = await pool.query(sql, params);
+        return {
+          rows: Array.isArray(rows) ? rows : [],
+          insertId: rows ? rows.insertId : null,
+          affectedRows: rows ? rows.affectedRows : 0
+        };
+      }
+      throw err;
+    }
   } else if (sqliteDb) {
     return new Promise((resolve, reject) => {
       const trimmed = sql.trim().toUpperCase();
       if (trimmed.startsWith('SELECT')) {
         sqliteDb.all(sql, params, (err, rows) => {
           if (err) return reject(err);
-          resolve({ rows, insertId: null, affectedRows: 0 });
+          resolve({ rows: rows || [], insertId: null, affectedRows: 0 });
         });
       } else {
         sqliteDb.run(sql, params, function (err) {
