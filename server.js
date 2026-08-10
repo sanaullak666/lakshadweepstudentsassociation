@@ -81,19 +81,14 @@ app.use(async (req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 app.use('/admin', express.static(path.join(__dirname, 'admin'), { extensions: ['html'] }));
 
-// API Routes
-app.use('/api/membership', membershipRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/committee', committeeRoutes);
-app.use('/api/admin', adminRoutes);
-
-// Fallback API route mounts for proxy path variations
-app.use('/admin/api', adminRoutes);
-app.use('/committee/api', committeeRoutes);
-app.use('/membership/api', membershipRoutes);
+// API Routes (Mounted on both /api/path and /path to handle Vercel serverless path rewrites)
+app.use(['/api/membership', '/membership'], membershipRoutes);
+app.use(['/api/payment', '/payment'], paymentRoutes);
+app.use(['/api/committee', '/committee'], committeeRoutes);
+app.use(['/api/admin', '/admin'], adminRoutes);
 
 // Health Check API
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     status: 'online',
     appName: 'Lakshadweep Students Association Membership Portal',
