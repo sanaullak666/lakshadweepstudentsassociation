@@ -122,10 +122,9 @@ async function verifyPublic(req, res) {
     }
 
     const result = await db.query(
-      `SELECT m.membership_id, m.full_name, m.gender, m.island, m.blood_group, m.designation, m.registration_status, m.created_at, c.photo_url 
-       FROM members m 
-       LEFT JOIN central_committee c ON (m.designation = c.designation OR m.full_name = c.name)
-       WHERE m.membership_id = ? AND m.registration_status = 'ACTIVE' LIMIT 1`,
+      `SELECT membership_id, full_name, gender, island, blood_group, designation, registration_status, created_at 
+       FROM members 
+       WHERE membership_id = ? AND registration_status = 'ACTIVE' LIMIT 1`,
       [cleanId]
     );
 
@@ -137,6 +136,22 @@ async function verifyPublic(req, res) {
     }
 
     const member = result.rows[0];
+
+    // Profile photo is strictly reserved for Central Committee members (LSA-2026-00001 to LSA-2026-00009)
+    const seqNum = parseInt(cleanId.split('-')[2], 10);
+    const isCentralCommittee = !isNaN(seqNum) && seqNum >= 1 && seqNum <= 9;
+
+    let photoUrl = null;
+    if (isCentralCommittee) {
+      const cRes = await db.query(
+        `SELECT photo_url FROM central_committee WHERE display_order = ? LIMIT 1`,
+        [seqNum]
+      );
+      if (cRes.rows && cRes.rows.length > 0) {
+        photoUrl = cRes.rows[0].photo_url;
+      }
+    }
+
     return res.json({
       success: true,
       message: 'Valid LSA Membership',
@@ -146,7 +161,7 @@ async function verifyPublic(req, res) {
         gender: member.gender,
         island: member.island,
         blood_group: member.blood_group,
-        photo_url: member.photo_url,
+        photo_url: photoUrl,
         designation: member.designation || 'Member',
         status: 'Active',
         validity_year: '2026'
