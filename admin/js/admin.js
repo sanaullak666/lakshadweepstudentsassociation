@@ -176,30 +176,38 @@ async function loadAdminMembers() {
 
     window.adminMemberList = res.data;
 
-    tableBody.innerHTML = res.data.map(m => `
-      <tr>
-        <td><strong style="font-family:monospace; color:var(--primary-deep);">${escapeHtml(m.membership_id || 'PENDING')}</strong></td>
-        <td><strong>${escapeHtml(m.full_name)}</strong></td>
-        <td>${escapeHtml(m.gender)}</td>
-        <td>${escapeHtml(m.island)}</td>
-        <td>${escapeHtml(m.contact_number)}</td>
-        <td>${escapeHtml(m.email)}</td>
-        <td><span class="badge" style="background:#F1F5F9; color:var(--dark-navy);">${escapeHtml(m.blood_group)}</span></td>
-        <td><span style="font-weight:600; color:var(--lsa-primary);">${escapeHtml(m.designation || 'Member')}</span></td>
-        <td>
-          <span class="badge ${m.payment_status === 'PAID' ? 'badge-paid' : 'badge-pending'}">
-            ${m.payment_status}
-          </span>
-        </td>
-        <td>${new Date(m.created_at).toLocaleDateString()}</td>
-        <td>
-          <div style="display:flex; gap:0.4rem;">
-            <button class="btn btn-sm btn-secondary" onclick="openEditMemberModalById(${m.id})" style="font-weight:600; padding:0.25rem 0.6rem; font-size:0.75rem;">Edit</button>
-            <button class="btn btn-sm btn-secondary" style="color:var(--danger); font-weight:600; padding:0.25rem 0.6rem; font-size:0.75rem;" onclick="deleteGeneralMember(${m.id})">Delete</button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
+    tableBody.innerHTML = res.data.map(m => {
+      const seq = m.membership_id ? parseInt(m.membership_id.split('-')[2], 10) : 999;
+      const isExec = seq <= 9 || (m.designation && m.designation !== 'Member');
+      const desigBadge = isExec 
+        ? `<span class="badge" style="background:var(--lsa-light-blue); color:var(--lsa-primary); font-weight:700; border:1px solid var(--lsa-border-light);">👑 ${escapeHtml(m.designation || 'Executive')}</span>`
+        : `<span style="font-weight:600; color:var(--lsa-primary);">${escapeHtml(m.designation || 'Member')}</span>`;
+
+      return `
+        <tr>
+          <td><strong style="font-family:monospace; color:var(--primary-deep);">${escapeHtml(m.membership_id || 'PENDING')}</strong></td>
+          <td><strong>${escapeHtml(m.full_name)}</strong></td>
+          <td>${escapeHtml(m.gender)}</td>
+          <td>${escapeHtml(m.island)}</td>
+          <td>${escapeHtml(m.contact_number)}</td>
+          <td>${escapeHtml(m.email)}</td>
+          <td><span class="badge" style="background:#F1F5F9; color:var(--dark-navy);">${escapeHtml(m.blood_group)}</span></td>
+          <td>${desigBadge}</td>
+          <td>
+            <span class="badge ${m.payment_status === 'PAID' ? 'badge-paid' : 'badge-pending'}">
+              ${m.payment_status}
+            </span>
+          </td>
+          <td>${new Date(m.created_at).toLocaleDateString()}</td>
+          <td>
+            <div style="display:flex; gap:0.4rem;">
+              <button class="btn btn-sm btn-secondary" onclick="openEditMemberModalById(${m.id})" style="font-weight:600; padding:0.25rem 0.6rem; font-size:0.75rem;">Edit</button>
+              <button class="btn btn-sm btn-secondary" style="color:var(--danger); font-weight:600; padding:0.25rem 0.6rem; font-size:0.75rem;" onclick="deleteGeneralMember(${m.id})">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
 
   } catch (err) {
     tableBody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-muted); padding:2rem;">No members recorded yet.</td></tr>`;

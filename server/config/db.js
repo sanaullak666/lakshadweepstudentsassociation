@@ -250,7 +250,7 @@ async function seedDefaultAdminAndCommittee() {
     }
 
     // Seed/Update access_password for Central Committee positions if missing, and clean up duplicate position rows
-    const { COMMITTEE_POSITIONS } = require('../utils/membershipIdGenerator');
+    const { COMMITTEE_POSITIONS, getReservedIdForOrder } = require('../utils/membershipIdGenerator');
     for (const pos of COMMITTEE_POSITIONS) {
       const existing = await executeQuery(
         'SELECT id, access_password FROM central_committee WHERE display_order = ? OR designation = ? ORDER BY id ASC',
@@ -271,6 +271,20 @@ async function seedDefaultAdminAndCommittee() {
         await executeQuery(
           'INSERT INTO central_committee (name, designation, display_order, is_active, access_password) VALUES (?, ?, ?, 1, ?)',
           [pos.title, pos.title, pos.order, pos.defaultPassword]
+        );
+      }
+
+      // Ensure Central Committee positions also exist in members table
+      const reservedId = getReservedIdForOrder(pos.order);
+      const mCheck = await executeQuery(
+        'SELECT id FROM members WHERE membership_id = ? OR designation = ? LIMIT 1',
+        [reservedId, pos.title]
+      );
+      if (!mCheck.rows || mCheck.rows.length === 0) {
+        await executeQuery(
+          `INSERT INTO members (membership_id, full_name, gender, island, contact_number, email, blood_group, designation, payment_status, registration_status)
+           VALUES (?, ?, 'Male', 'Kavaratti', '0000000000', ?, 'O+', ?, 'PENDING', 'PENDING')`,
+          [reservedId, pos.title, `${pos.key}@lsa.org.in`, pos.title]
         );
       }
     }
