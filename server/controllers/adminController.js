@@ -149,10 +149,23 @@ function getMe(req, res) {
  */
 async function getStats(req, res) {
   try {
-    const totalMembersRes = await db.query(`SELECT COUNT(*) as count FROM members`, []);
-    const paidMembersRes = await db.query(`SELECT COUNT(*) as count FROM members WHERE payment_status = 'PAID'`, []);
-    const pendingPaymentsRes = await db.query(`SELECT COUNT(*) as count FROM members WHERE payment_status = 'PENDING'`, []);
-    const activeCommitteeRes = await db.query(`SELECT COUNT(*) as count FROM central_committee WHERE is_active = 1`, []);
+    // Count real registered human members (excluding vacant position placeholders)
+    const totalMembersRes = await db.query(
+      `SELECT COUNT(*) as count FROM members WHERE contact_number != '0000000000'`,
+      []
+    );
+    const paidMembersRes = await db.query(
+      `SELECT COUNT(*) as count FROM members WHERE payment_status = 'PAID' AND contact_number != '0000000000'`,
+      []
+    );
+    const pendingPaymentsRes = await db.query(
+      `SELECT COUNT(*) as count FROM members WHERE payment_status = 'PENDING' AND contact_number != '0000000000'`,
+      []
+    );
+    const activeCommitteeRes = await db.query(
+      `SELECT COUNT(*) as count FROM central_committee WHERE is_active = 1`,
+      []
+    );
 
     const totalMembers = totalMembersRes.rows[0]?.count || totalMembersRes.rows[0]?.['COUNT(*)'] || 0;
     const paidMembers = paidMembersRes.rows[0]?.count || paidMembersRes.rows[0]?.['COUNT(*)'] || 0;
@@ -160,7 +173,10 @@ async function getStats(req, res) {
     const activeCommittee = activeCommitteeRes.rows[0]?.count || activeCommitteeRes.rows[0]?.['COUNT(*)'] || 0;
 
     // Island distribution
-    const islandRes = await db.query(`SELECT island, COUNT(*) as count FROM members WHERE payment_status = 'PAID' GROUP BY island`, []);
+    const islandRes = await db.query(
+      `SELECT island, COUNT(*) as count FROM members WHERE payment_status = 'PAID' AND contact_number != '0000000000' GROUP BY island`,
+      []
+    );
     
     return res.json({
       success: true,
