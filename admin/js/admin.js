@@ -461,31 +461,92 @@ async function loadAdminPayments() {
   const tbody = document.getElementById('admin-payments-tbody');
   if (!tbody) return;
 
-  tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:2rem;">Loading payments...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:2rem;">Loading payments...</td></tr>`;
 
   try {
     const res = await apiFetch('/api/admin/payments');
     if (!res.success || !res.data || res.data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">No payment transactions recorded yet.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:2rem; color:var(--text-muted);">No payment transactions recorded yet.</td></tr>`;
       return;
     }
 
-    tbody.innerHTML = res.data.map(p => `
-      <tr>
-        <td><strong>${escapeHtml(p.full_name || 'Member #' + p.member_id)}</strong></td>
-        <td><span style="font-family:monospace;">${escapeHtml(p.membership_id || 'PENDING')}</span></td>
-        <td><strong>₹${parseFloat(p.amount).toFixed(2)}</strong></td>
-        <td><small style="font-family:monospace;">${escapeHtml(p.order_id)}</small></td>
-        <td><small style="font-family:monospace;">${escapeHtml(p.payment_id || '-')}</small></td>
-        <td>
-          <span class="badge ${p.status === 'PAID' ? 'badge-paid' : 'badge-pending'}">${p.status}</span>
-        </td>
-        <td>${p.paid_at ? new Date(p.paid_at).toLocaleString() : '-'}</td>
-        <td>${new Date(p.created_at).toLocaleString()}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = res.data.map(p => {
+      const isPaid = p.status === 'PAID';
+      const isFailed = p.status === 'FAILED';
+
+      let statusBadgeHtml = `<span class="badge badge-pending">⏳ PENDING VERIFICATION</span>`;
+      if (isPaid) {
+        statusBadgeHtml = `<span class="badge badge-paid">✓ PAID & ACTIVE</span>`;
+      } else if (isFailed) {
+        statusBadgeHtml = `<span class="badge" style="background:#FEE2E2; color:#991B1B; font-weight:700;">✗ REJECTED</span>`;
+      }
+
+      let actionsHtml = `<span style="color:var(--lsa-success); font-weight:700; font-size:0.8rem;">✓ Verified</span>`;
+      if (!isPaid) {
+        actionsHtml = `
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" onclick="approveAdminPayment(${p.id}, ${p.member_id})" style="font-weight:700; font-size:0.75rem; padding:0.25rem 0.5rem;">
+              ✓ Approve & Issue ID
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="rejectAdminPayment(${p.id}, ${p.member_id})" style="color:var(--danger); font-size:0.75rem; font-weight:700; padding:0.25rem 0.5rem;">
+              ✗ Reject
+            </button>
+          </div>
+        `;
+      }
+
+      return `
+        <tr>
+          <td><strong>${escapeHtml(p.full_name || 'Member #' + p.member_id)}</strong></td>
+          <td><span style="font-family:monospace; font-weight:700; color:var(--lsa-primary);">${escapeHtml(p.membership_id || 'PENDING')}</span></td>
+          <td><strong>₹${parseFloat(p.amount).toFixed(2)}</strong></td>
+          <td><small style="font-family:monospace;">${escapeHtml(p.order_id)}</small></td>
+          <td><strong style="font-family:monospace; color:var(--lsa-secondary); background:var(--lsa-light-bg); padding:0.2rem 0.4rem; border-radius:4px; border:1px solid var(--lsa-border-light);">${escapeHtml(p.payment_id || 'Not Submitted')}</strong></td>
+          <td>${statusBadgeHtml}</td>
+          <td>${p.paid_at ? new Date(p.paid_at).toLocaleString() : '-'}</td>
+          <td>${new Date(p.created_at).toLocaleString()}</td>
+          <td>${actionsHtml}</td>
+        </tr>
+      `;
+    }).join('');
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;">No payment transactions recorded yet.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:2rem;">No payment transactions recorded yet.</td></tr>`;
+  }
+}
+
+async function approveAdminPayment(paymentId, memberId) {
+  if (!confirm('Are you sure you want to approve this UTR transaction and activate/issue the official Membership ID?')) return;
+
+  try {
+    const res = await apiFetch('/api/admin/payments/approve', {
+      method: 'POST',
+      body: JSON.stringify({ paymentId, memberId })
+    });
+
+    if (res.success) {
+      showToast(res.message || 'Payment approved and Membership ID issued!', 'success');
+      loadAdminPayments();
+    }
+  } catch (err) {
+    showToast(err.message || 'Failed to approve payment.', 'error');
+  }
+}
+
+async function rejectAdminPayment(paymentId, memberId) {
+  if (!confirm('Are you sure you want to reject this payment / UTR transaction?')) return;
+
+  try {
+    const res = await apiFetch('/api/admin/payments/reject', {
+      method: 'POST',
+      body: JSON.stringify({ paymentId, memberId })
+    });
+
+    if (res.success) {
+      showToast(res.message || 'Payment status updated to REJECTED.', 'info');
+      loadAdminPayments();
+    }
+  } catch (err) {
+    showToast(err.message || 'Failed to reject payment.', 'error');
   }
 }
 

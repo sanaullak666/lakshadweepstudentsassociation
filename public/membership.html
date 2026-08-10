@@ -361,16 +361,27 @@
       </div>
 
       <!-- Order Summary line -->
-      <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--lsa-text-muted); margin-bottom:1.25rem; border-top:1px solid var(--lsa-border-light); padding-top:0.75rem;">
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--lsa-text-muted); margin-bottom:1rem; border-top:1px solid var(--lsa-border-light); padding-top:0.75rem;">
         <span>Order ID: <strong style="font-family:monospace;" id="modal-order-id">order_demo_123</strong></span>
-        <span>Amount: <strong style="color:var(--lsa-primary);">₹3.00 INR</strong></span>
+        <span>Fee: <strong style="color:var(--lsa-primary);">₹3.00 INR</strong></span>
+      </div>
+
+      <!-- 12-DIGIT UTR TRANSACTION INPUT -->
+      <div style="background:var(--lsa-light-bg); padding:1rem; border-radius:12px; border:1px solid var(--lsa-border-light); margin-bottom:1.25rem; text-align:left;">
+        <label for="utr-number-input" style="font-size:0.85rem; font-weight:700; color:var(--lsa-primary); display:block; margin-bottom:0.4rem;">
+          Enter 12-Digit UPI Transaction ID (UTR / Ref No.) <span style="color:var(--danger)">*</span>
+        </label>
+        <input type="text" id="utr-number-input" class="form-control" placeholder="e.g. 423456789012" maxlength="18" required style="font-family:monospace; font-weight:700; letter-spacing:1px; font-size:1.05rem;">
+        <small style="color:var(--lsa-text-muted); display:block; margin-top:0.35rem; font-size:0.75rem;">
+          Found in your Google Pay / PhonePe / Paytm / BHIM payment receipt screen after making ₹3.00 payment.
+        </small>
       </div>
 
       <!-- Action Buttons -->
       <div style="display:flex; gap:0.75rem;">
         <button type="button" class="btn btn-secondary btn-block" id="modal-btn-cancel">Cancel</button>
-        <button type="button" class="btn btn-primary btn-block" id="modal-btn-success" style="font-weight:700;">
-          ✓ Verify & Activate (₹3.00)
+        <button type="button" class="btn btn-primary btn-block" id="modal-btn-submit-utr" style="font-weight:700;" onclick="submitUtrTransaction()">
+          ✓ Submit UTR for Verification
         </button>
       </div>
 

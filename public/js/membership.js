@@ -321,43 +321,50 @@ function triggerPaymentGateway(orderData) {
   }
 }
 
-// Generate valid test signature for sandbox mode verification
-async function processMockPaymentVerification() {
+// Submit 12-Digit UPI Transaction ID (UTR / Ref No.) for Admin Verification
+async function submitUtrTransaction() {
   if (!currentOrderData || !currentRegistration) return;
 
-  const mockPaymentId = 'pay_' + Math.random().toString(36).substring(2, 15);
-  // Compute valid HMAC SHA-256 using standard crypto API
-  const text = `${currentOrderData.orderId}|${mockPaymentId}`;
-  const secret = 'sample_secret_key_12345';
-  
-  const mockSignature = await computeHmacSha256(secret, text);
+  const utrInput = document.getElementById('utr-number-input');
+  const utrValue = utrInput ? utrInput.value.trim() : '';
 
-  await verifyBackendPayment({
-    memberId: currentRegistration.memberId,
-    razorpay_order_id: currentOrderData.orderId,
-    razorpay_payment_id: mockPaymentId,
-    razorpay_signature: mockSignature
-  });
-}
+  if (!utrValue || utrValue.length < 8) {
+    showToast('Please enter a valid 12-digit UPI Transaction / UTR ID.', 'error');
+    if (utrInput) utrInput.focus();
+    return;
+  }
 
-// Send signature to Node.js backend for strict verification
-async function verifyBackendPayment(verifyPayload) {
-  showToast('Verifying payment with LSA server...', 'info');
+  const btn = document.getElementById('modal-btn-submit-utr');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Submitting UTR...';
+  }
 
   try {
-    const res = await apiFetch('/api/payment/verify', {
+    const res = await apiFetch('/api/payment/submit-utr', {
       method: 'POST',
-      body: JSON.stringify(verifyPayload)
+      body: JSON.stringify({
+        memberId: currentRegistration.memberId,
+        orderId: currentOrderData.orderId,
+        utrNumber: utrValue
+      })
     });
 
-    if (res.success && res.data) {
-      showToast('✓ Payment Verified! Activating Membership...', 'success');
+    if (res.success) {
+      document.getElementById('sandbox-payment-modal').style.display = 'none';
+      showToast('✓ UPI Transaction ID submitted for verification!', 'success');
+      
       setTimeout(() => {
         window.location.href = `success?id=${currentRegistration.memberId}`;
       }, 1000);
     }
   } catch (err) {
-    showToast(err.message || 'Payment verification failed.', 'error');
+    showToast(err.message || 'Failed to submit UTR number.', 'error');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '✓ Submit UTR for Verification';
+    }
   }
 }
 
