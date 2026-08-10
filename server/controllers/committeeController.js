@@ -563,23 +563,29 @@ async function registerPositionMember(req, res) {
 
     // 1. Insert or update in `members` table
     const existingMember = await db.query(
-      `SELECT id FROM members WHERE membership_id = ? OR designation = ? OR email = ? OR contact_number = ? LIMIT 1`,
+      `SELECT id, payment_status, registration_status FROM members WHERE membership_id = ? OR designation = ? OR email = ? OR contact_number = ? LIMIT 1`,
       [reservedId, pos.title, email.trim(), contact_number.trim()]
     );
 
     let memberDbId = null;
+    let currentPaymentStatus = 'PENDING';
+    let currentRegStatus = 'PENDING';
+
     if (existingMember.rows && existingMember.rows.length > 0) {
       memberDbId = existingMember.rows[0].id;
+      currentPaymentStatus = existingMember.rows[0].payment_status || 'PENDING';
+      currentRegStatus = existingMember.rows[0].registration_status || 'PENDING';
+
       await db.query(
         `UPDATE members 
-         SET membership_id = ?, full_name = ?, gender = ?, island = ?, contact_number = ?, email = ?, blood_group = ?, present_address = ?, permanent_address = ?, designation = ?, payment_status = 'PAID', registration_status = 'ACTIVE', updated_at = CURRENT_TIMESTAMP 
+         SET membership_id = ?, full_name = ?, gender = ?, island = ?, contact_number = ?, email = ?, blood_group = ?, present_address = ?, permanent_address = ?, designation = ?, updated_at = CURRENT_TIMESTAMP 
          WHERE id = ?`,
         [reservedId, full_name.trim(), gender, island, contact_number.trim(), email.trim(), blood_group, present_address || null, permanent_address || null, pos.title, memberDbId]
       );
     } else {
       const ins = await db.query(
         `INSERT INTO members (membership_id, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation, payment_status, registration_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PAID', 'ACTIVE')`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', 'PENDING')`,
         [reservedId, full_name.trim(), gender, island, contact_number.trim(), email.trim(), blood_group, present_address || null, permanent_address || null, pos.title]
       );
       memberDbId = ins.insertId;
@@ -601,9 +607,11 @@ async function registerPositionMember(req, res) {
       );
     }
 
+    const needsPayment = currentPaymentStatus !== 'PAID';
+
     return res.status(200).json({
       success: true,
-      message: `${pos.title} profile updated successfully!`,
+      message: needsPayment ? `${pos.title} profile saved! Please complete the ₹3.00 payment to activate your official pass.` : `${pos.title} profile updated successfully!`,
       data: {
         memberId: memberDbId,
         membership_id: reservedId,
@@ -614,8 +622,9 @@ async function registerPositionMember(req, res) {
         email: email.trim(),
         blood_group,
         photo_url,
-        payment_status: 'PAID',
-        registration_status: 'ACTIVE'
+        payment_status: currentPaymentStatus,
+        registration_status: currentRegStatus,
+        needsPayment
       }
     });
   } catch (error) {

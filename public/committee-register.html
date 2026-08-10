@@ -315,7 +315,7 @@
 
             <div style="margin-top:2rem;">
               <button type="submit" id="btn-comm-submit" class="btn btn-primary btn-block btn-lg" style="font-size:1.1rem; font-weight:800;">
-                ✓ Save Details & Generate Official Pass
+                ✓ Save Details & Proceed to Payment
               </button>
             </div>
 
@@ -323,9 +323,61 @@
         </div>
       </div>
 
+      <!-- PAYMENT & UTR SUBMISSION STEP -->
+      <div id="committee-payment-wrap" style="display:none; max-width: 580px; margin:0 auto;">
+        <div style="background:white; border-radius:var(--lsa-radius-xl); padding:2.5rem; box-shadow:var(--lsa-shadow-xl); border:1px solid var(--lsa-border-light); text-align:center;">
+          
+          <div style="background:var(--lsa-light-blue); padding:0.4rem 1rem; border-radius:50px; display:inline-block; font-weight:700; color:var(--lsa-primary); font-size:0.85rem; margin-bottom:1rem;">
+            Step 2: Official Membership Fee & Payment Verification
+          </div>
+
+          <h2 style="color:var(--lsa-primary); font-size:1.6rem; margin-bottom:0.4rem;">Central Committee Registration Fee</h2>
+          <p style="color:var(--lsa-text-muted); font-size:0.95rem; margin-bottom:1.5rem;">
+            Please complete the ₹3.00 registration payment via UPI QR code below to submit your Central Committee Pass for Admin verification.
+          </p>
+
+          <!-- ORDER & FEE BOX -->
+          <div style="background:var(--lsa-light-bg); border-radius:12px; padding:1.25rem; margin-bottom:1.5rem; text-align:left; border:1px solid var(--lsa-border-light); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase;">Reserved Official ID</div>
+              <strong style="font-family:monospace; font-size:1.15rem; color:var(--lsa-primary);" id="comm-pay-reserved-id">LSA-2026-00001</strong>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase;">Membership Fee</div>
+              <strong style="font-size:1.25rem; color:var(--lsa-accent-teal); font-weight:800;">₹3.00 INR</strong>
+            </div>
+          </div>
+
+          <!-- QR CODE BOX -->
+          <div style="background:white; border:2px dashed var(--lsa-border); padding:1.5rem; border-radius:16px; margin-bottom:1.5rem; text-align:center;">
+            <div style="font-weight:800; color:var(--lsa-primary); font-size:0.95rem; margin-bottom:0.75rem;">Scan & Pay via any UPI App</div>
+            <img id="comm-upi-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3Darushkhan2004-1%40oksbi%26pn%3DLakshadweep%2520Students%2520Association%26am%3D3.00%26cu%3DINR" alt="UPI Payment QR Code" style="width:170px; height:170px; margin:0 auto 0.75rem auto; display:block; border-radius:12px; border:1px solid var(--lsa-border-light);">
+            <div style="font-family:monospace; font-weight:700; font-size:0.9rem; color:var(--lsa-secondary);">arushkhan2004-1@oksbi</div>
+          </div>
+
+          <!-- UTR INPUT FORM -->
+          <form id="comm-utr-form" onsubmit="handleCommUtrSubmit(event)">
+            <div class="form-group" style="text-align:left; margin-bottom:1.5rem;">
+              <label for="comm-utr-input" class="form-label" style="font-weight:700; color:var(--lsa-primary);">
+                Enter 12-Digit UPI Transaction ID (UTR / Ref No.) <span class="req">*</span>
+              </label>
+              <input type="text" id="comm-utr-input" class="form-control" placeholder="e.g. 423456789012" maxlength="18" required style="font-family:monospace; font-weight:700; font-size:1.05rem; letter-spacing:1px;">
+              <small style="color:var(--lsa-text-muted); display:block; margin-top:0.35rem; font-size:0.75rem;">
+                Found in your Google Pay / PhonePe / Paytm payment details screen after completing ₹3.00 payment.
+              </small>
+            </div>
+
+            <button type="submit" id="btn-comm-utr-submit" class="btn btn-primary btn-block btn-lg" style="font-weight:800; font-size:1.05rem;">
+              ✓ Submit UTR for Admin Verification
+            </button>
+          </form>
+
+        </div>
+      </div>
+
       <!-- SUCCESS / DIGITAL PASS STATE -->
       <div id="committee-success-wrap" style="display:none; text-align:center;">
-        <div style="display:inline-block; background:var(--lsa-success-bg); color:var(--lsa-success); padding:0.5rem 1.5rem; border-radius:50px; font-weight:700; font-size:0.95rem; margin-bottom:1.5rem;">
+        <div id="comm-status-banner" style="display:inline-block; background:var(--lsa-success-bg); color:var(--lsa-success); padding:0.5rem 1.5rem; border-radius:50px; font-weight:700; font-size:0.95rem; margin-bottom:1.5rem;">
           🎉 Central Committee Registration Complete!
         </div>
 
@@ -355,7 +407,7 @@
               </div>
               <div>
                 <span style="color:var(--lsa-text-muted); font-size:0.75rem; display:block;">Status</span>
-                <strong style="color:var(--lsa-accent-teal);">✓ ACTIVE</strong>
+                <strong style="color:var(--lsa-accent-teal);" id="pass-status-text">✓ ACTIVE</strong>
               </div>
             </div>
           </div>
@@ -370,21 +422,32 @@
     </div>
   </main>
 
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Lakshadweep Students Association (LSA). All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
   <script src="js/main.js"></script>
   <script>
     let currentPositionKey = '';
+    let currentMemberDbId = null;
+    let currentReservedId = '';
+    let currentCommData = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       initCommSameAddressCheckbox();
       const urlParams = new URLSearchParams(window.location.search);
-      currentPositionKey = urlParams.get('position') || '';
+      currentPositionKey = urlParams.get('pos') || urlParams.get('key') || '';
 
       if (!currentPositionKey) {
-        showError('Missing Position Parameter', 'Please access this page using your dedicated Central Committee link.');
+        showError('Missing Position Parameter', 'No central committee position was specified in the URL.');
         return;
       }
-
-      loadPositionData(currentPositionKey);
+      loadPositionGateInfo();
     });
 
     function initCommSameAddressCheckbox() {
@@ -408,45 +471,42 @@
       });
     }
 
-    async function loadPositionData(key) {
+    async function loadPositionGateInfo() {
       try {
-        const res = await apiFetch(`/api/committee/position-info/${encodeURIComponent(key)}`);
+        const res = await apiFetch(`/api/committee/position-info/${encodeURIComponent(currentPositionKey)}`);
         
         document.getElementById('committee-loading').style.display = 'none';
 
-        if (!res.success || !res.data) {
-          showError('Invalid Committee Position', res.message || 'Position link not recognized.');
-          return;
+        if (res.success && res.data) {
+          const info = res.data;
+          document.getElementById('pos-key-input').value = info.key;
+          document.getElementById('gate-pos-title').textContent = `${info.title} Access Gate`;
+          document.getElementById('gate-pos-id').textContent = info.reserved_id;
+          document.getElementById('pos-title-display').textContent = info.title;
+          document.getElementById('pos-id-display').textContent = info.reserved_id;
+
+          document.getElementById('committee-pass-gate').style.display = 'block';
+        } else {
+          showError('Invalid Position Link', res.message || 'Central committee position link not found.');
         }
-
-        const data = res.data;
-        document.getElementById('pos-key-input').value = data.key;
-        document.getElementById('pos-title-display').textContent = data.title;
-        document.getElementById('pos-id-display').textContent = data.reserved_id;
-
-        document.getElementById('gate-pos-title').textContent = `${data.title} Access Gate`;
-        document.getElementById('gate-pos-id').textContent = data.reserved_id;
-
-        document.getElementById('committee-pass-gate').style.display = 'block';
-
       } catch (err) {
         document.getElementById('committee-loading').style.display = 'none';
-        showError('Network Error', 'Failed to load position data. Please check your connection.');
+        showError('Connection Error', 'Failed to validate central committee link.');
       }
     }
 
     async function handleVerifyPassword(e) {
       e.preventDefault();
-      const passInput = document.getElementById('gate-password-input');
-      const errorMsg = document.getElementById('gate-error-msg');
+      const password = document.getElementById('gate-password-input').value.trim();
       const btn = document.getElementById('btn-gate-verify');
-      const password = passInput.value.trim();
+      const errorMsg = document.getElementById('gate-error-msg');
+      const photoFileInput = document.getElementById('comm-photo-file');
 
       if (!password) return;
 
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Verifying Password...';
       errorMsg.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Verifying...';
 
       try {
         const res = await apiFetch('/api/committee/verify-role-password', {
@@ -460,8 +520,6 @@
           document.getElementById('committee-form-wrap').style.display = 'block';
 
           const m = res.data.member;
-          const photoFileInput = document.getElementById('comm-photo-file');
-
           if (m) {
             if (m.full_name) document.getElementById('comm-fullname').value = m.full_name;
             if (m.gender) document.getElementById('comm-gender').value = m.gender;
@@ -481,7 +539,7 @@
               photoFileInput.removeAttribute('required');
             }
           }
-          showToast('Access granted! You can now update your profile details.', 'success');
+          showToast('Access granted! Please complete your details.', 'success');
         } else {
           errorMsg.textContent = res.message || 'Incorrect access password.';
           errorMsg.style.display = 'block';
@@ -555,28 +613,95 @@
 
         if (res.success && res.data) {
           const d = res.data;
+          currentCommData = d;
+          currentMemberDbId = d.memberId;
+          currentReservedId = d.membership_id;
+
           document.getElementById('committee-form-wrap').style.display = 'none';
-          document.getElementById('committee-success-wrap').style.display = 'block';
 
-          document.getElementById('pass-name').textContent = d.full_name;
-          document.getElementById('pass-designation').textContent = d.designation;
-          document.getElementById('pass-id').textContent = d.membership_id;
-          document.getElementById('pass-island').textContent = d.island;
-          document.getElementById('pass-blood').textContent = d.blood_group;
-
-          const photoEl = document.getElementById('pass-img');
-          if (d.photo_url) {
-            photoEl.src = d.photo_url;
+          if (d.needsPayment) {
+            document.getElementById('comm-pay-reserved-id').textContent = d.membership_id;
+            document.getElementById('committee-payment-wrap').style.display = 'block';
+            showToast('Details saved! Please submit your UPI UTR number to complete payment.', 'info');
           } else {
-            photoEl.src = 'images/logo.jpg';
+            showSuccessCard(d);
           }
-          showToast('Profile updated successfully!', 'success');
         }
       } catch (err) {
         showToast(err.message || 'Profile update failed.', 'error');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '✓ Save Details & Generate Official Pass';
+        btn.innerHTML = '✓ Save Details & Proceed to Payment';
+      }
+    }
+
+    async function handleCommUtrSubmit(e) {
+      e.preventDefault();
+      const utrVal = document.getElementById('comm-utr-input').value.trim();
+      const btn = document.getElementById('btn-comm-utr-submit');
+
+      if (!utrVal || utrVal.length < 8) {
+        showToast('Please enter a valid 12-digit UPI Transaction / UTR ID.', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Submitting UTR...';
+
+      try {
+        const res = await apiFetch('/api/payment/submit-utr', {
+          method: 'POST',
+          body: JSON.stringify({
+            memberId: currentMemberDbId,
+            orderId: 'order_comm_' + currentReservedId,
+            utrNumber: utrVal
+          })
+        });
+
+        if (res.success) {
+          document.getElementById('committee-payment-wrap').style.display = 'none';
+          showSuccessCard(currentCommData, true);
+          showToast('✓ UTR submitted! Pending Admin verification.', 'success');
+        }
+      } catch (err) {
+        showToast(err.message || 'Failed to submit UTR number.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '✓ Submit UTR for Admin Verification';
+      }
+    }
+
+    function showSuccessCard(d, isPending = false) {
+      document.getElementById('committee-success-wrap').style.display = 'block';
+
+      document.getElementById('pass-name').textContent = d.full_name;
+      document.getElementById('pass-designation').textContent = d.designation;
+      document.getElementById('pass-id').textContent = d.membership_id;
+      document.getElementById('pass-island').textContent = d.island;
+      document.getElementById('pass-blood').textContent = d.blood_group;
+
+      const photoEl = document.getElementById('pass-img');
+      if (d.photo_url) {
+        photoEl.src = d.photo_url;
+      } else {
+        photoEl.src = 'images/logo.jpg';
+      }
+
+      const statusBanner = document.getElementById('comm-status-banner');
+      const statusText = document.getElementById('pass-status-text');
+
+      if (isPending || d.payment_status === 'PENDING') {
+        statusBanner.style.background = '#FFF3CD';
+        statusBanner.style.color = '#856404';
+        statusBanner.textContent = '⏳ Registration & UTR Submitted - Pending Admin Verification';
+        statusText.style.color = '#856404';
+        statusText.textContent = '⏳ PENDING VERIFICATION';
+      } else {
+        statusBanner.style.background = 'var(--lsa-success-bg)';
+        statusBanner.style.color = 'var(--lsa-success)';
+        statusBanner.textContent = '🎉 Central Committee Registration Complete!';
+        statusText.style.color = 'var(--lsa-accent-teal)';
+        statusText.textContent = '✓ ACTIVE';
       }
     }
   </script>
