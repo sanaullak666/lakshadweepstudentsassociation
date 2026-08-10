@@ -249,16 +249,23 @@ async function seedDefaultAdminAndCommittee() {
       console.log(`[DB Seed] Seeded default admin: ${adminEmail}`);
     }
 
-    // Seed/Update access_password for Central Committee positions if missing
+    // Seed/Update access_password for Central Committee positions if missing, and clean up duplicate position rows
     const { COMMITTEE_POSITIONS } = require('../utils/membershipIdGenerator');
     for (const pos of COMMITTEE_POSITIONS) {
       const existing = await executeQuery(
-        'SELECT id, access_password FROM central_committee WHERE display_order = ? OR designation = ? LIMIT 1',
+        'SELECT id, access_password FROM central_committee WHERE display_order = ? OR designation = ? ORDER BY id ASC',
         [pos.order, pos.title]
       );
       if (existing.rows && existing.rows.length > 0) {
+        const keepId = existing.rows[0].id;
+        // Clean up duplicate rows for the same designation or display order
+        if (existing.rows.length > 1) {
+          for (let i = 1; i < existing.rows.length; i++) {
+            await executeQuery('DELETE FROM central_committee WHERE id = ?', [existing.rows[i].id]);
+          }
+        }
         if (!existing.rows[0].access_password) {
-          await executeQuery('UPDATE central_committee SET access_password = ? WHERE id = ?', [pos.defaultPassword, existing.rows[0].id]);
+          await executeQuery('UPDATE central_committee SET access_password = ? WHERE id = ?', [pos.defaultPassword, keepId]);
         }
       } else {
         await executeQuery(
