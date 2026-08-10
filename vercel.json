@@ -3,8 +3,52 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/:path*",
       "destination": "/api/index.js"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/login.html"
+    },
+    {
+      "source": "/admin/login",
+      "destination": "/admin/login.html"
+    },
+    {
+      "source": "/admin/dashboard",
+      "destination": "/admin/dashboard.html"
+    },
+    {
+      "source": "/admin/committee",
+      "destination": "/admin/committee.html"
+    },
+    {
+      "source": "/admin/members",
+      "destination": "/admin/members.html"
+    },
+    {
+      "source": "/admin/payments",
+      "destination": "/admin/payments.html"
+    },
+    {
+      "source": "/committee",
+      "destination": "/committee.html"
+    },
+    {
+      "source": "/membership",
+      "destination": "/membership.html"
+    },
+    {
+      "source": "/verify",
+      "destination": "/verify.html"
+    },
+    {
+      "source": "/success",
+      "destination": "/success.html"
+    },
+    {
+      "source": "/committee-register",
+      "destination": "/committee-register.html"
     }
   ]
 }
