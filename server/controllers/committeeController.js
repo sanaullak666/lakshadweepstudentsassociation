@@ -269,7 +269,7 @@ async function getCommitteeLinks(req, res) {
           photo_url: match.photo_url,
           is_active: match.is_active
         } : null,
-        link: `/committee-register.html?position=${pos.key}`
+        link: `/committee-register?position=${pos.key}`
       };
     });
 

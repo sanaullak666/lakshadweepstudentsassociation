@@ -306,7 +306,7 @@ async function verifyBackendPayment(verifyPayload) {
     if (res.success && res.data) {
       showToast('✓ Payment Verified! Activating Membership...', 'success');
       setTimeout(() => {
-        window.location.href = `success.html?id=${currentRegistration.memberId}`;
+        window.location.href = `success?id=${currentRegistration.memberId}`;
       }, 1000);
     }
   } catch (err) {

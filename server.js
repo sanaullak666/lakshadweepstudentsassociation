@@ -77,9 +77,9 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Serve Static Frontend Files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/admin', express.static(path.join(__dirname, 'admin')));
+// Serve Static Frontend Files with clean URLs
+app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
+app.use('/admin', express.static(path.join(__dirname, 'admin'), { extensions: ['html'] }));
 
 // API Routes
 app.use('/api/membership', membershipRoutes);

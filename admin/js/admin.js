@@ -22,13 +22,13 @@ if (typeof window.escapeHtml !== 'function') {
 }
 
 async function checkAdminAuth() {
-  const isLoginPage = window.location.pathname.endsWith('login.html');
+  const isLoginPage = window.location.pathname.includes('login');
   const adminToken = localStorage.getItem('lsa_admin_token');
 
   if (isLoginPage) return false;
 
   if (!adminToken) {
-    window.location.href = 'login.html';
+    window.location.href = '/admin/login';
     return false;
   }
 
@@ -42,7 +42,7 @@ async function checkAdminAuth() {
     const data = await res.json();
     if (!res.ok || !data.success) {
       localStorage.removeItem('lsa_admin_token');
-      window.location.href = 'login.html';
+      window.location.href = '/admin/login';
       return false;
     }
 
@@ -51,13 +51,13 @@ async function checkAdminAuth() {
     initAdminLogout();
     return true;
   } catch (err) {
-    window.location.href = 'login.html';
+    window.location.href = '/admin/login';
     return false;
   }
 }
 
 function initAdminAuthCheck() {
-  const isLoginPage = window.location.pathname.endsWith('login.html');
+  const isLoginPage = window.location.pathname.includes('login');
   if (isLoginPage) {
     initAdminLoginForm();
   } else {
@@ -88,7 +88,7 @@ function initAdminLoginForm() {
         localStorage.setItem('lsa_admin_token', res.data.token);
         showToast('Login successful! Redirecting...', 'success');
         setTimeout(() => {
-          window.location.href = 'dashboard.html';
+          window.location.href = '/admin/dashboard';
         }, 600);
       }
     } catch (err) {
@@ -108,7 +108,7 @@ function initAdminLogout() {
         await apiFetch('/api/admin/logout', { method: 'POST' });
       } catch (e) {}
       localStorage.removeItem('lsa_admin_token');
-      window.location.href = 'login.html';
+      window.location.href = '/admin/login';
     });
   }
 }
