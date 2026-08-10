@@ -218,8 +218,99 @@ async function handleWebhook(req, res) {
   }
 }
 
+/**
+ * Public Endpoint: Submit 12-Digit UPI Transaction ID / UTR Number for Admin Verification
+ */
+async function submitUtrNumber(req, res) {
+  try {
+    const { memberId, orderId, utrNumber } = req.body;
+
+    if (!memberId || !utrNumber || !utrNumber.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Member ID and 12-Digit UPI Transaction ID (UTR) are required.'
+      });
+    }
+
+    const cleanUtr = utrNumber.trim().toUpperCase();
+
+    if (cleanUtr.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please enter a valid 12-digit UPI Transaction / UTR ID.'
+      });
+    }
+
+    // Fetch member
+    const memberResult = await db.query(
+      `SELECT id, full_name, email, contact_number, payment_status, membership_id FROM members WHERE id = ?`,
+      [memberId]
+    );
+
+    if (!memberResult.rows || memberResult.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Member record not found.' });
+    }
+
+    const member = memberResult.rows[0];
+    if (member.payment_status === 'PAID' && member.membership_id) {
+      return res.json({
+        success: true,
+        message: 'Membership is already paid and activated.',
+        data: {
+          membershipId: member.membership_id,
+          member
+        }
+      });
+    }
+
+    // Insert or update payments record
+    const targetOrderId = orderId || `order_upi_${memberId}_${Date.now()}`;
+
+    const existingPayment = await db.query(
+      `SELECT id FROM payments WHERE member_id = ? OR order_id = ? LIMIT 1`,
+      [memberId, targetOrderId]
+    );
+
+    if (existingPayment.rows && existingPayment.rows.length > 0) {
+      await db.query(
+        `UPDATE payments SET payment_id = ?, status = 'PENDING', payment_method = 'upi_qr' WHERE id = ?`,
+        [cleanUtr, existingPayment.rows[0].id]
+      );
+    } else {
+      await db.query(
+        `INSERT INTO payments (member_id, order_id, payment_id, amount, currency, status, payment_method)
+         VALUES (?, ?, ?, 3.00, 'INR', 'PENDING', 'upi_qr')`,
+        [memberId, targetOrderId, cleanUtr]
+      );
+    }
+
+    // Keep member PENDING until admin approves
+    await db.query(
+      `UPDATE members SET payment_status = 'PENDING', registration_status = 'PENDING', updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      [memberId]
+    );
+
+    return res.json({
+      success: true,
+      message: 'UPI Transaction ID submitted successfully! Verification pending by LSA Admin.',
+      data: {
+        memberId: member.id,
+        utrNumber: cleanUtr,
+        status: 'PENDING'
+      }
+    });
+  } catch (error) {
+    console.error('[Submit UTR Error]', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to submit UPI Transaction ID.'
+    });
+  }
+}
+
 module.exports = {
   createOrder,
   verifyPayment,
-  handleWebhook
+  handleWebhook,
+  submitUtrNumber
 };

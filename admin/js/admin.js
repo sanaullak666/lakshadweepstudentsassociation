@@ -157,7 +157,7 @@ async function loadAdminMembers() {
   const gender = document.getElementById('filter-gender')?.value || '';
   const status = document.getElementById('filter-status')?.value || '';
 
-  tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:2rem;">Loading members...</td></tr>`;
+  tableBody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:2rem;">Loading members...</td></tr>`;
 
   try {
     const params = new URLSearchParams();
@@ -170,9 +170,11 @@ async function loadAdminMembers() {
     const res = await apiFetch(`/api/admin/members?${params.toString()}`);
     
     if (!res.success || res.data.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:2rem; color:var(--text-muted);">No members match the query filters.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:2rem; color:var(--text-muted);">No members match the query filters.</td></tr>`;
       return;
     }
+
+    window.adminMemberList = res.data;
 
     tableBody.innerHTML = res.data.map(m => `
       <tr>
@@ -190,11 +192,93 @@ async function loadAdminMembers() {
           </span>
         </td>
         <td>${new Date(m.created_at).toLocaleDateString()}</td>
+        <td>
+          <div style="display:flex; gap:0.4rem;">
+            <button class="btn btn-sm btn-secondary" onclick="openEditMemberModalById(${m.id})" style="font-weight:600; padding:0.25rem 0.6rem; font-size:0.75rem;">Edit</button>
+            <button class="btn btn-sm btn-secondary" style="color:var(--danger); font-weight:600; padding:0.25rem 0.6rem; font-size:0.75rem;" onclick="deleteGeneralMember(${m.id})">Delete</button>
+          </div>
+        </td>
       </tr>
     `).join('');
 
   } catch (err) {
-    tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:2rem;">No members recorded yet.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-muted); padding:2rem;">No members recorded yet.</td></tr>`;
+  }
+}
+
+function openEditMemberModalById(memberId) {
+  if (!window.adminMemberList) return;
+  const member = window.adminMemberList.find(m => m.id === memberId);
+  if (!member) return;
+
+  document.getElementById('edit-member-id').value = member.id;
+  document.getElementById('edit-member-name').value = member.full_name || '';
+  document.getElementById('edit-member-gender').value = member.gender || 'Male';
+  document.getElementById('edit-member-island').value = member.island || 'Agatti';
+  document.getElementById('edit-member-contact').value = member.contact_number || '';
+  document.getElementById('edit-member-blood').value = member.blood_group || 'A+';
+  document.getElementById('edit-member-email').value = member.email || '';
+  document.getElementById('edit-member-designation').value = member.designation || 'Member';
+  document.getElementById('edit-member-payment-status').value = member.payment_status || 'PENDING';
+  document.getElementById('edit-member-membership-id').value = member.membership_id || '';
+
+  document.getElementById('edit-member-modal').style.display = 'flex';
+}
+
+function closeEditMemberModal() {
+  document.getElementById('edit-member-modal').style.display = 'none';
+}
+
+async function saveMemberDetails(e) {
+  e.preventDefault();
+  const id = document.getElementById('edit-member-id').value;
+  const btn = document.getElementById('btn-save-member-edit');
+
+  const payload = {
+    full_name: document.getElementById('edit-member-name').value.trim(),
+    gender: document.getElementById('edit-member-gender').value,
+    island: document.getElementById('edit-member-island').value,
+    contact_number: document.getElementById('edit-member-contact').value.trim(),
+    email: document.getElementById('edit-member-email').value.trim(),
+    blood_group: document.getElementById('edit-member-blood').value,
+    designation: document.getElementById('edit-member-designation').value.trim(),
+    payment_status: document.getElementById('edit-member-payment-status').value,
+    membership_id: document.getElementById('edit-member-membership-id').value.trim()
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const res = await apiFetch(`/api/admin/members/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+
+    if (res.success) {
+      showToast(res.message || 'Member profile updated successfully!', 'success');
+      closeEditMemberModal();
+      loadAdminMembers();
+    }
+  } catch (err) {
+    showToast(err.message || 'Failed to update member.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save Changes';
+  }
+}
+
+async function deleteGeneralMember(id) {
+  if (!confirm('Are you sure you want to delete this member profile from the database?')) return;
+
+  try {
+    const res = await apiFetch(`/api/admin/members/${id}`, { method: 'DELETE' });
+    if (res.success) {
+      showToast(res.message || 'Member deleted from database.', 'success');
+      loadAdminMembers();
+    }
+  } catch (err) {
+    showToast(err.message || 'Failed to delete member.', 'error');
   }
 }
 

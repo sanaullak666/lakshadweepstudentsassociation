@@ -242,7 +242,7 @@ async function getPayments(req, res) {
   try {
     const sql = `
       SELECT p.id, p.member_id, p.order_id, p.payment_id, p.amount, p.currency, p.status, p.payment_method, p.paid_at, p.created_at,
-             m.full_name, m.email, m.membership_id
+             m.full_name, m.email, m.contact_number, m.island, m.membership_id
       FROM payments p
       LEFT JOIN members m ON p.member_id = m.id
       ORDER BY p.id DESC
@@ -259,6 +259,115 @@ async function getPayments(req, res) {
       success: false,
       message: 'Failed to retrieve payments history.'
     });
+  }
+}
+
+/**
+ * Admin Endpoint: Approve UTR / Payment and activate member membership ID
+ */
+async function approvePayment(req, res) {
+  try {
+    const { paymentId, memberId } = req.body;
+
+    let targetMemberId = memberId;
+    let targetPaymentId = paymentId;
+
+    if (!targetMemberId && targetPaymentId) {
+      const pRes = await db.query(`SELECT member_id FROM payments WHERE id = ? OR payment_id = ? OR order_id = ? LIMIT 1`, [targetPaymentId, targetPaymentId, targetPaymentId]);
+      if (pRes.rows && pRes.rows.length > 0) {
+        targetMemberId = pRes.rows[0].member_id;
+      }
+    }
+
+    if (!targetMemberId) {
+      return res.status(400).json({ success: false, message: 'Member ID or Payment ID is required.' });
+    }
+
+    const { generateMembershipId } = require('../utils/membershipIdGenerator');
+
+    // Fetch member
+    const memberRes = await db.query(
+      `SELECT id, full_name, email, membership_id, payment_status FROM members WHERE id = ?`,
+      [targetMemberId]
+    );
+
+    if (!memberRes.rows || memberRes.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Member not found.' });
+    }
+
+    const member = memberRes.rows[0];
+    let finalMembershipId = member.membership_id;
+
+    if (!finalMembershipId || finalMembershipId.startsWith('PENDING')) {
+      finalMembershipId = await generateMembershipId();
+    }
+
+    // 1. Update payments table
+    await db.query(
+      `UPDATE payments SET status = 'PAID', paid_at = CURRENT_TIMESTAMP WHERE member_id = ? OR id = ?`,
+      [targetMemberId, targetPaymentId || 0]
+    );
+
+    // 2. Update members table
+    await db.query(
+      `UPDATE members SET payment_status = 'PAID', registration_status = 'ACTIVE', membership_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      [finalMembershipId, targetMemberId]
+    );
+
+    return res.json({
+      success: true,
+      message: `Payment approved! Membership ID issued: ${finalMembershipId}`,
+      data: {
+        memberId: targetMemberId,
+        membershipId: finalMembershipId,
+        payment_status: 'PAID',
+        registration_status: 'ACTIVE'
+      }
+    });
+  } catch (error) {
+    console.error('[Approve Payment Error]', error);
+    return res.status(500).json({ success: false, message: 'Failed to approve payment.' });
+  }
+}
+
+/**
+ * Admin Endpoint: Reject payment / invalid UTR
+ */
+async function rejectPayment(req, res) {
+  try {
+    const { paymentId, memberId } = req.body;
+
+    let targetMemberId = memberId;
+    let targetPaymentId = paymentId;
+
+    if (!targetMemberId && targetPaymentId) {
+      const pRes = await db.query(`SELECT member_id FROM payments WHERE id = ? OR payment_id = ? OR order_id = ? LIMIT 1`, [targetPaymentId, targetPaymentId, targetPaymentId]);
+      if (pRes.rows && pRes.rows.length > 0) {
+        targetMemberId = pRes.rows[0].member_id;
+      }
+    }
+
+    if (!targetMemberId) {
+      return res.status(400).json({ success: false, message: 'Member ID or Payment ID is required.' });
+    }
+
+    await db.query(
+      `UPDATE payments SET status = 'FAILED' WHERE member_id = ? OR id = ?`,
+      [targetMemberId, targetPaymentId || 0]
+    );
+
+    await db.query(
+      `UPDATE members SET payment_status = 'FAILED', registration_status = 'INACTIVE', updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      [targetMemberId]
+    );
+
+    return res.json({
+      success: true,
+      message: 'Payment status marked as rejected/failed.'
+    });
+  } catch (error) {
+    console.error('[Reject Payment Error]', error);
+    return res.status(500).json({ success: false, message: 'Failed to reject payment.' });
   }
 }
 
@@ -315,6 +424,93 @@ async function exportMembersCSV(req, res) {
   }
 }
 
+/**
+ * Admin Endpoint: Update Member Profile Details
+ */
+async function updateMember(req, res) {
+  try {
+    const { id } = req.params;
+    const { full_name, gender, island, contact_number, email, blood_group, designation, payment_status, membership_id } = req.body;
+
+    if (!full_name || !email || !contact_number) {
+      return res.status(400).json({ success: false, message: 'Full name, email, and contact number are required.' });
+    }
+
+    // Check member exists
+    const current = await db.query(`SELECT id, membership_id FROM members WHERE id = ?`, [id]);
+    if (!current.rows || current.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Member not found.' });
+    }
+
+    let finalMembershipId = membership_id ? membership_id.trim() : current.rows[0].membership_id;
+    const cleanPayStatus = (payment_status || 'PENDING').toUpperCase();
+    const cleanRegStatus = cleanPayStatus === 'PAID' ? 'ACTIVE' : 'PENDING';
+
+    // If changing to PAID and no membership ID yet, generate one
+    if (cleanPayStatus === 'PAID' && (!finalMembershipId || finalMembershipId === 'PENDING')) {
+      const { generateMembershipId } = require('../utils/membershipIdGenerator');
+      finalMembershipId = await generateMembershipId();
+    }
+
+    await db.query(
+      `UPDATE members 
+       SET full_name = ?, gender = ?, island = ?, contact_number = ?, email = ?, blood_group = ?, designation = ?, payment_status = ?, registration_status = ?, membership_id = ?, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = ?`,
+      [full_name.trim(), gender, island, contact_number.trim(), email.trim(), blood_group, designation || 'Member', cleanPayStatus, cleanRegStatus, finalMembershipId, id]
+    );
+
+    // If payment status was updated to PAID, update payments table status as well
+    if (cleanPayStatus === 'PAID') {
+      await db.query(`UPDATE payments SET status = 'PAID', paid_at = CURRENT_TIMESTAMP WHERE member_id = ?`, [id]);
+    }
+
+    return res.json({
+      success: true,
+      message: 'Member details updated successfully.',
+      data: {
+        id,
+        full_name,
+        email,
+        membership_id: finalMembershipId,
+        payment_status: cleanPayStatus
+      }
+    });
+  } catch (error) {
+    console.error('[Update Member Error]', error);
+    return res.status(500).json({ success: false, message: 'Failed to update member profile.' });
+  }
+}
+
+/**
+ * Admin Endpoint: Delete Member from Database
+ */
+async function deleteMember(req, res) {
+  try {
+    const { id } = req.params;
+
+    const current = await db.query(`SELECT id, full_name, designation FROM members WHERE id = ?`, [id]);
+    if (!current.rows || current.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Member not found.' });
+    }
+
+    // Delete linked payments
+    try {
+      await db.query(`DELETE FROM payments WHERE member_id = ?`, [id]);
+    } catch (e) {}
+
+    // Delete member
+    await db.query(`DELETE FROM members WHERE id = ?`, [id]);
+
+    return res.json({
+      success: true,
+      message: 'Member record deleted from database successfully.'
+    });
+  } catch (error) {
+    console.error('[Delete Member Error]', error);
+    return res.status(500).json({ success: false, message: 'Failed to delete member from database.' });
+  }
+}
+
 module.exports = {
   login,
   logout,
@@ -322,5 +518,9 @@ module.exports = {
   getStats,
   getMembers,
   getPayments,
+  approvePayment,
+  rejectPayment,
+  updateMember,
+  deleteMember,
   exportMembersCSV
 };
