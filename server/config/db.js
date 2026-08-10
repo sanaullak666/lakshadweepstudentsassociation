@@ -89,10 +89,17 @@ async function createMySQLTables() {
 
 function initSQLite() {
   return new Promise((resolve, reject) => {
-    const dbDir = path.join(__dirname, '../../data');
-    if (!fs.existsSync(dbDir)) {
-      fs.mkdirSync(dbDir, { recursive: true });
+    const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION;
+    let dbDir = isVercel ? '/tmp' : path.join(__dirname, '../../data');
+    
+    if (!isVercel && !fs.existsSync(dbDir)) {
+      try {
+        fs.mkdirSync(dbDir, { recursive: true });
+      } catch (err) {
+        dbDir = '/tmp';
+      }
     }
+    
     const dbPath = path.join(dbDir, 'lsa_membership.sqlite');
     sqliteDb = new sqlite3.Database(dbPath, async (err) => {
       if (err) {
@@ -100,8 +107,12 @@ function initSQLite() {
         return reject(err);
       }
       console.log(`[DB] Connected to SQLite database at ${dbPath}`);
-      await createSQLiteTables();
-      await seedDefaultAdminAndCommittee();
+      try {
+        await createSQLiteTables();
+        await seedDefaultAdminAndCommittee();
+      } catch (e) {
+        console.warn('[DB Init Warning]', e.message);
+      }
       resolve(true);
     });
   });

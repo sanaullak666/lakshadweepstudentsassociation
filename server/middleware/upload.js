@@ -3,9 +3,12 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure committee uploads directory exists
-const uploadDir = path.join(__dirname, '../../public/uploads/committee');
+const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION;
+const uploadDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '../../public/uploads/committee');
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+  try {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  } catch (e) {}
 }
 
 // Multer Disk Storage Configuration

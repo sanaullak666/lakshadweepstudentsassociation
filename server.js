@@ -60,6 +60,20 @@ app.use(
   })
 );
 
+// Auto-initialize DB on first request for serverless environments
+let dbInitialized = false;
+app.use(async (req, res, next) => {
+  if (!dbInitialized) {
+    try {
+      await initDatabase();
+      dbInitialized = true;
+    } catch (err) {
+      console.error('[DB Serverless Init Error]', err);
+    }
+  }
+  next();
+});
+
 // Serve Static Frontend Files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
@@ -89,21 +103,25 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: 'API Endpoint Not Found' });
 });
 
-// Start Server after Database Initialization
-async function startServer() {
-  try {
-    await initDatabase();
-    app.listen(PORT, () => {
-      console.log(`=======================================================`);
-      console.log(`  LSA Membership Portal is running on port ${PORT}`);
-      console.log(`  Website URL: http://localhost:${PORT}`);
-      console.log(`  Admin Login: http://localhost:${PORT}/admin/login.html`);
-      console.log(`=======================================================`);
-    });
-  } catch (err) {
-    console.error('Failed to start application server:', err);
-    process.exit(1);
-  }
-}
+module.exports = app;
 
-startServer();
+if (!process.env.VERCEL) {
+  async function startServer() {
+    try {
+      await initDatabase();
+      dbInitialized = true;
+      app.listen(PORT, () => {
+        console.log(`=======================================================`);
+        console.log(`  LSA Membership Portal is running on port ${PORT}`);
+        console.log(`  Website URL: http://localhost:${PORT}`);
+        console.log(`  Admin Login: http://localhost:${PORT}/admin/login.html`);
+        console.log(`=======================================================`);
+      });
+    } catch (err) {
+      console.error('Failed to start application server:', err);
+      process.exit(1);
+    }
+  }
+
+  startServer();
+}
