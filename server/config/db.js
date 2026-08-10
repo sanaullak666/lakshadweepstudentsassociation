@@ -110,6 +110,10 @@ async function createMySQLTables() {
   }
 
   try {
+    await pool.query(`ALTER TABLE central_committee ADD COLUMN access_password VARCHAR(255) DEFAULT NULL`);
+  } catch (e) {}
+
+  try {
     await pool.query(`ALTER TABLE members ADD COLUMN present_address TEXT DEFAULT NULL`);
   } catch (e) {}
 
@@ -160,12 +164,14 @@ function createSQLiteTables() {
           photo_url TEXT DEFAULT NULL,
           display_order INTEGER DEFAULT 0,
           is_active INTEGER DEFAULT 1,
+          access_password TEXT DEFAULT NULL,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
       sqliteDb.run(`ALTER TABLE central_committee ADD COLUMN photo_url TEXT DEFAULT NULL`, (err) => {});
+      sqliteDb.run(`ALTER TABLE central_committee ADD COLUMN access_password TEXT DEFAULT NULL`, (err) => {});
 
       sqliteDb.run(`
         CREATE TABLE IF NOT EXISTS members (
@@ -241,6 +247,25 @@ async function seedDefaultAdminAndCommittee() {
         [adminEmail, hash, 'LSA Admin', 'super_admin']
       );
       console.log(`[DB Seed] Seeded default admin: ${adminEmail}`);
+    }
+
+    // Seed/Update access_password for Central Committee positions if missing
+    const { COMMITTEE_POSITIONS } = require('../utils/membershipIdGenerator');
+    for (const pos of COMMITTEE_POSITIONS) {
+      const existing = await executeQuery(
+        'SELECT id, access_password FROM central_committee WHERE display_order = ? OR designation = ? LIMIT 1',
+        [pos.order, pos.title]
+      );
+      if (existing.rows && existing.rows.length > 0) {
+        if (!existing.rows[0].access_password) {
+          await executeQuery('UPDATE central_committee SET access_password = ? WHERE id = ?', [pos.defaultPassword, existing.rows[0].id]);
+        }
+      } else {
+        await executeQuery(
+          'INSERT INTO central_committee (name, designation, display_order, is_active, access_password) VALUES (?, ?, ?, 1, ?)',
+          [pos.title, pos.title, pos.order, pos.defaultPassword]
+        );
+      }
     }
   } catch (err) {
     console.error('[DB Seed Error]', err.message);

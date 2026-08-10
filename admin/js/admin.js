@@ -260,6 +260,8 @@ async function loadAdminCommitteeLinks() {
       const baseUrl = window.location.origin;
       grid.innerHTML = res.data.map(item => {
         const fullLink = `${baseUrl}${item.link}`;
+        const shareText = `Central Committee Access Portal (${item.title})\nLink: ${fullLink}\nAccess Password: ${item.access_password}`;
+
         const statusBadge = item.is_registered
           ? `<span style="background:var(--lsa-success-bg); color:var(--lsa-success); font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:50px; font-weight:700;">✓ ${escapeHtml(item.member.name)}</span>`
           : `<span style="background:#FFF3CD; color:#856404; font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:50px; font-weight:700;">⏳ Pending Registration</span>`;
@@ -271,13 +273,22 @@ async function loadAdminCommitteeLinks() {
                 <strong style="color:var(--lsa-primary); font-size:1.05rem;">${escapeHtml(item.title)}</strong>
                 <span style="font-family:var(--lsa-font-mono); font-size:0.8rem; font-weight:700; background:var(--lsa-light-blue); color:var(--lsa-primary); padding:0.15rem 0.5rem; border-radius:4px;">${item.reserved_id}</span>
               </div>
-              <div style="margin-bottom:0.8rem;">
+              <div style="margin-bottom:0.6rem;">
                 ${statusBadge}
               </div>
+              <div style="font-size:0.85rem; color:var(--lsa-primary); background:var(--lsa-light-bg); padding:0.4rem 0.65rem; border-radius:6px; font-weight:700; font-family:var(--lsa-font-mono); margin-bottom:0.8rem; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--lsa-border-light);">
+                <span>🔑 Pass: <code>${escapeHtml(item.access_password)}</code></span>
+                <button class="btn btn-sm btn-secondary" onclick="openRolePassModal('${item.key}', '${escapeHtml(item.title)}', '${escapeHtml(item.access_password)}')" style="padding:0.15rem 0.5rem; font-size:0.75rem; font-weight:700;">Edit</button>
+              </div>
             </div>
-            <button class="btn btn-sm btn-secondary btn-block" onclick="copyCommitteeLink('${fullLink}')" style="font-weight:600; margin-top:0.4rem;">
-              📋 Copy Link
-            </button>
+            <div style="display:grid; grid-template-columns:1fr; gap:0.4rem; margin-top:0.2rem;">
+              <button class="btn btn-sm btn-primary btn-block" onclick="copyCommitteeLink(\`${escapeHtml(shareText)}\`, 'Link & Password copied!')" style="font-weight:700;">
+                📋 Copy Link & Password
+              </button>
+              <button class="btn btn-sm btn-secondary btn-block" onclick="copyCommitteeLink('${fullLink}', 'Link copied!')" style="font-weight:600;">
+                🔗 Copy Link Only
+              </button>
+            </div>
           </div>
         `;
       }).join('');
@@ -287,28 +298,72 @@ async function loadAdminCommitteeLinks() {
   }
 }
 
-function copyCommitteeLink(linkUrl) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(linkUrl).then(() => {
-      showToast('Registration link copied to clipboard!', 'success');
-    }).catch(() => {
-      fallbackCopyText(linkUrl);
+function openRolePassModal(key, title, currentPassword) {
+  document.getElementById('role-pass-key').value = key;
+  document.getElementById('role-pass-title-display').value = title;
+  document.getElementById('role-new-password').value = currentPassword || '';
+  document.getElementById('role-pass-modal').style.display = 'flex';
+}
+
+function closeRolePassModal() {
+  document.getElementById('role-pass-modal').style.display = 'none';
+}
+
+async function saveRolePassword(e) {
+  e.preventDefault();
+  const key = document.getElementById('role-pass-key').value;
+  const newPassword = document.getElementById('role-new-password').value.trim();
+  const btn = document.getElementById('btn-save-role-pass');
+
+  if (!key || !newPassword) {
+    showToast('Please enter a valid password.', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const res = await apiFetch('/api/committee/update-role-password', {
+      method: 'POST',
+      body: JSON.stringify({ positionKey: key, newPassword })
     });
-  } else {
-    fallbackCopyText(linkUrl);
+
+    if (res.success) {
+      showToast(res.message || 'Access password updated successfully!', 'success');
+      closeRolePassModal();
+      loadAdminCommitteeLinks();
+    }
+  } catch (err) {
+    showToast(err.message || 'Failed to update access password.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save Password';
   }
 }
 
-function fallbackCopyText(text) {
+function copyCommitteeLink(textToCopy, successMsg = 'Copied to clipboard!') {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      showToast(successMsg, 'success');
+    }).catch(() => {
+      fallbackCopyText(textToCopy, successMsg);
+    });
+  } else {
+    fallbackCopyText(textToCopy, successMsg);
+  }
+}
+
+function fallbackCopyText(text, successMsg = 'Copied!') {
   const textArea = document.createElement('textarea');
   textArea.value = text;
   document.body.appendChild(textArea);
   textArea.select();
   try {
     document.execCommand('copy');
-    showToast('Registration link copied!', 'success');
+    showToast(successMsg, 'success');
   } catch (err) {
-    showToast('Failed to copy link.', 'error');
+    showToast('Failed to copy text.', 'error');
   }
   document.body.removeChild(textArea);
 }

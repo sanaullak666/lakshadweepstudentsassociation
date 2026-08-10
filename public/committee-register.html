@@ -163,6 +163,37 @@
         <a href="committee.html" class="btn btn-primary">View Central Committee</a>
       </div>
 
+      <!-- PASSWORD PROTECTION GATE -->
+      <div id="committee-pass-gate" style="display:none; max-width: 520px; margin: 0 auto;">
+        <div style="background:white; border-radius:var(--lsa-radius-xl); padding:2.5rem; box-shadow:var(--lsa-shadow-xl); border:1px solid var(--lsa-border-light); text-align:center;">
+          <div style="width:70px; height:70px; background:var(--lsa-light-blue); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem auto; font-size:2rem; color:var(--lsa-primary);">
+            🔒
+          </div>
+          <span style="display:inline-block; background:var(--lsa-light-blue); color:var(--lsa-primary); padding:0.25rem 0.85rem; border-radius:50px; font-weight:700; font-size:0.85rem; margin-bottom:0.75rem;">Role Access Protection</span>
+          <h2 style="color:var(--lsa-primary); font-size:1.6rem; margin-bottom:0.4rem;" id="gate-pos-title">Central Committee Access Gate</h2>
+          <p style="color:var(--lsa-text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
+            Reserved Official ID: <strong style="font-family:var(--lsa-font-mono); color:var(--lsa-primary);" id="gate-pos-id">-</strong>
+          </p>
+          <div style="background:var(--lsa-light-bg); border-radius:12px; padding:1.25rem; margin-bottom:1.75rem; text-align:left; border:1px solid var(--lsa-border-light);">
+            <p style="color:var(--lsa-text-secondary); font-size:0.88rem; margin:0;">
+              Enter the official <strong>Access Password</strong> set by LSA Admin for this role to access and update your Central Committee profile settings.
+            </p>
+          </div>
+
+          <form id="pass-gate-form" onsubmit="handleVerifyPassword(event)">
+            <div class="form-group" style="text-align:left; margin-bottom:1.5rem;">
+              <label for="gate-password-input" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Role Access Password <span class="req">*</span></label>
+              <input type="password" id="gate-password-input" class="form-control" placeholder="Enter Access Password" required style="font-weight:700; font-family:var(--lsa-font-mono); letter-spacing:1px; font-size:1.05rem;">
+              <div id="gate-error-msg" style="color:var(--danger); font-size:0.88rem; font-weight:700; margin-top:0.5rem; display:none;"></div>
+            </div>
+
+            <button type="submit" id="btn-gate-verify" class="btn btn-primary btn-block btn-lg" style="font-weight:800; font-size:1.05rem;">
+              🔓 Unlock Profile Settings
+            </button>
+          </form>
+        </div>
+      </div>
+
       <!-- FORM STATE -->
       <div id="committee-form-wrap" style="display:none;">
         
@@ -175,11 +206,12 @@
         <div style="background:white; border-radius:var(--lsa-radius-xl); padding:2.5rem; box-shadow:var(--lsa-shadow-xl); border:1px solid var(--lsa-border-light);">
           <h2 style="color:var(--lsa-primary); font-size:1.5rem; margin-bottom:0.5rem;">Official Details Submission</h2>
           <p style="color:var(--lsa-text-secondary); font-size:0.95rem; margin-bottom:2rem;">
-            Please complete your profile details to activate your Central Committee Digital Pass and directory listing.
+            Please complete or update your profile details to activate your Central Committee Digital Pass and directory listing.
           </p>
 
           <form id="comm-reg-form" onsubmit="handleCommitteeSubmit(event)">
             <input type="hidden" id="pos-key-input">
+            <input type="hidden" id="pos-password-input">
 
             <!-- FULL NAME -->
             <div class="form-group">
@@ -392,11 +424,10 @@
         document.getElementById('pos-title-display').textContent = data.title;
         document.getElementById('pos-id-display').textContent = data.reserved_id;
 
-        if (data.is_registered && data.current_member) {
-          document.getElementById('comm-fullname').value = data.current_member.name || '';
-        }
+        document.getElementById('gate-pos-title').textContent = `${data.title} Access Gate`;
+        document.getElementById('gate-pos-id').textContent = data.reserved_id;
 
-        document.getElementById('committee-form-wrap').style.display = 'block';
+        document.getElementById('committee-pass-gate').style.display = 'block';
 
       } catch (err) {
         document.getElementById('committee-loading').style.display = 'none';
@@ -404,8 +435,69 @@
       }
     }
 
+    async function handleVerifyPassword(e) {
+      e.preventDefault();
+      const passInput = document.getElementById('gate-password-input');
+      const errorMsg = document.getElementById('gate-error-msg');
+      const btn = document.getElementById('btn-gate-verify');
+      const password = passInput.value.trim();
+
+      if (!password) return;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Verifying Password...';
+      errorMsg.style.display = 'none';
+
+      try {
+        const res = await apiFetch('/api/committee/verify-role-password', {
+          method: 'POST',
+          body: JSON.stringify({ positionKey: currentPositionKey, password })
+        });
+
+        if (res.success && res.data) {
+          document.getElementById('pos-password-input').value = password;
+          document.getElementById('committee-pass-gate').style.display = 'none';
+          document.getElementById('committee-form-wrap').style.display = 'block';
+
+          const m = res.data.member;
+          const photoFileInput = document.getElementById('comm-photo-file');
+
+          if (m) {
+            if (m.full_name) document.getElementById('comm-fullname').value = m.full_name;
+            if (m.gender) document.getElementById('comm-gender').value = m.gender;
+            if (m.island) document.getElementById('comm-island').value = m.island;
+            if (m.contact_number) document.getElementById('comm-contact').value = m.contact_number;
+            if (m.email) document.getElementById('comm-email').value = m.email;
+            if (m.blood_group) document.getElementById('comm-blood').value = m.blood_group;
+            if (m.present_address) document.getElementById('comm-present-address').value = m.present_address;
+            if (m.permanent_address) document.getElementById('comm-permanent-address').value = m.permanent_address;
+
+            if (m.photo_url) {
+              const img = document.getElementById('comm-photo-preview');
+              const placeholder = document.getElementById('comm-photo-placeholder');
+              img.src = m.photo_url;
+              img.style.display = 'block';
+              placeholder.style.display = 'none';
+              photoFileInput.removeAttribute('required');
+            }
+          }
+          showToast('Access granted! You can now update your profile details.', 'success');
+        } else {
+          errorMsg.textContent = res.message || 'Incorrect access password.';
+          errorMsg.style.display = 'block';
+        }
+      } catch (err) {
+        errorMsg.textContent = err.message || 'Incorrect access password.';
+        errorMsg.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔓 Unlock Profile Settings';
+      }
+    }
+
     function showError(title, desc) {
       document.getElementById('committee-loading').style.display = 'none';
+      document.getElementById('committee-pass-gate').style.display = 'none';
       document.getElementById('committee-form-wrap').style.display = 'none';
       document.getElementById('committee-error').style.display = 'block';
       document.getElementById('error-title').textContent = title;
@@ -437,6 +529,7 @@
       const formData = new FormData();
 
       formData.append('positionKey', document.getElementById('pos-key-input').value);
+      formData.append('password', document.getElementById('pos-password-input').value);
       formData.append('full_name', document.getElementById('comm-fullname').value.trim());
       formData.append('gender', document.getElementById('comm-gender').value);
       formData.append('island', document.getElementById('comm-island').value);
@@ -477,10 +570,10 @@
           } else {
             photoEl.src = 'images/logo.jpg';
           }
-          showToast('Registration successful!', 'success');
+          showToast('Profile updated successfully!', 'success');
         }
       } catch (err) {
-        showToast(err.message || 'Registration failed.', 'error');
+        showToast(err.message || 'Profile update failed.', 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = '✓ Save Details & Generate Official Pass';

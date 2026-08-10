@@ -7,10 +7,12 @@ const { handleCommitteePhotoUpload } = require('../middleware/upload');
 // Public route: Get active central committee
 router.get('/', committeeController.getActiveCommittee);
 router.get('/position-info/:positionKey', committeeController.getCommitteePositionInfo);
+router.post('/verify-role-password', committeeController.verifyRolePassword);
 router.post('/register-position', handleCommitteePhotoUpload, committeeController.registerPositionMember);
 
 // Protected Admin routes
 router.get('/links', requireAdmin, committeeController.getCommitteeLinks);
+router.post('/update-role-password', requireAdmin, committeeController.updateRolePassword);
 router.get('/all', requireAdmin, committeeController.getAllCommittee);
 router.post('/', requireAdmin, handleCommitteePhotoUpload, committeeController.addMember);
 router.put('/:id', requireAdmin, handleCommitteePhotoUpload, committeeController.updateMember);

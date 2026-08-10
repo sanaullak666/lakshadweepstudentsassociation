@@ -258,7 +258,7 @@ async function toggleActive(req, res) {
 async function getCommitteeLinks(req, res) {
   try {
     const existingRes = await db.query(
-      `SELECT id, name, designation, display_order, photo_url, is_active FROM central_committee ORDER BY display_order ASC`
+      `SELECT id, name, designation, display_order, photo_url, is_active, access_password FROM central_committee ORDER BY display_order ASC`
     );
     const existing = existingRes.rows || [];
 
@@ -267,13 +267,15 @@ async function getCommitteeLinks(req, res) {
     const links = COMMITTEE_POSITIONS.map(pos => {
       const reservedId = getReservedIdForOrder(pos.order);
       const match = existing.find(c => c.display_order === pos.order || c.designation.toLowerCase() === pos.title.toLowerCase());
+      const accessPass = match && match.access_password ? match.access_password : pos.defaultPassword;
       
       return {
         key: pos.key,
         title: pos.title,
         order: pos.order,
         reserved_id: reservedId,
-        is_registered: !!match,
+        access_password: accessPass,
+        is_registered: !!match && match.name !== pos.title,
         member: match ? {
           id: match.id,
           name: match.name,
@@ -315,7 +317,7 @@ async function getCommitteePositionInfo(req, res) {
       [pos.order, pos.title]
     );
 
-    const isRegistered = existing.rows && existing.rows.length > 0;
+    const isRegistered = existing.rows && existing.rows.length > 0 && existing.rows[0].name !== pos.title;
     const currentMember = isRegistered ? existing.rows[0] : null;
 
     return res.json({
@@ -336,16 +338,147 @@ async function getCommitteePositionInfo(req, res) {
 }
 
 /**
+ * Public Endpoint: Verify position role password before unlocking registration form
+ */
+async function verifyRolePassword(req, res) {
+  try {
+    const { positionKey, password } = req.body;
+
+    if (!positionKey || !password) {
+      return res.status(400).json({ success: false, message: 'Position key and password are required.' });
+    }
+
+    const { getPositionByKey, getReservedIdForOrder } = require('../utils/membershipIdGenerator');
+    const pos = getPositionByKey(positionKey);
+
+    if (!pos) {
+      return res.status(404).json({ success: false, message: 'Invalid Central Committee position.' });
+    }
+
+    const reservedId = getReservedIdForOrder(pos.order);
+
+    // Fetch password from central_committee table
+    const existingComm = await db.query(
+      `SELECT id, name, designation, photo_url, access_password FROM central_committee WHERE display_order = ? OR designation = ? LIMIT 1`,
+      [pos.order, pos.title]
+    );
+
+    let expectedPassword = pos.defaultPassword;
+    let commMatch = null;
+    if (existingComm.rows && existingComm.rows.length > 0) {
+      commMatch = existingComm.rows[0];
+      if (commMatch.access_password) {
+        expectedPassword = commMatch.access_password;
+      }
+    }
+
+    if (password.trim() !== expectedPassword.trim()) {
+      return res.status(401).json({ success: false, message: 'Incorrect Access Password for this position.' });
+    }
+
+    // Password matches -> fetch full member details if registered
+    const existingMember = await db.query(
+      `SELECT id, membership_id, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation 
+       FROM members 
+       WHERE membership_id = ? OR designation = ? LIMIT 1`,
+      [reservedId, pos.title]
+    );
+
+    let memberData = null;
+    if (existingMember.rows && existingMember.rows.length > 0) {
+      memberData = {
+        ...existingMember.rows[0],
+        photo_url: commMatch ? commMatch.photo_url : null
+      };
+    } else if (commMatch && commMatch.name && commMatch.name !== pos.title) {
+      memberData = {
+        full_name: commMatch.name,
+        photo_url: commMatch.photo_url,
+        designation: pos.title
+      };
+    }
+
+    return res.json({
+      success: true,
+      message: 'Access granted.',
+      data: {
+        key: pos.key,
+        title: pos.title,
+        order: pos.order,
+        reserved_id: reservedId,
+        is_registered: !!memberData,
+        member: memberData
+      }
+    });
+  } catch (error) {
+    console.error('[Verify Role Password Error]', error);
+    return res.status(500).json({ success: false, message: 'Failed to verify position access password.' });
+  }
+}
+
+/**
+ * Admin Endpoint: Update access password for a Central Committee role
+ */
+async function updateRolePassword(req, res) {
+  try {
+    const { positionKey, newPassword } = req.body;
+
+    if (!positionKey || !newPassword || !newPassword.trim()) {
+      return res.status(400).json({ success: false, message: 'Position key and new password are required.' });
+    }
+
+    const { getPositionByKey } = require('../utils/membershipIdGenerator');
+    const pos = getPositionByKey(positionKey);
+
+    if (!pos) {
+      return res.status(404).json({ success: false, message: 'Invalid Central Committee position.' });
+    }
+
+    const cleanPass = newPassword.trim();
+
+    const existing = await db.query(
+      `SELECT id FROM central_committee WHERE display_order = ? OR designation = ? LIMIT 1`,
+      [pos.order, pos.title]
+    );
+
+    if (existing.rows && existing.rows.length > 0) {
+      await db.query(
+        `UPDATE central_committee SET access_password = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [cleanPass, existing.rows[0].id]
+      );
+    } else {
+      await db.query(
+        `INSERT INTO central_committee (name, designation, photo_url, display_order, is_active, access_password) VALUES (?, ?, NULL, ?, 1, ?)`,
+        [pos.title, pos.title, pos.order, cleanPass]
+      );
+    }
+
+    return res.json({
+      success: true,
+      message: `Access password for ${pos.title} updated successfully.`,
+      data: {
+        positionKey: pos.key,
+        title: pos.title,
+        access_password: cleanPass
+      }
+    });
+  } catch (error) {
+    console.error('[Update Role Password Error]', error);
+    return res.status(500).json({ success: false, message: 'Failed to update position password.' });
+  }
+}
+
+/**
  * Public Endpoint: Register/Submit details for a Central Committee position via link
  */
 async function registerPositionMember(req, res) {
   try {
-    const { positionKey, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address } = req.body;
+    const { positionKey, password, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address } = req.body;
 
     if (!positionKey || !full_name || !gender || !island || !contact_number || !email || !blood_group) {
       return res.status(400).json({
         success: false,
-        message: 'All fields are required (Name, Gender, Island, Contact, Email, Blood Group).'
+        message: 'All mandatory fields are required (Name, Gender, Island, Contact, Email, Blood Group).'
       });
     }
 
@@ -355,19 +488,43 @@ async function registerPositionMember(req, res) {
       return res.status(400).json({ success: false, message: 'Invalid committee position link.' });
     }
 
+    // Check Role Access Password
+    const commRes = await db.query(
+      `SELECT id, photo_url, access_password FROM central_committee WHERE display_order = ? OR designation = ? LIMIT 1`,
+      [pos.order, pos.title]
+    );
+
+    let expectedPassword = pos.defaultPassword;
+    let existingCommPhoto = null;
+    let commId = null;
+
+    if (commRes.rows && commRes.rows.length > 0) {
+      commId = commRes.rows[0].id;
+      existingCommPhoto = commRes.rows[0].photo_url;
+      if (commRes.rows[0].access_password) {
+        expectedPassword = commRes.rows[0].access_password;
+      }
+    }
+
+    if (password && password.trim() !== expectedPassword.trim()) {
+      return res.status(401).json({ success: false, message: 'Invalid access password for this role.' });
+    }
+
     const reservedId = getReservedIdForOrder(pos.order);
 
     let photo_url = null;
     if (req.file) {
       photo_url = getPhotoUrlFromFile(req.file);
-    } else if (req.body.photo_url) {
+    } else if (req.body.photo_url && req.body.photo_url.trim()) {
       photo_url = req.body.photo_url.trim();
+    } else if (existingCommPhoto) {
+      photo_url = existingCommPhoto;
     }
 
     // 1. Insert or update in `members` table
     const existingMember = await db.query(
-      `SELECT id FROM members WHERE membership_id = ? OR email = ? OR contact_number = ? LIMIT 1`,
-      [reservedId, email.trim(), contact_number.trim()]
+      `SELECT id FROM members WHERE membership_id = ? OR designation = ? OR email = ? OR contact_number = ? LIMIT 1`,
+      [reservedId, pos.title, email.trim(), contact_number.trim()]
     );
 
     let memberDbId = null;
@@ -389,31 +546,24 @@ async function registerPositionMember(req, res) {
     }
 
     // 2. Insert or update in `central_committee` table
-    const existingComm = await db.query(
-      `SELECT id, photo_url FROM central_committee WHERE display_order = ? OR designation = ? LIMIT 1`,
-      [pos.order, pos.title]
-    );
-
-    if (existingComm.rows && existingComm.rows.length > 0) {
-      const commId = existingComm.rows[0].id;
-      const finalPhoto = photo_url || existingComm.rows[0].photo_url;
+    if (commId) {
       await db.query(
         `UPDATE central_committee 
          SET name = ?, designation = ?, photo_url = ?, display_order = ?, is_active = 1, updated_at = CURRENT_TIMESTAMP 
          WHERE id = ?`,
-        [full_name.trim(), pos.title, finalPhoto, pos.order, commId]
+        [full_name.trim(), pos.title, photo_url, pos.order, commId]
       );
     } else {
       await db.query(
-        `INSERT INTO central_committee (name, designation, photo_url, display_order, is_active)
-         VALUES (?, ?, ?, ?, 1)`,
-        [full_name.trim(), pos.title, photo_url, pos.order]
+        `INSERT INTO central_committee (name, designation, photo_url, display_order, is_active, access_password)
+         VALUES (?, ?, ?, ?, 1, ?)`,
+        [full_name.trim(), pos.title, photo_url, pos.order, expectedPassword]
       );
     }
 
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
-      message: `${pos.title} registration completed successfully!`,
+      message: `${pos.title} profile updated successfully!`,
       data: {
         memberId: memberDbId,
         membership_id: reservedId,
@@ -430,7 +580,7 @@ async function registerPositionMember(req, res) {
     });
   } catch (error) {
     console.error('[Register Position Error]', error);
-    return res.status(500).json({ success: false, message: 'Failed to complete committee registration.' });
+    return res.status(500).json({ success: false, message: 'Failed to complete committee profile update.' });
   }
 }
 
@@ -443,6 +593,8 @@ module.exports = {
   toggleActive,
   getCommitteeLinks,
   getCommitteePositionInfo,
+  verifyRolePassword,
+  updateRolePassword,
   registerPositionMember
 };
 

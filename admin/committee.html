@@ -187,6 +187,32 @@
     </div>
   </div>
 
+  <!-- EDIT ROLE ACCESS PASSWORD MODAL -->
+  <div id="role-pass-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,10,26,0.75); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+    <div style="background:white; border-radius:16px; width:100%; max-width:440px; padding:2rem; box-shadow:var(--lsa-shadow-xl);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 id="role-pass-modal-title" style="color:var(--lsa-primary); margin:0;">🔑 Set Role Access Password</h3>
+        <button onclick="closeRolePassModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--lsa-text-muted);">&times;</button>
+      </div>
+      <form id="role-pass-form" onsubmit="saveRolePassword(event)">
+        <input type="hidden" id="role-pass-key">
+        <div class="form-group" style="margin-bottom:1.25rem;">
+          <label style="font-weight:700; color:var(--lsa-primary); display:block; margin-bottom:0.4rem;">Position Role</label>
+          <input type="text" id="role-pass-title-display" class="form-control" readonly style="font-weight:700; background:var(--lsa-light-bg);">
+        </div>
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label for="role-new-password" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Role Access Password <span class="req">*</span></label>
+          <input type="text" id="role-new-password" class="form-control" placeholder="e.g. LSA@Pres2026" required style="font-weight:700; font-family:var(--lsa-font-mono);">
+          <small style="color:var(--lsa-text-muted); margin-top:0.3rem; display:block;">Members must enter this password to access and update their profile settings.</small>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeRolePassModal()">Cancel</button>
+          <button type="submit" id="btn-save-role-pass" class="btn btn-primary" style="font-weight:700;">Save Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="../js/main.js"></script>
   <script src="js/admin.js"></script>
   <script>
