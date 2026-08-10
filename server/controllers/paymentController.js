@@ -59,6 +59,7 @@ async function createOrder(req, res) {
         currency: razorpayOrder.currency,
         keyId: razorpay.keyId,
         isMock: razorpay.isMockMode,
+        upiId: process.env.PAYMENT_UPI_ID || 'arushkhan2004-1@oksbi',
         member: {
           id: member.id,
           name: member.full_name,

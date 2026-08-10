@@ -236,7 +236,18 @@ function initPaymentActions() {
   }
 }
 
+function copyUpiIdToClipboard() {
+  const upiId = document.getElementById('upi-id-display')?.textContent || 'arushkhan2004-1@oksbi';
+  navigator.clipboard.writeText(upiId).then(() => {
+    showToast('✓ UPI ID copied to clipboard!', 'success');
+  }).catch(() => {
+    showToast(`UPI ID: ${upiId}`, 'info');
+  });
+}
+
 function triggerPaymentGateway(orderData) {
+  const upiId = orderData.upiId || 'arushkhan2004-1@oksbi';
+
   // If real Razorpay key is configured and Razorpay SDK loaded
   if (typeof Razorpay !== 'undefined' && orderData.keyId && !orderData.isMock && !orderData.keyId.includes('sample')) {
     const options = {
@@ -247,6 +258,25 @@ function triggerPaymentGateway(orderData) {
       description: 'LSA Membership Registration Fee',
       image: 'https://cdn-icons-png.flaticon.com/512/2991/2991106.png',
       order_id: orderData.orderId,
+      config: {
+        display: {
+          blocks: {
+            banks: {
+              name: 'Pay via UPI',
+              instruments: [
+                {
+                  method: 'upi',
+                  vpa: upiId
+                }
+              ]
+            }
+          },
+          sequence: ['block.banks'],
+          preferences: {
+            show_default_blocks: false
+          }
+        }
+      },
       handler: async function (response) {
         await verifyBackendPayment({
           memberId: currentRegistration.memberId,
@@ -258,7 +288,8 @@ function triggerPaymentGateway(orderData) {
       prefill: {
         name: orderData.member.name,
         email: orderData.member.email,
-        contact: orderData.member.contact
+        contact: orderData.member.contact,
+        method: 'upi'
       },
       theme: {
         color: '#028090'
@@ -267,9 +298,25 @@ function triggerPaymentGateway(orderData) {
     const rzp = new Razorpay(options);
     rzp.open();
   } else {
-    // Open Test Sandbox Modal
+    // Open UPI Payment Modal
     const modalOverlay = document.getElementById('sandbox-payment-modal');
     document.getElementById('modal-order-id').textContent = orderData.orderId;
+    
+    const upiDisplayEl = document.getElementById('upi-id-display');
+    if (upiDisplayEl) upiDisplayEl.textContent = upiId;
+
+    const qrImgEl = document.getElementById('upi-qr-image');
+    if (qrImgEl) {
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Lakshadweep Students Association')}&am=3.00&cu=INR`;
+      qrImgEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+    }
+
+    const upiLinkEl = document.getElementById('btn-upi-app-link');
+    const bhimLinkEl = document.getElementById('btn-bhim-app-link');
+    const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Lakshadweep Students Association')}&am=3.00&cu=INR`;
+    if (upiLinkEl) upiLinkEl.href = upiDeepLink;
+    if (bhimLinkEl) bhimLinkEl.href = upiDeepLink;
+
     modalOverlay.style.display = 'flex';
   }
 }

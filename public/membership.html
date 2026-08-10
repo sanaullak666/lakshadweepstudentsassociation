@@ -310,66 +310,67 @@
     </div>
   </section>
 
-  <!-- POLISHED DEMO PAYMENT GATEWAY MODAL -->
-  <div id="sandbox-payment-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,10,26,0.75); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center; padding:1.5rem;">
-    <div style="background:white; border-radius:var(--lsa-radius-xl); width:100%; max-width:480px; padding:2rem 2.5rem; box-shadow:var(--lsa-shadow-2xl); border:1px solid var(--lsa-border-light);">
+  <!-- DEDICATED UPI PAYMENT MODAL (arushkhan2004-1@oksbi) -->
+  <div id="sandbox-payment-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,10,26,0.8); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center; padding:1.5rem; overflow-y:auto;">
+    <div style="background:white; border-radius:var(--lsa-radius-xl); width:100%; max-width:440px; padding:1.75rem 2rem; box-shadow:var(--lsa-shadow-2xl); border:1px solid var(--lsa-border-light); text-align:center;">
       
       <!-- Modal Header -->
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--lsa-border-light); padding-bottom:1rem; margin-bottom:1.5rem;">
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <img src="images/logo.jpg" alt="LSA Logo" style="height:36px; width:auto; border-radius:6px;">
-          <div>
-            <div style="font-weight:800; color:var(--lsa-primary); font-size:1.05rem; line-height:1.2;">LSA Payment Gateway</div>
-            <div style="font-size:0.75rem; color:var(--lsa-text-muted);">Secure Online Transaction</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--lsa-border-light); padding-bottom:0.85rem; margin-bottom:1.25rem;">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <img src="images/logo.jpg" alt="LSA Logo" style="height:32px; width:auto; border-radius:6px;">
+          <div style="text-align:left;">
+            <div style="font-weight:800; color:var(--lsa-primary); font-size:1rem; line-height:1.2;">UPI Instant Pay</div>
+            <div style="font-size:0.75rem; color:var(--lsa-text-muted);">Lakshadweep Students Association</div>
           </div>
         </div>
-        <span style="background:var(--lsa-success-bg); color:var(--lsa-success); font-size:0.75rem; font-weight:800; padding:0.3rem 0.7rem; border-radius:99px;">DEMO MODE</span>
+        <span style="background:rgba(5, 150, 105, 0.12); color:var(--lsa-success); font-size:0.7rem; font-weight:800; padding:0.25rem 0.6rem; border-radius:99px;">UPI FASTPAY</span>
       </div>
 
-      <!-- Merchant Details Card -->
-      <div style="background:var(--lsa-light-bg); padding:1.25rem; border-radius:var(--lsa-radius-md); border:1px solid var(--lsa-border-light); margin-bottom:1.5rem; font-size:0.9rem;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-          <span style="color:var(--lsa-text-muted);">Merchant:</span>
-          <strong style="color:var(--lsa-primary);">Lakshadweep Students Association</strong>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-          <span style="color:var(--lsa-text-muted);">Amount:</span>
-          <strong style="color:var(--lsa-primary); font-size:1.1rem;">₹3.00 INR</strong>
-        </div>
-        <div style="display:flex; justify-content:space-between;">
-          <span style="color:var(--lsa-text-muted);">Order ID:</span>
-          <span style="font-family:monospace; font-weight:700; color:var(--lsa-secondary);" id="modal-order-id">order_demo_123</span>
-        </div>
-      </div>
-
-      <!-- Payment Method Simulation Options -->
-      <div style="margin-bottom:1.5rem; text-align:left;">
-        <label style="font-size:0.85rem; font-weight:700; color:var(--lsa-primary); margin-bottom:0.6rem; display:block;">Select Payment Method:</label>
+      <!-- UPI QR Code & VPA Container -->
+      <div style="background:var(--lsa-light-bg); padding:1.25rem; border-radius:var(--lsa-radius-lg); border:1.5px solid var(--lsa-border-light); margin-bottom:1.25rem;">
+        <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Scan QR to Pay ₹3.00 Fee</div>
         
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.25rem;">
-          <label style="background:var(--lsa-light-blue); padding:0.75rem 1rem; border-radius:var(--lsa-radius-sm); border:1.5px solid var(--lsa-accent); font-size:0.875rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--lsa-primary);">
-            <input type="radio" name="demo-pay-method" value="upi" checked style="accent-color:var(--lsa-accent);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-            UPI (GPay/PhonePe)
-          </label>
-          <label style="background:var(--lsa-white); padding:0.75rem 1rem; border-radius:var(--lsa-radius-sm); border:1.5px solid var(--lsa-border); font-size:0.875rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.5rem;">
-            <input type="radio" name="demo-pay-method" value="card" style="accent-color:var(--lsa-accent);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-            Debit / Credit Card
-          </label>
+        <!-- Scannable UPI QR Code -->
+        <div style="background:white; padding:0.75rem; border-radius:12px; display:inline-block; border:1px solid var(--lsa-border-light); box-shadow:var(--lsa-shadow-sm); margin-bottom:0.75rem;">
+          <img id="upi-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3Darushkhan2004-1%40oksbi%26pn%3DLakshadweep%2520Students%2520Association%26am%3D3.00%26cu%3DINR" alt="UPI QR Code" style="width:180px; height:180px; display:block;">
         </div>
 
-        <div style="background:#EFF6FF; border:1px solid #BFDBFE; padding:0.85rem 1rem; border-radius:var(--lsa-radius-sm); font-size:0.8125rem; color:#1E40AF; line-height:1.5; display:flex; gap:0.5rem; align-items:flex-start;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <div><strong>Demo Payment Mode:</strong> Clicking the button below simulates instant payment verification and issues your official LSA Membership ID.</div>
+        <!-- UPI ID Copy Bar -->
+        <div style="background:white; border:1.5px solid var(--lsa-accent); padding:0.5rem 0.85rem; border-radius:8px; display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+          <div style="text-align:left;">
+            <div style="font-size:0.7rem; color:var(--lsa-text-muted); font-weight:600;">Official Payee UPI ID</div>
+            <div style="font-family:monospace; font-weight:800; font-size:0.95rem; color:var(--lsa-primary);" id="upi-id-display">arushkhan2004-1@oksbi</div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-upi" style="padding:0.35rem 0.65rem; font-size:0.75rem; font-weight:700;" onclick="copyUpiIdToClipboard()">
+            📋 Copy
+          </button>
         </div>
       </div>
 
-      <!-- Modal Action Buttons -->
-      <div style="display:flex; gap:1rem;">
+      <!-- 1-Click Pay Buttons for Mobile UPI Apps -->
+      <div style="margin-bottom:1.25rem;">
+        <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; margin-bottom:0.5rem; text-align:left;">Pay directly via UPI App:</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+          <a id="btn-upi-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=3.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#1E40AF;">
+            ⚡ Google Pay / PhonePe
+          </a>
+          <a id="btn-bhim-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=3.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#047857;">
+            📱 Paytm / BHIM UPI
+          </a>
+        </div>
+      </div>
+
+      <!-- Order Summary line -->
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--lsa-text-muted); margin-bottom:1.25rem; border-top:1px solid var(--lsa-border-light); padding-top:0.75rem;">
+        <span>Order ID: <strong style="font-family:monospace;" id="modal-order-id">order_demo_123</strong></span>
+        <span>Amount: <strong style="color:var(--lsa-primary);">₹3.00 INR</strong></span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; gap:0.75rem;">
         <button type="button" class="btn btn-secondary btn-block" id="modal-btn-cancel">Cancel</button>
         <button type="button" class="btn btn-primary btn-block" id="modal-btn-success" style="font-weight:700;">
-          Complete Payment (₹3.00)
+          ✓ Verify & Activate (₹3.00)
         </button>
       </div>
 
