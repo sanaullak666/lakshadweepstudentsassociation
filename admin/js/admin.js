@@ -217,11 +217,9 @@ async function loadAdminCommittee() {
       return;
     }
 
-    tbody.innerHTML = res.data.map(c => {
-      const safeName = (c.name || '').replace(/['"\\]/g, '\\$&');
-      const safeDesignation = (c.designation || '').replace(/['"\\]/g, '\\$&');
-      const safePhoto = (c.photo_url || '').replace(/['"\\]/g, '\\$&');
+    window.adminCommitteeList = res.data;
 
+    tbody.innerHTML = res.data.map(c => {
       const photoCell = c.photo_url 
         ? `<img src="${escapeHtml(c.photo_url)}" alt="${escapeHtml(c.name)}" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid var(--lsa-border-light);">` 
         : `<div style="width:42px; height:42px; border-radius:50%; background:var(--lsa-light-blue); color:var(--lsa-primary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem;">${getInitials(c.name)}</div>`;
@@ -240,7 +238,7 @@ async function loadAdminCommittee() {
         <td>${c.created_at ? new Date(c.created_at).toLocaleDateString() : '-'}</td>
         <td>
           <div style="display:flex; gap:0.5rem;">
-            <button class="btn btn-sm btn-secondary" onclick="openEditCommitteeModal(${c.id}, '${safeName}', '${safeDesignation}', ${c.display_order}, ${c.is_active}, '${safePhoto}')">Edit</button>
+            <button class="btn btn-sm btn-secondary" onclick="openEditCommitteeModalById(${c.id})">Edit</button>
             <button class="btn btn-sm btn-secondary" style="color:var(--danger);" onclick="deleteCommitteeMember(${c.id})">Delete</button>
           </div>
         </td>
@@ -464,6 +462,12 @@ function openAddCommitteeModal() {
 
   document.getElementById('committee-modal-title').textContent = 'Add Committee Member';
   document.getElementById('committee-modal').style.display = 'flex';
+}
+
+function openEditCommitteeModalById(id) {
+  const member = (window.adminCommitteeList || []).find(m => m.id == id);
+  if (!member) return;
+  openEditCommitteeModal(member.id, member.name, member.designation, member.display_order, member.is_active, member.photo_url || '');
 }
 
 function openEditCommitteeModal(id, name, designation, order, active, photo_url = '') {

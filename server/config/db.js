@@ -102,8 +102,12 @@ async function createMySQLTables() {
   }
 
   try {
-    await pool.query(`ALTER TABLE central_committee ADD COLUMN photo_url VARCHAR(500) DEFAULT NULL`);
-  } catch (e) {}
+    await pool.query(`ALTER TABLE central_committee MODIFY COLUMN photo_url LONGTEXT DEFAULT NULL`);
+  } catch (e) {
+    try {
+      await pool.query(`ALTER TABLE central_committee ADD COLUMN photo_url LONGTEXT DEFAULT NULL`);
+    } catch (err) {}
+  }
 
   try {
     await pool.query(`ALTER TABLE members ADD COLUMN present_address TEXT DEFAULT NULL`);

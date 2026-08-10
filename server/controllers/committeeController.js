@@ -21,6 +21,17 @@ function safeDeletePhotoFile(photoUrl) {
 }
 
 /**
+ * Helper to get Data URL or URL from uploaded file
+ */
+function getPhotoUrlFromFile(file, fallbackUrl = null) {
+  if (file && file.buffer) {
+    const mimeType = file.mimetype || 'image/jpeg';
+    return `data:${mimeType};base64,${file.buffer.toString('base64')}`;
+  }
+  return fallbackUrl;
+}
+
+/**
  * Public Endpoint: Get active Central Committee members
  */
 async function getActiveCommittee(req, res) {
@@ -84,7 +95,7 @@ async function addMember(req, res) {
 
     let photo_url = null;
     if (req.file) {
-      photo_url = `/uploads/committee/${req.file.filename}`;
+      photo_url = getPhotoUrlFromFile(req.file);
     } else if (req.body.photo_url) {
       photo_url = req.body.photo_url.trim();
     }
@@ -143,9 +154,9 @@ async function updateMember(req, res) {
     let photo_url = currentPhotoUrl;
 
     if (req.file) {
-      // New file uploaded -> remove old file if present, store new path
+      // New file uploaded -> store base64 data URL
       safeDeletePhotoFile(currentPhotoUrl);
-      photo_url = `/uploads/committee/${req.file.filename}`;
+      photo_url = getPhotoUrlFromFile(req.file);
     } else if (remove_photo === 'true' || remove_photo === true || remove_photo === 1 || remove_photo === '1') {
       // Requested photo removal
       safeDeletePhotoFile(currentPhotoUrl);
@@ -348,7 +359,7 @@ async function registerPositionMember(req, res) {
 
     let photo_url = null;
     if (req.file) {
-      photo_url = `/uploads/committee/${req.file.filename}`;
+      photo_url = getPhotoUrlFromFile(req.file);
     } else if (req.body.photo_url) {
       photo_url = req.body.photo_url.trim();
     }

@@ -11,17 +11,8 @@ if (!fs.existsSync(uploadDir)) {
   } catch (e) {}
 }
 
-// Multer Disk Storage Configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `committee-${uniqueSuffix}${ext}`);
-  }
-});
+// Multer Memory Storage Configuration (Works in Vercel & Serverless environments)
+const storage = multer.memoryStorage();
 
 // File Filter for Image Files
 const fileFilter = (req, file, cb) => {
