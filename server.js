@@ -15,6 +15,9 @@ const adminRoutes = require('./server/routes/adminRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Enable Trust Proxy for Vercel / Reverse Proxy headers
+app.set('trust proxy', 1);
+
 // Security Headers (Configured to allow Razorpay inline modal & CDNs for icons/fonts)
 app.use(
   helmet({
