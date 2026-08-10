@@ -122,8 +122,10 @@ async function verifyPublic(req, res) {
     }
 
     const result = await db.query(
-      `SELECT membership_id, full_name, island, designation, registration_status, created_at 
-       FROM members WHERE membership_id = ? AND registration_status = 'ACTIVE'`,
+      `SELECT m.membership_id, m.full_name, m.gender, m.island, m.blood_group, m.designation, m.registration_status, m.created_at, c.photo_url 
+       FROM members m 
+       LEFT JOIN central_committee c ON (m.designation = c.designation OR m.full_name = c.name)
+       WHERE m.membership_id = ? AND m.registration_status = 'ACTIVE' LIMIT 1`,
       [cleanId]
     );
 
@@ -141,7 +143,10 @@ async function verifyPublic(req, res) {
       data: {
         membership_id: member.membership_id,
         full_name: member.full_name,
+        gender: member.gender,
         island: member.island,
+        blood_group: member.blood_group,
+        photo_url: member.photo_url,
         designation: member.designation || 'Member',
         status: 'Active',
         validity_year: '2026'
