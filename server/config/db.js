@@ -8,32 +8,59 @@ let pool = null;
 let sqliteDb = null;
 let dbType = process.env.DB_TYPE || 'mysql';
 
+function getDbConnectionParams() {
+  const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
+  if (dbUrl) {
+    try {
+      const parsed = new URL(dbUrl);
+      const rawDb = parsed.pathname ? parsed.pathname.replace(/^\//, '') : '';
+      const dbName = (rawDb && rawDb !== 'sys') ? rawDb : 'lsa_membership';
+      return {
+        host: parsed.hostname,
+        port: parseInt(parsed.port, 10) || 4000,
+        user: decodeURIComponent(parsed.username),
+        password: decodeURIComponent(parsed.password),
+        database: dbName,
+        ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
+      };
+    } catch (err) {
+      console.warn('[DB URL Warning] Failed to parse DATABASE_URL, using individual env variables.');
+    }
+  }
+
+  return {
+    host: process.env.DB_HOST || 'gateway01.us-west-2.prod.aws.tidbcloud.com',
+    port: parseInt(process.env.DB_PORT, 10) || 4000,
+    user: process.env.DB_USER || '2wE8pt6cEdhXT96.root',
+    password: process.env.DB_PASSWORD || 'AkSCcQC0MGCq1EpV',
+    database: process.env.DB_NAME || 'lsa_membership',
+    ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
+  };
+}
+
 async function initDatabase() {
-  const host = process.env.DB_HOST || 'localhost';
-  const port = process.env.DB_PORT || 3306;
-  const user = process.env.DB_USER || 'root';
-  const password = process.env.DB_PASSWORD || '';
-  const database = process.env.DB_NAME || 'lsa_membership';
+  const params = getDbConnectionParams();
 
   try {
-    // 1. Try MySQL root connection to create database if needed
-    const rootConnection = await mysql.createConnection({
-      host,
-      port,
-      user,
-      password
-    });
-
-    await rootConnection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
-    await rootConnection.end();
+    // 1. Try connection to server root/sys to create target database if needed
+    try {
+      const rootConfig = { ...params };
+      delete rootConfig.database;
+      const rootConnection = await mysql.createConnection(rootConfig);
+      await rootConnection.query(`CREATE DATABASE IF NOT EXISTS \`${params.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+      await rootConnection.end();
+    } catch (e) {
+      // Ignore database creation error if DB exists or using default database
+    }
 
     // 2. Create connection pool for specified database
     pool = mysql.createPool({
-      host,
-      port,
-      user,
-      password,
-      database,
+      host: params.host,
+      port: params.port,
+      user: params.user,
+      password: params.password,
+      database: params.database,
+      ssl: params.ssl,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0
@@ -41,7 +68,7 @@ async function initDatabase() {
 
     // Test connection
     const connection = await pool.getConnection();
-    console.log(`[DB] Successfully connected to MySQL database: ${database}`);
+    console.log(`[DB] Successfully connected to TiDB Cloud MySQL database: ${params.database} at ${params.host}:${params.port}`);
     connection.release();
 
     // Ensure tables exist
@@ -50,7 +77,7 @@ async function initDatabase() {
     dbType = 'mysql';
     return true;
   } catch (err) {
-    console.warn(`[DB Warning] MySQL connection failed (${err.message}). Falling back to embedded SQLite database...`);
+    console.warn(`[DB Warning] TiDB/MySQL connection failed (${err.message}). Falling back to embedded SQLite database...`);
     dbType = 'sqlite';
     return initSQLite();
   }
