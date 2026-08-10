@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Membership Verification & Digital ID | Lakshadweep Students Association</title>
+  <meta name="description" content="Verify authentic LSA membership ID online and download official digital membership card.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="images/logo.jpg">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-logo">
+        <img src="images/logo.jpg" alt="LSA Logo">
+        <div class="logo-text">
+          <span class="brand-title">Lakshadweep Students Association</span>
+          <span class="brand-subtitle">Verification Pass • <strong class="brand-motto">Unity is Strength</strong></span>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="committee.html" class="nav-link">Central Committee</a></li>
+          <li><a href="membership.html" class="nav-link">Membership</a></li>
+          <li><a href="verify.html" class="nav-link active">Verify Member</a></li>
+          <li><a href="membership.html" class="btn btn-primary btn-sm">Register Now</a></li>
+        </ul>
+      </nav>
+
+      <button class="mobile-toggle" aria-label="Toggle Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- VERIFICATION SECTION -->
+  <section class="section" style="background:var(--lsa-light-bg); min-height:80vh; padding-top: calc(var(--lsa-nav-height) + 2rem);">
+    <div class="container">
+      
+      <div class="section-header">
+        <span style="display:inline-block; padding:0.35rem 1rem; background:rgba(36, 75, 255, 0.1); color:var(--lsa-accent); font-weight:700; border-radius:99px; font-size:0.85rem; margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em;">
+          Instant Verification & Digital ID
+        </span>
+        <h1 style="color:var(--lsa-primary); margin-bottom:1rem; font-size:clamp(2rem, 4vw, 3rem);">Verify LSA Membership</h1>
+        <p style="color:var(--lsa-text-secondary); font-size:1.1rem;">Enter the official LSA Membership ID below to check active registration status and view your printable Digital Membership Pass.</p>
+      </div>
+
+      <div style="max-width:580px; margin:0 auto; background:white; padding:2.5rem; border-radius:var(--lsa-radius-lg); box-shadow:var(--lsa-shadow-md); border:1px solid var(--lsa-border);">
+        <form id="verify-form">
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label for="verify-membership-id" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Membership ID</label>
+            <input type="text" id="verify-membership-id" class="form-control" placeholder="e.g. LSA-2026-00001" required style="font-family:monospace; font-size:1.1rem; text-transform:uppercase; font-weight:700; letter-spacing:0.05em;">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="btn-verify-submit" style="font-weight:700; padding:0.85rem 1.5rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Verify & View Digital Card
+          </button>
+        </form>
+
+        <div id="verify-result" style="display:none; margin-top:2rem;"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Lakshadweep Students Association (LSA). All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/verify.js"></script>
+</body>
+</html>

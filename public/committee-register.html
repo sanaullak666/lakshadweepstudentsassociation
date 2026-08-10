@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central Committee Registration | Lakshadweep Students Association</title>
+  <meta name="description" content="Official Central Committee member onboarding portal for Lakshadweep Students Association.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="images/logo.jpg">
+  <style>
+    .position-hero-card {
+      background: linear-gradient(135deg, var(--lsa-primary) 0%, var(--lsa-primary-dark) 100%);
+      color: white;
+      border-radius: var(--lsa-radius-xl);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: var(--lsa-shadow-xl);
+      position: relative;
+      overflow: hidden;
+    }
+    .position-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .pos-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      color: #FFF;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.4rem 1.25rem;
+      border-radius: 50px;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .pos-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+    .pos-id-tag {
+      font-family: var(--lsa-font-mono);
+      font-weight: 700;
+      color: var(--lsa-accent);
+      font-size: 1.15rem;
+      background: rgba(10, 10, 26, 0.4);
+      padding: 0.35rem 1rem;
+      border-radius: var(--lsa-radius-md);
+      display: inline-block;
+      border: 1px solid rgba(255,215,0,0.3);
+    }
+    .pass-card {
+      background: white;
+      border-radius: 20px;
+      border: 2px solid var(--lsa-border);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      max-width: 440px;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+    }
+    .pass-header {
+      background: linear-gradient(135deg, var(--lsa-primary) 0%, #002244 100%);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+    .pass-header img {
+      height: 52px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    .pass-body {
+      padding: 2rem;
+      text-align: center;
+    }
+    .pass-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--lsa-accent);
+      box-shadow: var(--lsa-shadow-md);
+      margin: -60px auto 1rem auto;
+      background: white;
+      position: relative;
+      z-index: 2;
+    }
+    .pass-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--lsa-primary);
+      margin-bottom: 0.2rem;
+    }
+    .pass-designation {
+      font-weight: 700;
+      color: var(--lsa-accent-teal);
+      font-size: 1.05rem;
+      margin-bottom: 1.25rem;
+    }
+    .pass-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      text-align: left;
+      background: var(--lsa-light-bg);
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-logo">
+        <img src="images/logo.jpg" alt="LSA Logo">
+        <div class="logo-text">
+          <span class="brand-title">Lakshadweep Students Association</span>
+          <span class="brand-subtitle">Central Committee Registration Portal</span>
+        </div>
+      </a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="committee.html" class="nav-link">Central Committee</a></li>
+          <li><a href="membership.html" class="nav-link">Public Membership</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section" style="padding-top: calc(var(--lsa-nav-height) + 2rem); min-height: 85vh;">
+    <div class="container" style="max-width: 800px;">
+      
+      <!-- LOADING STATE -->
+      <div id="committee-loading" style="text-align:center; padding: 4rem 0;">
+        <div class="spinner spinner-lg"></div>
+        <p style="margin-top:1rem; color:var(--lsa-text-muted); font-weight:600;">Validating Central Committee Link...</p>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="committee-error" style="display:none; text-align:center; background:white; padding:3rem 2rem; border-radius:16px; box-shadow:var(--lsa-shadow-lg);">
+        <div style="font-size:3.5rem; margin-bottom:1rem;">⚠️</div>
+        <h2 style="color:var(--danger); margin-bottom:0.75rem;" id="error-title">Invalid Registration Link</h2>
+        <p style="color:var(--lsa-text-secondary); max-width:500px; margin:0 auto 1.5rem auto;" id="error-desc">
+          The requested Central Committee position link could not be found or has expired.
+        </p>
+        <a href="committee.html" class="btn btn-primary">View Central Committee</a>
+      </div>
+
+      <!-- FORM STATE -->
+      <div id="committee-form-wrap" style="display:none;">
+        
+        <div class="position-hero-card">
+          <span class="pos-badge">Executive Governance Official</span>
+          <h1 class="pos-title" id="pos-title-display">President</h1>
+          <div>Reserved Official Unique ID: <span class="pos-id-tag" id="pos-id-display">LSA-2026-00001</span></div>
+        </div>
+
+        <div style="background:white; border-radius:var(--lsa-radius-xl); padding:2.5rem; box-shadow:var(--lsa-shadow-xl); border:1px solid var(--lsa-border-light);">
+          <h2 style="color:var(--lsa-primary); font-size:1.5rem; margin-bottom:0.5rem;">Official Details Submission</h2>
+          <p style="color:var(--lsa-text-secondary); font-size:0.95rem; margin-bottom:2rem;">
+            Please complete your profile details to activate your Central Committee Digital Pass and directory listing.
+          </p>
+
+          <form id="comm-reg-form" onsubmit="handleCommitteeSubmit(event)">
+            <input type="hidden" id="pos-key-input">
+
+            <!-- FULL NAME -->
+            <div class="form-group">
+              <label for="comm-fullname" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Full Name (as per Official Records) <span class="req">*</span></label>
+              <input type="text" id="comm-fullname" class="form-control" placeholder="Enter your Name" required style="font-weight:600;">
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+              <!-- GENDER -->
+              <div class="form-group">
+                <label for="comm-gender" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Gender <span class="req">*</span></label>
+                <select id="comm-gender" class="form-control" required style="font-weight:600;">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <!-- ISLAND -->
+              <div class="form-group">
+                <label for="comm-island" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Native Island <span class="req">*</span></label>
+                <select id="comm-island" class="form-control" required style="font-weight:600;">
+                  <option value="">Select Island</option>
+                  <option value="Agatti">Agatti</option>
+                  <option value="Amini">Amini</option>
+                  <option value="Androth">Androth</option>
+                  <option value="Bitra">Bitra</option>
+                  <option value="Chetlat">Chetlat</option>
+                  <option value="Kadmat">Kadmat</option>
+                  <option value="Kalpeni">Kalpeni</option>
+                  <option value="Kavaratti">Kavaratti</option>
+                  <option value="Kiltan">Kiltan</option>
+                  <option value="Minicoy">Minicoy</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+              <!-- CONTACT -->
+              <div class="form-group">
+                <label for="comm-contact" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Contact Number (WhatsApp) <span class="req">*</span></label>
+                <input type="tel" id="comm-contact" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required style="font-weight:600;">
+              </div>
+
+              <!-- BLOOD GROUP -->
+              <div class="form-group">
+                <label for="comm-blood" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Blood Group <span class="req">*</span></label>
+                <select id="comm-blood" class="form-control" required style="font-weight:600;">
+                  <option value="">Select Blood Group</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-group">
+              <label for="comm-email" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Email Address <span class="req">*</span></label>
+              <input type="email" id="comm-email" class="form-control" placeholder="e.g. safwan@gmail.com" required style="font-weight:600;">
+            </div>
+
+            <!-- PRESENT ADDRESS -->
+            <div class="form-group">
+              <label for="comm-present-address" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Present Address <span class="req">*</span></label>
+              <textarea id="comm-present-address" class="form-control" rows="2" placeholder="Current / Hostel / Official address" required style="font-weight:600; resize:vertical;"></textarea>
+            </div>
+
+            <!-- PERMANENT ADDRESS & CHECKBOX -->
+            <div class="form-group">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label for="comm-permanent-address" class="form-label" style="font-weight:700; color:var(--lsa-primary); margin-bottom:0;">Permanent Address <span class="req">*</span></label>
+                <label style="font-size:0.85rem; font-weight:600; color:var(--lsa-primary); cursor:pointer; display:flex; align-items:center; gap:0.4rem;">
+                  <input type="checkbox" id="comm-same-address-check" style="accent-color:var(--lsa-accent); width:16px; height:16px;">
+                  Permanent address is same as present address
+                </label>
+              </div>
+              <textarea id="comm-permanent-address" class="form-control" rows="2" placeholder="Native permanent address" required style="font-weight:600; resize:vertical;"></textarea>
+            </div>
+
+            <!-- PHOTO UPLOAD -->
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700; color:var(--lsa-primary);">Official Passport Photo <span class="req">*</span></label>
+              <div style="display:flex; align-items:center; gap:1.25rem; background:var(--lsa-light-bg); padding:1.25rem; border-radius:var(--lsa-radius-md); border:1px dashed var(--lsa-border-dark);">
+                <div style="width:70px; height:70px; border-radius:50%; background:var(--lsa-light-blue); display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid var(--lsa-border); flex-shrink:0;">
+                  <img id="comm-photo-preview" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
+                  <span id="comm-photo-placeholder" style="font-weight:700; color:var(--lsa-primary); font-size:1.2rem;">LSA</span>
+                </div>
+                <div style="flex:1;">
+                  <input type="file" id="comm-photo-file" class="form-control" accept="image/jpeg,image/png,image/webp" required onchange="previewCommPhoto(event)" style="padding:0.4rem 0.6rem; font-size:0.85rem; height:auto;">
+                  <small style="color:var(--lsa-text-muted); display:block; margin-top:0.3rem;">Clear front face photo (Max 5MB)</small>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:2rem;">
+              <button type="submit" id="btn-comm-submit" class="btn btn-primary btn-block btn-lg" style="font-size:1.1rem; font-weight:800;">
+                ✓ Save Details & Generate Official Pass
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- SUCCESS / DIGITAL PASS STATE -->
+      <div id="committee-success-wrap" style="display:none; text-align:center;">
+        <div style="display:inline-block; background:var(--lsa-success-bg); color:var(--lsa-success); padding:0.5rem 1.5rem; border-radius:50px; font-weight:700; font-size:0.95rem; margin-bottom:1.5rem;">
+          🎉 Central Committee Registration Complete!
+        </div>
+
+        <div class="pass-card">
+          <div class="pass-header">
+            <img src="images/logo.jpg" alt="LSA Logo">
+            <div style="font-size:0.95rem; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Lakshadweep Students Association</div>
+            <div style="font-size:0.75rem; color:var(--lsa-accent); font-weight:700;">OFFICIAL CENTRAL COMMITTEE PASS</div>
+          </div>
+          <div class="pass-body">
+            <img id="pass-img" src="" class="pass-avatar" alt="Member Photo">
+            <h2 class="pass-name" id="pass-name">-</h2>
+            <div class="pass-designation" id="pass-designation">-</div>
+
+            <div class="pass-meta-grid">
+              <div>
+                <span style="color:var(--lsa-text-muted); font-size:0.75rem; display:block;">Membership ID</span>
+                <strong style="font-family:var(--lsa-font-mono); color:var(--lsa-primary);" id="pass-id">-</strong>
+              </div>
+              <div>
+                <span style="color:var(--lsa-text-muted); font-size:0.75rem; display:block;">Island</span>
+                <strong id="pass-island">-</strong>
+              </div>
+              <div>
+                <span style="color:var(--lsa-text-muted); font-size:0.75rem; display:block;">Blood Group</span>
+                <strong id="pass-blood">-</strong>
+              </div>
+              <div>
+                <span style="color:var(--lsa-text-muted); font-size:0.75rem; display:block;">Status</span>
+                <strong style="color:var(--lsa-accent-teal);">✓ ACTIVE</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+          <a href="committee.html" class="btn btn-primary">View Central Committee Directory</a>
+          <a href="index.html" class="btn btn-secondary">Go to Home Page</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    let currentPositionKey = '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initCommSameAddressCheckbox();
+      const urlParams = new URLSearchParams(window.location.search);
+      currentPositionKey = urlParams.get('position') || '';
+
+      if (!currentPositionKey) {
+        showError('Missing Position Parameter', 'Please access this page using your dedicated Central Committee link.');
+        return;
+      }
+
+      loadPositionData(currentPositionKey);
+    });
+
+    function initCommSameAddressCheckbox() {
+      const check = document.getElementById('comm-same-address-check');
+      const present = document.getElementById('comm-present-address');
+      const permanent = document.getElementById('comm-permanent-address');
+      if (!check || !present || !permanent) return;
+
+      check.addEventListener('change', () => {
+        if (check.checked) {
+          permanent.value = present.value;
+          permanent.readOnly = true;
+          permanent.style.backgroundColor = 'var(--lsa-light-bg)';
+        } else {
+          permanent.readOnly = false;
+          permanent.style.backgroundColor = '';
+        }
+      });
+      present.addEventListener('input', () => {
+        if (check.checked) permanent.value = present.value;
+      });
+    }
+
+    async function loadPositionData(key) {
+      try {
+        const res = await apiFetch(`/api/committee/position-info/${encodeURIComponent(key)}`);
+        
+        document.getElementById('committee-loading').style.display = 'none';
+
+        if (!res.success || !res.data) {
+          showError('Invalid Committee Position', res.message || 'Position link not recognized.');
+          return;
+        }
+
+        const data = res.data;
+        document.getElementById('pos-key-input').value = data.key;
+        document.getElementById('pos-title-display').textContent = data.title;
+        document.getElementById('pos-id-display').textContent = data.reserved_id;
+
+        if (data.is_registered && data.current_member) {
+          document.getElementById('comm-fullname').value = data.current_member.name || '';
+        }
+
+        document.getElementById('committee-form-wrap').style.display = 'block';
+
+      } catch (err) {
+        document.getElementById('committee-loading').style.display = 'none';
+        showError('Network Error', 'Failed to load position data. Please check your connection.');
+      }
+    }
+
+    function showError(title, desc) {
+      document.getElementById('committee-loading').style.display = 'none';
+      document.getElementById('committee-form-wrap').style.display = 'none';
+      document.getElementById('committee-error').style.display = 'block';
+      document.getElementById('error-title').textContent = title;
+      document.getElementById('error-desc').textContent = desc;
+    }
+
+    function previewCommPhoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Image file size cannot exceed 5MB.', 'error');
+        e.target.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = document.getElementById('comm-photo-preview');
+        const placeholder = document.getElementById('comm-photo-placeholder');
+        img.src = evt.target.result;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function handleCommitteeSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-comm-submit');
+      const formData = new FormData();
+
+      formData.append('positionKey', document.getElementById('pos-key-input').value);
+      formData.append('full_name', document.getElementById('comm-fullname').value.trim());
+      formData.append('gender', document.getElementById('comm-gender').value);
+      formData.append('island', document.getElementById('comm-island').value);
+      formData.append('contact_number', document.getElementById('comm-contact').value.trim());
+      formData.append('email', document.getElementById('comm-email').value.trim());
+      formData.append('blood_group', document.getElementById('comm-blood').value);
+      formData.append('present_address', document.getElementById('comm-present-address').value.trim());
+      formData.append('permanent_address', document.getElementById('comm-permanent-address').value.trim());
+
+      const fileInput = document.getElementById('comm-photo-file');
+      if (fileInput.files && fileInput.files[0]) {
+        formData.append('photo', fileInput.files[0]);
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Saving Details...';
+
+      try {
+        const res = await apiFetch('/api/committee/register-position', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.success && res.data) {
+          const d = res.data;
+          document.getElementById('committee-form-wrap').style.display = 'none';
+          document.getElementById('committee-success-wrap').style.display = 'block';
+
+          document.getElementById('pass-name').textContent = d.full_name;
+          document.getElementById('pass-designation').textContent = d.designation;
+          document.getElementById('pass-id').textContent = d.membership_id;
+          document.getElementById('pass-island').textContent = d.island;
+          document.getElementById('pass-blood').textContent = d.blood_group;
+
+          const photoEl = document.getElementById('pass-img');
+          if (d.photo_url) {
+            photoEl.src = d.photo_url;
+          } else {
+            photoEl.src = 'images/logo.jpg';
+          }
+          showToast('Registration successful!', 'success');
+        }
+      } catch (err) {
+        showToast(err.message || 'Registration failed.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '✓ Save Details & Generate Official Pass';
+      }
+    }
+  </script>
+</body>
+</html>

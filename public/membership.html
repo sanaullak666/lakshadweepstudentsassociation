@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membership Registration | Lakshadweep Students Association</title>
+  <meta name="description" content="Register for official LSA Membership. Complete member registration form online.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="images/logo.jpg">
+</head>
+<body>
+
+  <!-- HEADER / NAVIGATION -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-logo">
+        <img src="images/logo.jpg" alt="LSA Logo">
+        <div class="logo-text">
+          <span class="brand-title">Lakshadweep Students Association</span>
+          <span class="brand-subtitle">Registration Portal • <strong class="brand-motto">Unity is Strength</strong></span>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="committee.html" class="nav-link">Central Committee</a></li>
+          <li><a href="membership.html" class="nav-link active">Membership</a></li>
+          <li><a href="verify.html" class="nav-link">Verify Member</a></li>
+        </ul>
+      </nav>
+
+      <button class="mobile-toggle" aria-label="Toggle Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN REGISTRATION SECTION -->
+  <section class="section" style="background:linear-gradient(160deg, var(--lsa-light-bg) 0%, var(--lsa-light-blue) 50%, #E8EEFF 100%); min-height:90vh; padding-top: calc(var(--lsa-nav-height) + 2rem);">
+    <div class="container" style="max-width:800px;">
+      
+      <!-- PAGE HEADER -->
+      <div class="section-header" style="margin-bottom:2.5rem;">
+        <span style="display:inline-block; padding:0.35rem 1rem; background:rgba(36, 75, 255, 0.1); color:var(--lsa-accent); font-weight:700; border-radius:99px; font-size:0.85rem; margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em;">
+          Official Membership Registration
+        </span>
+        <h1 style="color:var(--lsa-primary); margin-bottom:0.75rem; font-size:clamp(2rem, 4vw, 3rem);">LSA Membership Portal</h1>
+        <p style="color:var(--lsa-text-secondary); font-size:1.1rem;">Join the official student community of Lakshadweep. Complete your registration to receive an instant verified Digital Membership Card.</p>
+      </div>
+
+      <!-- MAIN CARD WRAPPER -->
+      <div style="background:var(--lsa-white); border-radius:var(--lsa-radius-xl); padding:2.5rem 3rem; box-shadow:var(--lsa-shadow-xl); border:1px solid var(--lsa-border-light); position:relative;">
+        
+        <!-- STEP PROGRESS INDICATOR -->
+        <div class="step-progress" style="margin-bottom:2.5rem;">
+          <div class="step-line" id="step-progress-bar" style="width: 33%;"></div>
+          
+          <div class="step-item active" id="step-node-1">
+            <div class="step-number">1</div>
+            <div class="step-label">Member Details</div>
+          </div>
+
+          <div class="step-item" id="step-node-2">
+            <div class="step-number">2</div>
+            <div class="step-label">Review Info</div>
+          </div>
+
+          <div class="step-item" id="step-node-3">
+            <div class="step-number">3</div>
+            <div class="step-label">Payment & Card</div>
+          </div>
+        </div>
+
+        <!-- STEP 1: MEMBER DETAILS FORM -->
+        <form id="registration-form" class="step-container" style="display:block;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid var(--lsa-border-light);">
+            <h3 style="color:var(--lsa-primary); font-size:1.35rem;">Step 1: Enter Personal Details</h3>
+            <span style="font-size:0.8rem; color:var(--lsa-text-muted); font-weight:600;">* Required Fields</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem;">
+            
+            <!-- Full Name (Full Width) -->
+            <div class="form-group" style="grid-column:1/-1;">
+              <label for="full_name" class="form-label">Full Name <span class="req">*</span></label>
+              <input type="text" id="full_name" class="form-control" placeholder="Enter your Name" required minlength="2" style="font-weight:600;">
+              <span class="form-error" id="err-full_name"></span>
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group">
+              <label for="gender" class="form-label">Gender <span class="req">*</span></label>
+              <select id="gender" class="form-control" required style="font-weight:600;">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+              <span class="form-error" id="err-gender"></span>
+            </div>
+
+            <!-- Island -->
+            <div class="form-group">
+              <label for="island" class="form-label">Native Island <span class="req">*</span></label>
+              <select id="island" class="form-control" required style="font-weight:600;">
+                <option value="">Select Island</option>
+                <option value="Agatti">Agatti</option>
+                <option value="Amini">Amini</option>
+                <option value="Andrott">Andrott</option>
+                <option value="Bitra">Bitra</option>
+                <option value="Chetlat">Chetlat</option>
+                <option value="Kadmat">Kadmat</option>
+                <option value="Kalpeni">Kalpeni</option>
+                <option value="Kavaratti">Kavaratti</option>
+                <option value="Kiltan">Kiltan</option>
+                <option value="Minicoy">Minicoy</option>
+              </select>
+              <span class="form-error" id="err-island"></span>
+            </div>
+
+            <!-- Contact Number -->
+            <div class="form-group">
+              <label for="contact_number" class="form-label">Mobile Contact Number <span class="req">*</span></label>
+              <input type="tel" id="contact_number" class="form-control" placeholder="10-digit Indian Mobile" required pattern="[0-9]{10}" style="font-weight:600;">
+              <span class="form-error" id="err-contact_number"></span>
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address <span class="req">*</span></label>
+              <input type="email" id="email" class="form-control" placeholder="name@example.com" required style="font-weight:600;">
+              <span class="form-error" id="err-email"></span>
+            </div>
+
+            <!-- Designation / Student Role (Optional) -->
+            <div class="form-group">
+              <label for="designation" class="form-label">Designation / Role <span style="font-weight:400; color:var(--lsa-text-muted); font-size:0.8rem;">(Optional)</span></label>
+              <input type="text" id="designation" class="form-control" placeholder="LSA Kozhikode Committee President" style="font-weight:600;">
+              <span class="form-error" id="err-designation"></span>
+            </div>
+
+            <!-- Blood Group -->
+            <div class="form-group">
+              <label for="blood_group" class="form-label">Blood Group <span class="req">*</span></label>
+              <select id="blood_group" class="form-control" required style="font-weight:600;">
+                <option value="">Select Blood Group</option>
+                <option value="A+">A Positive (A+)</option>
+                <option value="A-">A Negative (A-)</option>
+                <option value="B+">B Positive (B+)</option>
+                <option value="B-">B Negative (B-)</option>
+                <option value="AB+">AB Positive (AB+)</option>
+                <option value="AB-">AB Negative (AB-)</option>
+                <option value="O+">O Positive (O+)</option>
+                <option value="O-">O Negative (O-)</option>
+              </select>
+              <span class="form-error" id="err-blood_group"></span>
+            </div>
+
+            <!-- Present Address (Full Width) -->
+            <div class="form-group" style="grid-column:1/-1;">
+              <label for="present_address" class="form-label">Present Address <span class="req">*</span></label>
+              <textarea id="present_address" class="form-control" rows="2" placeholder="Enter current / hostel / college address" required style="font-weight:600; resize:vertical;"></textarea>
+              <span class="form-error" id="err-present_address"></span>
+            </div>
+
+            <!-- Permanent Address Checkbox & Input (Full Width) -->
+            <div class="form-group" style="grid-column:1/-1;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label for="permanent_address" class="form-label" style="margin-bottom:0;">Permanent Address <span class="req">*</span></label>
+                <label style="font-size:0.85rem; font-weight:600; color:var(--lsa-primary); cursor:pointer; display:flex; align-items:center; gap:0.4rem;">
+                  <input type="checkbox" id="same_address_check" style="accent-color:var(--lsa-accent); width:16px; height:16px;">
+                  Permanent address is same as present address
+                </label>
+              </div>
+              <textarea id="permanent_address" class="form-control" rows="2" placeholder="Enter native permanent address" required style="font-weight:600; resize:vertical;"></textarea>
+              <span class="form-error" id="err-permanent_address"></span>
+            </div>
+
+          </div>
+
+          <div style="margin-top:2.5rem; text-align:right;">
+            <button type="submit" class="btn btn-primary btn-lg" id="btn-submit-step1" style="font-weight:700;">
+              Continue to Review Step →
+            </button>
+          </div>
+        </form>
+
+        <!-- STEP 2: REVIEW PAGE -->
+        <div id="review-container" class="step-container" style="display:none;">
+          <div style="margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid var(--lsa-border-light);">
+            <h3 style="color:var(--lsa-primary); font-size:1.35rem;">Step 2: Confirm Your Information</h3>
+            <p style="color:var(--lsa-text-secondary); font-size:0.9rem;">Please review your details carefully before initiating payment.</p>
+          </div>
+
+          <!-- SUMMARY CARD -->
+          <div style="background:var(--lsa-light-bg); border-radius:var(--lsa-radius-md); padding:1.5rem; border:1px solid var(--lsa-border-light); margin-bottom:2rem;">
+            
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
+              <div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Full Name</div>
+                <div style="font-size:1.1rem; font-weight:700; color:var(--lsa-primary);" id="rev-name">-</div>
+              </div>
+
+              <div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Native Island</div>
+                <div style="font-size:1.1rem; font-weight:700; color:var(--lsa-primary);" id="rev-island">-</div>
+              </div>
+
+              <div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Contact Phone</div>
+                <div style="font-size:1.05rem; font-weight:700; color:var(--lsa-text-main);" id="rev-contact">-</div>
+              </div>
+
+              <div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Email Address</div>
+                <div style="font-size:1.05rem; font-weight:700; color:var(--lsa-text-main);" id="rev-email">-</div>
+              </div>
+
+              <div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Gender</div>
+                <div style="font-size:1rem; font-weight:600; color:var(--lsa-text-secondary);" id="rev-gender">-</div>
+              </div>
+
+              <div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Designation</div>
+                <div style="font-size:1rem; font-weight:700; color:var(--lsa-primary);" id="rev-designation">Member</div>
+              </div>
+
+              <div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Blood Group</div>
+                <div style="font-size:1rem; font-weight:800; color:#DC2626;" id="rev-blood">-</div>
+              </div>
+
+              <div style="grid-column:1/-1;">
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Present Address</div>
+                <div style="font-size:0.95rem; font-weight:600; color:var(--lsa-text-main);" id="rev-present-address">-</div>
+              </div>
+
+              <div style="grid-column:1/-1;">
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Permanent Address</div>
+                <div style="font-size:0.95rem; font-weight:600; color:var(--lsa-text-main);" id="rev-permanent-address">-</div>
+              </div>
+            </div>
+
+            <!-- FEE SUMMARY HIGHLIGHT -->
+            <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px dashed var(--lsa-border); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700; color:var(--lsa-primary); font-size:1rem;">Annual LSA Membership Registration</div>
+                <div style="font-size:0.8rem; color:var(--lsa-success); font-weight:600; display:flex; align-items:center; gap:0.3rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Includes Digital Membership Card & Verification Pass
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:1.6rem; font-weight:800; color:var(--lsa-primary);">₹3.00</div>
+                <div style="font-size:0.75rem; color:var(--lsa-text-muted);">INR / Year</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- BUTTON ACTIONS -->
+          <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary btn-lg" id="btn-edit-details">
+              ← Edit Information
+            </button>
+            <button type="button" class="btn btn-primary btn-lg" id="btn-proceed-payment" style="font-weight:700;">
+              Proceed to Payment (₹3.00) →
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: PAYMENT SCREEN -->
+        <div id="payment-container" class="step-container" style="display:none; text-align:center;">
+          <div style="margin-bottom:2rem;">
+            <h3 style="color:var(--lsa-primary); font-size:1.5rem; margin-bottom:0.5rem;">Step 3: Secure Payment</h3>
+            <p style="color:var(--lsa-text-secondary); font-size:1rem;">Click below to launch the official LSA Payment Gateway.</p>
+          </div>
+
+          <div style="background:var(--lsa-light-bg); border:1.5px solid var(--lsa-border); padding:2rem; border-radius:var(--lsa-radius-lg); max-width:440px; margin:0 auto 2.5rem; box-shadow:var(--lsa-shadow-sm);">
+            <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(5, 150, 105, 0.12); color:var(--lsa-success); font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:99px; margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              256-Bit SSL Encrypted Gateway
+            </div>
+            <div style="font-size:0.85rem; color:var(--lsa-secondary); font-weight:700; text-transform:uppercase; margin-bottom:0.4rem;">Lakshadweep Students Association</div>
+            <div style="font-size:2rem; font-weight:800; color:var(--lsa-primary); margin-bottom:0.2rem;">₹3.00</div>
+            <div style="font-size:0.85rem; color:var(--lsa-text-muted);">Annual Membership Fee</div>
+          </div>
+
+          <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary" id="btn-back-to-step2" onclick="goToStep(2)">
+              ← Back to Review
+            </button>
+            <button type="button" class="btn btn-primary btn-xl" id="btn-pay-now" style="font-weight:700; display:inline-flex; align-items:center; gap:0.5rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Complete Membership Payment
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- POLISHED DEMO PAYMENT GATEWAY MODAL -->
+  <div id="sandbox-payment-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,10,26,0.75); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center; padding:1.5rem;">
+    <div style="background:white; border-radius:var(--lsa-radius-xl); width:100%; max-width:480px; padding:2rem 2.5rem; box-shadow:var(--lsa-shadow-2xl); border:1px solid var(--lsa-border-light);">
+      
+      <!-- Modal Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--lsa-border-light); padding-bottom:1rem; margin-bottom:1.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <img src="images/logo.jpg" alt="LSA Logo" style="height:36px; width:auto; border-radius:6px;">
+          <div>
+            <div style="font-weight:800; color:var(--lsa-primary); font-size:1.05rem; line-height:1.2;">LSA Payment Gateway</div>
+            <div style="font-size:0.75rem; color:var(--lsa-text-muted);">Secure Online Transaction</div>
+          </div>
+        </div>
+        <span style="background:var(--lsa-success-bg); color:var(--lsa-success); font-size:0.75rem; font-weight:800; padding:0.3rem 0.7rem; border-radius:99px;">DEMO MODE</span>
+      </div>
+
+      <!-- Merchant Details Card -->
+      <div style="background:var(--lsa-light-bg); padding:1.25rem; border-radius:var(--lsa-radius-md); border:1px solid var(--lsa-border-light); margin-bottom:1.5rem; font-size:0.9rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--lsa-text-muted);">Merchant:</span>
+          <strong style="color:var(--lsa-primary);">Lakshadweep Students Association</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--lsa-text-muted);">Amount:</span>
+          <strong style="color:var(--lsa-primary); font-size:1.1rem;">₹3.00 INR</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--lsa-text-muted);">Order ID:</span>
+          <span style="font-family:monospace; font-weight:700; color:var(--lsa-secondary);" id="modal-order-id">order_demo_123</span>
+        </div>
+      </div>
+
+      <!-- Payment Method Simulation Options -->
+      <div style="margin-bottom:1.5rem; text-align:left;">
+        <label style="font-size:0.85rem; font-weight:700; color:var(--lsa-primary); margin-bottom:0.6rem; display:block;">Select Payment Method:</label>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.25rem;">
+          <label style="background:var(--lsa-light-blue); padding:0.75rem 1rem; border-radius:var(--lsa-radius-sm); border:1.5px solid var(--lsa-accent); font-size:0.875rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--lsa-primary);">
+            <input type="radio" name="demo-pay-method" value="upi" checked style="accent-color:var(--lsa-accent);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            UPI (GPay/PhonePe)
+          </label>
+          <label style="background:var(--lsa-white); padding:0.75rem 1rem; border-radius:var(--lsa-radius-sm); border:1.5px solid var(--lsa-border); font-size:0.875rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.5rem;">
+            <input type="radio" name="demo-pay-method" value="card" style="accent-color:var(--lsa-accent);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Debit / Credit Card
+          </label>
+        </div>
+
+        <div style="background:#EFF6FF; border:1px solid #BFDBFE; padding:0.85rem 1rem; border-radius:var(--lsa-radius-sm); font-size:0.8125rem; color:#1E40AF; line-height:1.5; display:flex; gap:0.5rem; align-items:flex-start;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div><strong>Demo Payment Mode:</strong> Clicking the button below simulates instant payment verification and issues your official LSA Membership ID.</div>
+        </div>
+      </div>
+
+      <!-- Modal Action Buttons -->
+      <div style="display:flex; gap:1rem;">
+        <button type="button" class="btn btn-secondary btn-block" id="modal-btn-cancel">Cancel</button>
+        <button type="button" class="btn btn-primary btn-block" id="modal-btn-success" style="font-weight:700;">
+          Complete Payment (₹3.00)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Lakshadweep Students Association (LSA). All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/membership.js"></script>
+</body>
+</html>
