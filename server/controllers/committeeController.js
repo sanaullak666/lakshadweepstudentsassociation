@@ -197,28 +197,68 @@ async function updateMember(req, res) {
 }
 
 /**
- * Admin Endpoint: Delete committee member
+ * Admin Endpoint: Delete committee member and wipe profile from database
  */
 async function deleteMember(req, res) {
   try {
     const { id } = req.params;
     
-    // Fetch member to delete photo file
-    const currentRes = await db.query(`SELECT photo_url FROM central_committee WHERE id = ?`, [id]);
-    if (currentRes.rows && currentRes.rows.length > 0) {
-      safeDeletePhotoFile(currentRes.rows[0].photo_url);
+    // 1. Fetch member details from central_committee
+    const currentRes = await db.query(
+      `SELECT id, name, designation, display_order, photo_url FROM central_committee WHERE id = ?`,
+      [id]
+    );
+
+    if (!currentRes.rows || currentRes.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Committee member not found.' });
     }
 
-    await db.query(`DELETE FROM central_committee WHERE id = ?`, [id]);
+    const commMember = currentRes.rows[0];
+    safeDeletePhotoFile(commMember.photo_url);
+
+    const { getReservedIdForOrder } = require('../utils/membershipIdGenerator');
+    const reservedId = getReservedIdForOrder(commMember.display_order);
+
+    // 2. Delete linked records from `members` and `payments` tables
+    const memberRes = await db.query(
+      `SELECT id FROM members WHERE membership_id = ? OR designation = ? OR (full_name = ? AND designation = ?)`,
+      [reservedId, commMember.designation, commMember.name, commMember.designation]
+    );
+
+    if (memberRes.rows && memberRes.rows.length > 0) {
+      for (const m of memberRes.rows) {
+        try {
+          await db.query(`DELETE FROM payments WHERE member_id = ?`, [m.id]);
+        } catch (e) {}
+        await db.query(`DELETE FROM members WHERE id = ?`, [m.id]);
+      }
+    } else {
+      await db.query(
+        `DELETE FROM members WHERE membership_id = ? OR designation = ? OR (full_name = ? AND designation = ?)`,
+        [reservedId, commMember.designation, commMember.name, commMember.designation]
+      );
+    }
+
+    // 3. Reset or delete from `central_committee` table
+    if (commMember.display_order >= 1 && commMember.display_order <= 9) {
+      // Reset core role position to default designation title so registration link remains active
+      await db.query(
+        `UPDATE central_committee SET name = designation, photo_url = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [id]
+      );
+    } else {
+      await db.query(`DELETE FROM central_committee WHERE id = ?`, [id]);
+    }
+
     return res.json({
       success: true,
-      message: 'Committee member deleted successfully.'
+      message: 'Committee member removed from database successfully.'
     });
   } catch (error) {
     console.error('[Delete Committee Error]', error);
     return res.status(500).json({
       success: false,
-      message: 'Failed to delete committee member.'
+      message: 'Failed to delete committee member from database.'
     });
   }
 }

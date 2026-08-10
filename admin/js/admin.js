@@ -483,15 +483,16 @@ async function toggleCommitteeActive(id) {
 }
 
 async function deleteCommitteeMember(id) {
-  if (!confirm('Are you sure you want to delete this committee member?')) return;
+  if (!confirm('Are you sure you want to delete this committee member from the database?')) return;
   try {
     const res = await apiFetch(`/api/committee/${id}`, { method: 'DELETE' });
     if (res.success) {
-      showToast('Committee member deleted.', 'success');
+      showToast(res.message || 'Committee member deleted from database.', 'success');
       loadAdminCommittee();
+      loadAdminCommitteeLinks();
     }
   } catch (e) {
-    showToast('Failed to delete member.', 'error');
+    showToast(e.message || 'Failed to delete member.', 'error');
   }
 }
 
