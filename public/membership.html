@@ -341,8 +341,9 @@
             <div style="font-size:0.7rem; color:var(--lsa-text-muted); font-weight:600;">Official Payee UPI ID</div>
             <div style="font-family:monospace; font-weight:800; font-size:0.95rem; color:var(--lsa-primary);" id="upi-id-display">arushkhan2004-1@oksbi</div>
           </div>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-upi" style="padding:0.35rem 0.65rem; font-size:0.75rem; font-weight:700;" onclick="copyUpiIdToClipboard()">
-            📋 Copy
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-upi" style="padding:0.35rem 0.65rem; font-size:0.75rem; font-weight:700; display:inline-flex; align-items:center; gap:0.3rem;" onclick="copyUpiIdToClipboard()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            Copy
           </button>
         </div>
       </div>
@@ -352,10 +353,12 @@
         <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; margin-bottom:0.5rem; text-align:left;">Pay directly via UPI App:</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
           <a id="btn-upi-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=3.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#1E40AF;">
-            ⚡ Google Pay / PhonePe
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            Google Pay / PhonePe
           </a>
           <a id="btn-bhim-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=3.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#047857;">
-            📱 Paytm / BHIM UPI
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            Paytm / BHIM UPI
           </a>
         </div>
       </div>
@@ -380,8 +383,9 @@
       <!-- Action Buttons -->
       <div style="display:flex; gap:0.75rem;">
         <button type="button" class="btn btn-secondary btn-block" id="modal-btn-cancel">Cancel</button>
-        <button type="button" class="btn btn-primary btn-block" id="modal-btn-submit-utr" style="font-weight:700;" onclick="submitUtrTransaction()">
-          ✓ Submit UTR for Verification
+        <button type="button" class="btn btn-primary btn-block" id="modal-btn-submit-utr" style="font-weight:700; display:flex; align-items:center; justify-content:center; gap:0.4rem;" onclick="submitUtrTransaction()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Submit UTR for Verification
         </button>
       </div>
 

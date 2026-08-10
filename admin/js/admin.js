@@ -180,7 +180,7 @@ async function loadAdminMembers() {
       const seq = m.membership_id ? parseInt(m.membership_id.split('-')[2], 10) : 999;
       const isExec = seq <= 9 || (m.designation && m.designation !== 'Member');
       const desigBadge = isExec 
-        ? `<span class="badge" style="background:var(--lsa-light-blue); color:var(--lsa-primary); font-weight:700; border:1px solid var(--lsa-border-light);">👑 ${escapeHtml(m.designation || 'Executive')}</span>`
+        ? `<span class="badge" style="background:var(--lsa-light-blue); color:var(--lsa-primary); font-weight:700; border:1px solid var(--lsa-border-light); display:inline-flex; align-items:center; gap:0.25rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path></svg>${escapeHtml(m.designation || 'Executive')}</span>`
         : `<span style="font-weight:600; color:var(--lsa-primary);">${escapeHtml(m.designation || 'Member')}</span>`;
 
       return `
@@ -323,8 +323,8 @@ async function loadAdminCommittee() {
         <td><strong>${escapeHtml(c.name)}</strong></td>
         <td><span style="color:var(--primary-teal); font-weight:600;">${escapeHtml(c.designation)}</span></td>
         <td>
-          <button class="btn btn-sm ${c.is_active ? 'btn-primary' : 'btn-secondary'}" onclick="toggleCommitteeActive(${c.id})">
-            ${c.is_active ? '✓ Active' : 'Inactive'}
+          <button class="btn btn-sm ${c.is_active ? 'btn-primary' : 'btn-secondary'}" onclick="toggleCommitteeActive(${c.id})" style="display:inline-flex; align-items:center; gap:0.25rem;">
+            ${c.is_active ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Active' : 'Inactive'}
           </button>
         </td>
         <td>${c.created_at ? new Date(c.created_at).toLocaleDateString() : '-'}</td>
@@ -355,8 +355,8 @@ async function loadAdminCommitteeLinks() {
         const shareText = `Central Committee Access Portal (${item.title})\nLink: ${fullLink}\nAccess Password: ${item.access_password}`;
 
         const statusBadge = item.is_registered
-          ? `<span style="background:var(--lsa-success-bg); color:var(--lsa-success); font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:50px; font-weight:700;">✓ ${escapeHtml(item.member.name)}</span>`
-          : `<span style="background:#FFF3CD; color:#856404; font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:50px; font-weight:700;">⏳ Pending Registration</span>`;
+          ? `<span style="background:var(--lsa-success-bg); color:var(--lsa-success); font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:50px; font-weight:700; display:inline-flex; align-items:center; gap:0.25rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${escapeHtml(item.member.name)}</span>`
+          : `<span style="background:#FFF3CD; color:#856404; font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:50px; font-weight:700; display:inline-flex; align-items:center; gap:0.25rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"></path><path d="M5 2h14"></path><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path></svg> Pending Registration</span>`;
 
         return `
           <div style="background:white; border-radius:12px; padding:1.1rem; border:1px solid var(--lsa-border-light); display:flex; flex-direction:column; justify-content:space-between; box-shadow:var(--lsa-shadow-sm);">
@@ -369,16 +369,16 @@ async function loadAdminCommitteeLinks() {
                 ${statusBadge}
               </div>
               <div style="font-size:0.85rem; color:var(--lsa-primary); background:var(--lsa-light-bg); padding:0.4rem 0.65rem; border-radius:6px; font-weight:700; font-family:var(--lsa-font-mono); margin-bottom:0.8rem; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--lsa-border-light);">
-                <span>🔑 Pass: <code>${escapeHtml(item.access_password)}</code></span>
+                <span style="display:inline-flex; align-items:center; gap:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg> Pass: <code>${escapeHtml(item.access_password)}</code></span>
                 <button class="btn btn-sm btn-secondary" onclick="openRolePassModal('${item.key}', '${escapeHtml(item.title)}', '${escapeHtml(item.access_password)}')" style="padding:0.15rem 0.5rem; font-size:0.75rem; font-weight:700;">Edit</button>
               </div>
             </div>
             <div style="display:grid; grid-template-columns:1fr; gap:0.4rem; margin-top:0.2rem;">
-              <button class="btn btn-sm btn-primary btn-block" onclick="copyCommitteeLink(\`${escapeHtml(shareText)}\`, 'Link & Password copied!')" style="font-weight:700;">
-                📋 Copy Link & Password
+              <button class="btn btn-sm btn-primary btn-block" onclick="copyCommitteeLink(\`${escapeHtml(shareText)}\`, 'Link & Password copied!')" style="font-weight:700; display:flex; align-items:center; justify-content:center; gap:0.4rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy Link & Password
               </button>
-              <button class="btn btn-sm btn-secondary btn-block" onclick="copyCommitteeLink('${fullLink}', 'Link copied!')" style="font-weight:600;">
-                🔗 Copy Link Only
+              <button class="btn btn-sm btn-secondary btn-block" onclick="copyCommitteeLink('${fullLink}', 'Link copied!')" style="font-weight:600; display:flex; align-items:center; justify-content:center; gap:0.4rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Copy Link Only
               </button>
             </div>
           </div>
@@ -482,22 +482,22 @@ async function loadAdminPayments() {
       const isPaid = p.status === 'PAID';
       const isFailed = p.status === 'FAILED';
 
-      let statusBadgeHtml = `<span class="badge badge-pending">⏳ PENDING VERIFICATION</span>`;
+      let statusBadgeHtml = `<span class="badge badge-pending" style="display:inline-flex; align-items:center; gap:0.25rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"></path><path d="M5 2h14"></path><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path></svg> PENDING VERIFICATION</span>`;
       if (isPaid) {
-        statusBadgeHtml = `<span class="badge badge-paid">✓ PAID & ACTIVE</span>`;
+        statusBadgeHtml = `<span class="badge badge-paid" style="display:inline-flex; align-items:center; gap:0.25rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> PAID & ACTIVE</span>`;
       } else if (isFailed) {
-        statusBadgeHtml = `<span class="badge" style="background:#FEE2E2; color:#991B1B; font-weight:700;">✗ REJECTED</span>`;
+        statusBadgeHtml = `<span class="badge" style="background:#FEE2E2; color:#991B1B; font-weight:700; display:inline-flex; align-items:center; gap:0.25rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> REJECTED</span>`;
       }
 
-      let actionsHtml = `<span style="color:var(--lsa-success); font-weight:700; font-size:0.8rem;">✓ Verified</span>`;
+      let actionsHtml = `<span style="color:var(--lsa-success); font-weight:700; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.25rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Verified</span>`;
       if (!isPaid) {
         actionsHtml = `
           <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-            <button class="btn btn-sm btn-primary" onclick="approveAdminPayment(${p.id}, ${p.member_id})" style="font-weight:700; font-size:0.75rem; padding:0.25rem 0.5rem;">
-              ✓ Approve & Issue ID
+            <button class="btn btn-sm btn-primary" onclick="approveAdminPayment(${p.id}, ${p.member_id})" style="font-weight:700; font-size:0.75rem; padding:0.25rem 0.5rem; display:inline-flex; align-items:center; gap:0.25rem;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Approve & Issue ID
             </button>
-            <button class="btn btn-sm btn-secondary" onclick="rejectAdminPayment(${p.id}, ${p.member_id})" style="color:var(--danger); font-size:0.75rem; font-weight:700; padding:0.25rem 0.5rem;">
-              ✗ Reject
+            <button class="btn btn-sm btn-secondary" onclick="rejectAdminPayment(${p.id}, ${p.member_id})" style="color:var(--danger); font-size:0.75rem; font-weight:700; padding:0.25rem 0.5rem; display:inline-flex; align-items:center; gap:0.25rem;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Reject
             </button>
           </div>
         `;

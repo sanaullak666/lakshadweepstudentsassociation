@@ -55,7 +55,8 @@ function initVerification() {
             <div style="background:linear-gradient(135deg, var(--lsa-primary) 0%, #002B49 100%); padding:1.75rem 1.5rem; text-align:center; color:white;">
               <div style="margin-bottom:0.4rem;">
                 <span style="background:rgba(5, 150, 105, 0.25); color:#34D399; font-size:0.8rem; font-weight:800; padding:0.3rem 0.9rem; border-radius:50px; border:1px solid rgba(52, 211, 153, 0.4); display:inline-flex; align-items:center; gap:0.35rem;">
-                  ✓ OFFICIAL VERIFIED MEMBER
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  OFFICIAL VERIFIED MEMBER
                 </span>
               </div>
               <div style="font-size:1.3rem; font-weight:800; letter-spacing:0.5px;">Lakshadweep Students Association</div>
