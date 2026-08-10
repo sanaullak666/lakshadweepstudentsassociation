@@ -441,7 +441,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       initCommSameAddressCheckbox();
       const urlParams = new URLSearchParams(window.location.search);
-      currentPositionKey = urlParams.get('pos') || urlParams.get('key') || '';
+      currentPositionKey = urlParams.get('position') || urlParams.get('pos') || urlParams.get('key') || '';
 
       if (!currentPositionKey) {
         showError('Missing Position Parameter', 'No central committee position was specified in the URL.');
