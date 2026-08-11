@@ -497,6 +497,12 @@ a:hover {
   transition: all var(--lsa-transition-base);
   appearance: none;
   min-height: 48px;
+}
+
+#registration-form .form-control,
+#comm-reg-form .form-control,
+#utr-number-input,
+#comm-utr-input {
   text-transform: uppercase;
 }
 
@@ -512,7 +518,23 @@ a:hover {
 
 .form-control::placeholder {
   color: var(--lsa-text-muted);
+}
+
+#registration-form .form-control::placeholder,
+#comm-reg-form .form-control::placeholder,
+#utr-number-input::placeholder,
+#comm-utr-input::placeholder {
   text-transform: uppercase;
+}
+
+.login-page-body .form-control,
+#admin-login-form .form-control {
+  text-transform: none !important;
+}
+
+.login-page-body .form-control::placeholder,
+#admin-login-form .form-control::placeholder {
+  text-transform: none !important;
 }
 
 .form-control:disabled {

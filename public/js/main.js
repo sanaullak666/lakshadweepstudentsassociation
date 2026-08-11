@@ -8,8 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initCapsLockInputs();
 });
 
-// Auto CAPS LOCK for input fields & textareas
+// Auto CAPS LOCK for input fields & textareas (registration forms only)
 function initCapsLockInputs() {
+  // Do not run caps lock on admin pages or login form
+  if (window.location.pathname.includes('/admin') || document.getElementById('admin-login-form') || document.body.classList.contains('login-page-body')) {
+    return;
+  }
+
   document.addEventListener('input', (e) => {
     const target = e.target;
     if (!target) return;
