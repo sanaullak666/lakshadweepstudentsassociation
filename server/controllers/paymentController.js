@@ -3,7 +3,7 @@ const razorpay = require('../config/razorpay');
 const { generateMembershipId } = require('../utils/membershipIdGenerator');
 
 /**
- * Creates a payment order for ₹3.00 (300 paise)
+ * Creates a payment order for ₹23.00 (2300 paise)
  */
 async function createOrder(req, res) {
   try {
@@ -37,10 +37,10 @@ async function createOrder(req, res) {
       });
     }
 
-    // Dynamic fee: ₹150.00 for Physical ID Card, ₹3.00 for Digital ID Card
+    // Dynamic fee: ₹150.00 for Physical ID Card, ₹23.00 for Digital ID Card + Yearly Fee
     const wantsPhysical = member.wants_physical_card === 1 || member.wants_physical_card === true || member.wants_physical_card === '1';
-    const amountRupees = wantsPhysical ? 150.00 : 3.00;
-    const amountPaise = wantsPhysical ? 15000 : 300;
+    const amountRupees = wantsPhysical ? 150.00 : 23.00;
+    const amountPaise = wantsPhysical ? 15000 : 2300;
     const receiptId = `receipt_lsa_${memberId}_${Date.now()}`;
 
     // Create Razorpay Order
@@ -163,7 +163,7 @@ async function verifyPayment(req, res) {
           membership_id: newMembershipId,
           payment_status: 'PAID',
           registration_status: 'ACTIVE',
-          amount: 3.00
+          amount: wantsPhysical ? 150.00 : 23.00
         }
       }
     });
@@ -283,7 +283,7 @@ async function submitUtrNumber(req, res) {
     } else {
       await db.query(
         `INSERT INTO payments (member_id, order_id, payment_id, amount, currency, status, payment_method)
-         VALUES (?, ?, ?, 3.00, 'INR', 'PENDING', 'upi_qr')`,
+         VALUES (?, ?, ?, 23.00, 'INR', 'PENDING', 'upi_qr')`,
         [memberId, targetOrderId, cleanUtr]
       );
     }

@@ -23,9 +23,9 @@ if (!isDemoMode) {
 }
 
 /**
- * Creates a payment order for ₹3.00 (300 paise)
+ * Creates a payment order for ₹23.00 (2300 paise)
  */
-async function createOrder(amountPaise = 300, receiptId) {
+async function createOrder(amountPaise = 2300, receiptId) {
   if (razorpayInstance && !isDemoMode) {
     const options = {
       amount: amountPaise, // amount in paise

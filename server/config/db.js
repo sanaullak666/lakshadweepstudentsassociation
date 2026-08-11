@@ -208,7 +208,7 @@ function createSQLiteTables() {
           member_id INTEGER NOT NULL,
           order_id TEXT NOT NULL,
           payment_id TEXT DEFAULT NULL,
-          amount REAL NOT NULL DEFAULT 3.00,
+          amount REAL NOT NULL DEFAULT 23.00,
           currency TEXT NOT NULL DEFAULT 'INR',
           status TEXT DEFAULT 'PENDING',
           payment_method TEXT DEFAULT 'razorpay',

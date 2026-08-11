@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
 
-// POST /api/payment/create-order - Create Razorpay payment order for ₹3.00
+// POST /api/payment/create-order - Create Razorpay payment order for ₹23.00
 router.post('/create-order', paymentController.createOrder);
 
 // POST /api/payment/verify - Verify Razorpay signature and activate membership

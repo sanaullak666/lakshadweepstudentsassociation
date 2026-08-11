@@ -648,7 +648,7 @@ async function registerPositionMember(req, res) {
     }
 
     const needsPayment = currentPaymentStatus !== 'PAID';
-    const amountRupees = wantsPhysicalCardVal === 1 ? 150.00 : 3.00;
+    const amountRupees = wantsPhysicalCardVal === 1 ? 150.00 : 23.00;
 
     return res.status(200).json({
       success: true,

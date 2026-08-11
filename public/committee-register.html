@@ -357,14 +357,14 @@
             </div>
             <div style="text-align:right;">
               <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase;">Membership Fee</div>
-              <strong style="font-size:1.25rem; color:var(--lsa-accent-teal); font-weight:800;" id="comm-pay-fee-amount">₹3.00 INR</strong>
+              <strong style="font-size:1.25rem; color:var(--lsa-accent-teal); font-weight:800;" id="comm-pay-fee-amount">₹23.00 INR</strong>
             </div>
           </div>
 
           <!-- QR CODE BOX -->
           <div style="background:white; border:2px dashed var(--lsa-border); padding:1.5rem; border-radius:16px; margin-bottom:1.5rem; text-align:center;">
             <div style="font-weight:800; color:var(--lsa-primary); font-size:0.95rem; margin-bottom:0.75rem;">Scan & Pay via any UPI App</div>
-            <img id="comm-upi-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3Darushkhan2004-1%40oksbi%26pn%3DLakshadweep%2520Students%2520Association%26am%3D3.00%26cu%3DINR" alt="UPI Payment QR Code" style="width:170px; height:170px; margin:0 auto 0.75rem auto; display:block; border-radius:12px; border:1px solid var(--lsa-border-light);">
+            <img id="comm-upi-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3Darushkhan2004-1%40oksbi%26pn%3DLakshadweep%2520Students%2520Association%26am%3D23.00%26cu%3DINR" alt="UPI Payment QR Code" style="width:170px; height:170px; margin:0 auto 0.75rem auto; display:block; border-radius:12px; border:1px solid var(--lsa-border-light);">
             <div style="font-family:monospace; font-weight:700; font-size:0.9rem; color:var(--lsa-secondary);">arushkhan2004-1@oksbi</div>
           </div>
 
@@ -376,7 +376,7 @@
               </label>
               <input type="text" id="comm-utr-input" class="form-control" placeholder="e.g. 423456789012" maxlength="18" required style="font-family:monospace; font-weight:700; font-size:1.05rem; letter-spacing:1px;">
               <small style="color:var(--lsa-text-muted); display:block; margin-top:0.35rem; font-size:0.75rem;">
-                Found in your Google Pay / PhonePe / Paytm payment details screen after completing ₹3.00 payment.
+                Found in your Google Pay / PhonePe / Paytm payment details screen after completing ₹23.00 payment.
               </small>
             </div>
 
@@ -650,7 +650,7 @@
 
           if (d.needsPayment) {
             const isPhysical = d.wants_physical_card === 1 || d.wants_physical_card === true || d.wants_physical_card === '1';
-            const feeStr = isPhysical ? '150.00' : '3.00';
+            const feeStr = isPhysical ? '150.00' : '23.00';
             document.getElementById('comm-pay-reserved-id').textContent = d.membership_id;
             document.getElementById('comm-pay-fee-amount').textContent = `₹${feeStr} INR`;
             document.getElementById('comm-pay-fee-desc').textContent = `Please complete the ₹${feeStr} registration payment via UPI QR code below to submit your Central Committee Pass for Admin verification.`;

@@ -251,17 +251,29 @@
             </div>
 
             <!-- FEE SUMMARY HIGHLIGHT -->
-            <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px dashed var(--lsa-border); display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <div style="font-weight:700; color:var(--lsa-primary); font-size:1rem;">Annual LSA Membership Registration</div>
-                <div style="font-size:0.8rem; color:var(--lsa-success); font-weight:600; display:flex; align-items:center; gap:0.3rem;" id="rev-fee-type">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  Includes Digital Membership Card & Verification Pass
+            <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px dashed var(--lsa-border);">
+              <div style="display:flex; flex-direction:column; gap:0.4rem; margin-bottom:1rem; background:white; padding:0.85rem 1rem; border-radius:var(--lsa-radius-md); border:1px solid var(--lsa-border-light);">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; color:var(--lsa-text-secondary);">
+                  <span>Digital ID Card Fee</span>
+                  <span style="font-weight:700; color:var(--lsa-text-main);">₹3.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; color:var(--lsa-text-secondary);">
+                  <span>Yearly Fee</span>
+                  <span style="font-weight:700; color:var(--lsa-text-main);">₹20.00</span>
                 </div>
               </div>
-              <div style="text-align:right;">
-                <div style="font-size:1.6rem; font-weight:800; color:var(--lsa-primary);" id="rev-fee-amount">₹3.00</div>
-                <div style="font-size:0.75rem; color:var(--lsa-text-muted);">INR / Year</div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-weight:700; color:var(--lsa-primary); font-size:1rem;">Total Payable Amount</div>
+                  <div style="font-size:0.8rem; color:var(--lsa-success); font-weight:600; display:flex; align-items:center; gap:0.3rem;" id="rev-fee-type">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    Includes Digital Membership Card & Yearly Membership
+                  </div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:1.6rem; font-weight:800; color:var(--lsa-primary);" id="rev-fee-amount">₹23.00</div>
+                  <div style="font-size:0.75rem; color:var(--lsa-text-muted);">INR / Year</div>
+                </div>
               </div>
             </div>
 
@@ -273,7 +285,7 @@
               ← Edit Information
             </button>
             <button type="button" class="btn btn-primary btn-lg" id="btn-proceed-payment" style="font-weight:700;">
-              Proceed to Payment (₹3.00) →
+              Proceed to Payment (₹23.00) →
             </button>
           </div>
         </div>
@@ -291,8 +303,8 @@
               256-Bit SSL Encrypted Gateway
             </div>
             <div style="font-size:0.85rem; color:var(--lsa-secondary); font-weight:700; text-transform:uppercase; margin-bottom:0.4rem;">Lakshadweep Students Association</div>
-            <div style="font-size:2rem; font-weight:800; color:var(--lsa-primary); margin-bottom:0.2rem;" id="step3-fee-amount">₹3.00</div>
-            <div style="font-size:0.85rem; color:var(--lsa-text-muted);">Annual Membership Fee</div>
+            <div style="font-size:2rem; font-weight:800; color:var(--lsa-primary); margin-bottom:0.2rem;" id="step3-fee-amount">₹23.00</div>
+            <div style="font-size:0.85rem; color:var(--lsa-text-muted);">Total Fee (₹3 Card Fee + ₹20 Yearly Fee)</div>
           </div>
 
           <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
@@ -329,11 +341,11 @@
 
       <!-- UPI QR Code & VPA Container -->
       <div style="background:var(--lsa-light-bg); padding:1.25rem; border-radius:var(--lsa-radius-lg); border:1.5px solid var(--lsa-border-light); margin-bottom:1.25rem;">
-        <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;" id="modal-fee-header-text">Scan QR to Pay ₹3.00 Fee</div>
+        <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;" id="modal-fee-header-text">Scan QR to Pay ₹23.00 Fee</div>
         
         <!-- Scannable UPI QR Code -->
         <div style="background:white; padding:0.75rem; border-radius:12px; display:inline-block; border:1px solid var(--lsa-border-light); box-shadow:var(--lsa-shadow-sm); margin-bottom:0.75rem;">
-          <img id="upi-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3Darushkhan2004-1%40oksbi%26pn%3DLakshadweep%2520Students%2520Association%26am%3D3.00%26cu%3DINR" alt="UPI QR Code" style="width:180px; height:180px; display:block;">
+          <img id="upi-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3Darushkhan2004-1%40oksbi%26pn%3DLakshadweep%2520Students%2520Association%26am%3D23.00%26cu%3DINR" alt="UPI QR Code" style="width:180px; height:180px; display:block;">
         </div>
 
         <!-- UPI ID Copy Bar -->
@@ -353,11 +365,11 @@
       <div style="margin-bottom:1.25rem;">
         <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; margin-bottom:0.5rem; text-align:left;">Pay directly via UPI App:</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
-          <a id="btn-upi-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=3.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#1E40AF;">
+          <a id="btn-upi-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=23.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#1E40AF;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
             Google Pay / PhonePe
           </a>
-          <a id="btn-bhim-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=3.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#047857;">
+          <a id="btn-bhim-app-link" href="upi://pay?pa=arushkhan2004-1@oksbi&pn=Lakshadweep%20Students%20Association&am=23.00&cu=INR" class="btn btn-secondary btn-sm" style="font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:#047857;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
             Paytm / BHIM UPI
           </a>
@@ -367,7 +379,7 @@
       <!-- Order Summary line -->
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--lsa-text-muted); margin-bottom:1rem; border-top:1px solid var(--lsa-border-light); padding-top:0.75rem;">
         <span>Order ID: <strong style="font-family:monospace;" id="modal-order-id">order_demo_123</strong></span>
-        <span>Fee: <strong style="color:var(--lsa-primary);" id="modal-summary-fee-text">₹3.00 INR</strong></span>
+        <span>Fee: <strong style="color:var(--lsa-primary);" id="modal-summary-fee-text">₹23.00 INR</strong></span>
       </div>
 
       <!-- 12-DIGIT UTR TRANSACTION INPUT -->
@@ -377,7 +389,7 @@
         </label>
         <input type="text" id="utr-number-input" class="form-control" placeholder="e.g. 423456789012" maxlength="18" required style="font-family:monospace; font-weight:700; letter-spacing:1px; font-size:1.05rem;">
         <small style="color:var(--lsa-text-muted); display:block; margin-top:0.35rem; font-size:0.75rem;">
-          Found in your Google Pay / PhonePe / Paytm / BHIM payment receipt screen after making ₹3.00 payment.
+          Found in your Google Pay / PhonePe / Paytm / BHIM payment receipt screen after making ₹23.00 payment.
         </small>
       </div>
 

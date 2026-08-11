@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS payments (
   member_id INT NOT NULL,
   order_id VARCHAR(255) NOT NULL,
   payment_id VARCHAR(255) DEFAULT NULL,
-  amount DECIMAL(10, 2) NOT NULL DEFAULT 3.00,
+  amount DECIMAL(10, 2) NOT NULL DEFAULT 23.00,
   currency VARCHAR(10) NOT NULL DEFAULT 'INR',
   status ENUM('PENDING', 'PAID', 'FAILED') DEFAULT 'PENDING',
   payment_method VARCHAR(50) DEFAULT 'razorpay',

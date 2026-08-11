@@ -49,7 +49,7 @@ async function register(req, res) {
       memberId = insertResult.insertId;
     }
 
-    const calculatedAmount = wantsPhysicalCard === 1 ? 150.00 : 3.00;
+    const calculatedAmount = wantsPhysicalCard === 1 ? 150.00 : 23.00;
 
     return res.status(201).json({
       success: true,

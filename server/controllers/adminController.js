@@ -295,7 +295,7 @@ async function getPayments(req, res) {
         m.id as member_id,
         COALESCE(p.order_id, 'ORDER_PENDING') as order_id,
         p.payment_id,
-        COALESCE(p.amount, CASE WHEN m.wants_physical_card = 1 THEN 150.00 ELSE 3.00 END) as amount,
+        COALESCE(p.amount, CASE WHEN m.wants_physical_card = 1 THEN 150.00 ELSE 23.00 END) as amount,
         COALESCE(p.currency, 'INR') as currency,
         COALESCE(p.status, m.payment_status) as status,
         COALESCE(p.payment_method, 'upi') as payment_method,
@@ -378,7 +378,7 @@ async function approvePayment(req, res) {
         [targetMemberId, targetPaymentId || 0]
       );
     } else {
-      const amt = (member.wants_physical_card === 1 || member.wants_physical_card === true) ? 150.00 : 3.00;
+      const amt = (member.wants_physical_card === 1 || member.wants_physical_card === true) ? 150.00 : 23.00;
       await db.query(
         `INSERT INTO payments (member_id, order_id, payment_id, amount, currency, status, payment_method, paid_at)
          VALUES (?, ?, ?, ?, 'INR', 'PAID', 'admin_approved', CURRENT_TIMESTAMP)`,
