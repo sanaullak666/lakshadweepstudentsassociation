@@ -422,16 +422,6 @@ async function rejectPayment(req, res) {
   }
 }
 
-    return res.json({
-      success: true,
-      message: 'Payment status marked as rejected/failed.'
-    });
-  } catch (error) {
-    console.error('[Reject Payment Error]', error);
-    return res.status(500).json({ success: false, message: 'Failed to reject payment.' });
-  }
-}
-
 /**
  * Export Members to CSV
  */
