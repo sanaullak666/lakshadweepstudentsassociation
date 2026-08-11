@@ -17,7 +17,7 @@ async function createOrder(req, res) {
     }
 
     const memberResult = await db.query(
-      `SELECT id, full_name, email, contact_number, payment_status FROM members WHERE id = ?`,
+      `SELECT id, full_name, email, contact_number, payment_status, wants_physical_card FROM members WHERE id = ?`,
       [memberId]
     );
 
@@ -37,8 +37,10 @@ async function createOrder(req, res) {
       });
     }
 
-    // Always exact ₹3.00 = 300 paise
-    const amountPaise = 300;
+    // Dynamic fee: ₹150.00 for Physical ID Card, ₹3.00 for Digital ID Card
+    const wantsPhysical = member.wants_physical_card === 1 || member.wants_physical_card === true || member.wants_physical_card === '1';
+    const amountRupees = wantsPhysical ? 150.00 : 3.00;
+    const amountPaise = wantsPhysical ? 15000 : 300;
     const receiptId = `receipt_lsa_${memberId}_${Date.now()}`;
 
     // Create Razorpay Order
@@ -47,8 +49,8 @@ async function createOrder(req, res) {
     // Save payment record in DB
     await db.query(
       `INSERT INTO payments (member_id, order_id, amount, currency, status, payment_method)
-       VALUES (?, ?, 3.00, 'INR', 'PENDING', 'razorpay')`,
-      [memberId, razorpayOrder.id]
+       VALUES (?, ?, ?, 'INR', 'PENDING', 'razorpay')`,
+      [memberId, razorpayOrder.id, amountRupees]
     );
 
     return res.json({

@@ -120,6 +120,10 @@ async function createMySQLTables() {
   try {
     await pool.query(`ALTER TABLE members ADD COLUMN permanent_address TEXT DEFAULT NULL`);
   } catch (e) {}
+
+  try {
+    await pool.query(`ALTER TABLE members ADD COLUMN wants_physical_card TINYINT(1) DEFAULT 0`);
+  } catch (e) {}
 }
 
 function initSQLite() {
@@ -196,6 +200,7 @@ function createSQLiteTables() {
       sqliteDb.run(`ALTER TABLE members ADD COLUMN present_address TEXT DEFAULT NULL`, (err) => {});
       sqliteDb.run(`ALTER TABLE members ADD COLUMN permanent_address TEXT DEFAULT NULL`, (err) => {});
       sqliteDb.run(`ALTER TABLE members ADD COLUMN designation TEXT DEFAULT 'Member'`, (err) => {});
+      sqliteDb.run(`ALTER TABLE members ADD COLUMN wants_physical_card INTEGER DEFAULT 0`, (err) => {});
 
       sqliteDb.run(`
         CREATE TABLE IF NOT EXISTS payments (

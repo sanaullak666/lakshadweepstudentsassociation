@@ -5,8 +5,10 @@ const db = require('../config/db');
  */
 async function register(req, res) {
   try {
-    const { full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address } = req.sanitizedBody || req.body;
-    const designation = ((req.sanitizedBody || req.body).designation || 'Member').trim() || 'Member';
+    const body = req.sanitizedBody || req.body;
+    const { full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address } = body;
+    const designation = (body.designation || 'Member').trim() || 'Member';
+    const wantsPhysicalCard = (body.wants_physical_card === true || body.wants_physical_card === 1 || body.wants_physical_card === '1' || body.wants_physical_card === 'true') ? 1 : 0;
 
     // Check for existing PAID / ACTIVE membership with same email or phone
     const existingCheck = await db.query(
@@ -34,18 +36,20 @@ async function register(req, res) {
       memberId = pendingCheck.rows[0].id;
       // Update existing pending record
       await db.query(
-        `UPDATE members SET full_name = ?, gender = ?, island = ?, blood_group = ?, present_address = ?, permanent_address = ?, designation = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-        [full_name, gender, island, blood_group, present_address || null, permanent_address || null, designation, memberId]
+        `UPDATE members SET full_name = ?, gender = ?, island = ?, blood_group = ?, present_address = ?, permanent_address = ?, designation = ?, wants_physical_card = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [full_name, gender, island, blood_group, present_address || null, permanent_address || null, designation, wantsPhysicalCard, memberId]
       );
     } else {
       // Insert new member record with PENDING status
       const insertResult = await db.query(
-        `INSERT INTO members (full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation, payment_status, registration_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', 'PENDING')`,
-        [full_name, gender, island, contact_number, email, blood_group, present_address || null, permanent_address || null, designation]
+        `INSERT INTO members (full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation, wants_physical_card, payment_status, registration_status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', 'PENDING')`,
+        [full_name, gender, island, contact_number, email, blood_group, present_address || null, permanent_address || null, designation, wantsPhysicalCard]
       );
       memberId = insertResult.insertId;
     }
+
+    const calculatedAmount = wantsPhysicalCard === 1 ? 150.00 : 3.00;
 
     return res.status(201).json({
       success: true,
@@ -61,7 +65,8 @@ async function register(req, res) {
         present_address,
         permanent_address,
         designation,
-        amount: 3.00,
+        wants_physical_card: wantsPhysicalCard,
+        amount: calculatedAmount,
         currency: 'INR'
       }
     });
@@ -81,7 +86,7 @@ async function getMemberById(req, res) {
   try {
     const { id } = req.params;
     const result = await db.query(
-      `SELECT id, membership_id, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation, payment_status, registration_status, created_at 
+      `SELECT id, membership_id, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation, wants_physical_card, payment_status, registration_status, created_at 
        FROM members WHERE id = ?`,
       [id]
     );

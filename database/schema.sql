@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS members (
   present_address TEXT DEFAULT NULL,
   permanent_address TEXT DEFAULT NULL,
   designation VARCHAR(255) DEFAULT 'Member',
+  wants_physical_card TINYINT(1) DEFAULT 0,
   payment_status ENUM('PENDING', 'PAID', 'FAILED') DEFAULT 'PENDING',
   registration_status ENUM('PENDING', 'ACTIVE', 'INACTIVE') DEFAULT 'PENDING',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

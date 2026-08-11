@@ -191,6 +191,11 @@ async function loadAdminMembers() {
         ? `<span class="badge" style="background:var(--lsa-light-blue); color:var(--lsa-primary); font-weight:700; border:1px solid var(--lsa-border-light); display:inline-flex; align-items:center; gap:0.25rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path></svg>${escapeHtml(m.designation || 'Executive')}</span>`
         : `<span style="font-weight:600; color:var(--lsa-primary);">${escapeHtml(m.designation || 'Member')}</span>`;
 
+      const isPhysical = m.wants_physical_card === 1 || m.wants_physical_card === true || m.wants_physical_card === '1';
+      const cardTypeBadge = isPhysical
+        ? `<span class="badge" style="background:#FEF3C7; color:#92400E; font-weight:700; border:1px solid #FCD34D;">Physical (₹150)</span>`
+        : `<span class="badge" style="background:#E0F2FE; color:#075985; font-weight:600;">Digital (₹3)</span>`;
+
       return `
         <tr>
           <td><strong style="font-family:monospace; color:var(--primary-deep);">${escapeHtml(m.membership_id || 'PENDING')}</strong></td>
@@ -201,6 +206,7 @@ async function loadAdminMembers() {
           <td>${escapeHtml(m.email)}</td>
           <td><span class="badge" style="background:#F1F5F9; color:var(--dark-navy);">${escapeHtml(m.blood_group)}</span></td>
           <td>${desigBadge}</td>
+          <td>${cardTypeBadge}</td>
           <td>
             <span class="badge ${m.payment_status === 'PAID' ? 'badge-paid' : 'badge-pending'}">
               ${m.payment_status}

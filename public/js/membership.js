@@ -116,6 +116,8 @@ function initRegistrationForm() {
     submitBtn.innerHTML = 'Saving Details...';
 
     try {
+      const wantsPhysicalCard = document.getElementById('wants_physical_card')?.checked || false;
+
       const payload = {
         full_name: fullName,
         gender,
@@ -125,7 +127,8 @@ function initRegistrationForm() {
         blood_group: bloodGroup,
         designation,
         present_address: presentAddress,
-        permanent_address: permanentAddress
+        permanent_address: permanentAddress,
+        wants_physical_card: wantsPhysicalCard
       };
 
       const res = await apiFetch('/api/membership/register', {
@@ -163,6 +166,23 @@ function populateReviewStep(data) {
   if (document.getElementById('rev-permanent-address')) {
     document.getElementById('rev-permanent-address').textContent = data.permanent_address || '-';
   }
+
+  // Dynamic fee calculations based on Physical ID Card selection
+  const isPhysical = data.wants_physical_card === 1 || data.wants_physical_card === true || data.amount === 150;
+  const amountStr = isPhysical ? '150.00' : '3.00';
+  const cardDesc = isPhysical 
+    ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Includes Printed Physical ID Card & Delivery + Digital Card`
+    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Includes Digital Membership Card & Verification Pass`;
+
+  const feeAmountEl = document.getElementById('rev-fee-amount');
+  const feeTypeEl = document.getElementById('rev-fee-type');
+  const btnProceedEl = document.getElementById('btn-proceed-payment');
+  const step3FeeEl = document.getElementById('step3-fee-amount');
+
+  if (feeAmountEl) feeAmountEl.textContent = `₹${amountStr}`;
+  if (feeTypeEl) feeTypeEl.innerHTML = cardDesc;
+  if (btnProceedEl) btnProceedEl.textContent = `Proceed to Payment (₹${amountStr}) →`;
+  if (step3FeeEl) step3FeeEl.textContent = `₹${amountStr}`;
 }
 
 // Step 2: Review Page Action Listeners
@@ -247,12 +267,16 @@ function copyUpiIdToClipboard() {
 
 function triggerPaymentGateway(orderData) {
   const upiId = orderData.upiId || 'arushkhan2004-1@oksbi';
+  const rawAmount = orderData.amount || 300;
+  const amountStr = (typeof rawAmount === 'number' && rawAmount > 500) 
+    ? (rawAmount / 100).toFixed(2) 
+    : (rawAmount === 150 ? '150.00' : (rawAmount === 3 ? '3.00' : (rawAmount / 100).toFixed(2)));
 
   // If real Razorpay key is configured and Razorpay SDK loaded
   if (typeof Razorpay !== 'undefined' && orderData.keyId && !orderData.isMock && !orderData.keyId.includes('sample')) {
     const options = {
       key: orderData.keyId,
-      amount: orderData.amount, // 300 paise
+      amount: orderData.amount, // in paise
       currency: orderData.currency,
       name: 'Lakshadweep Students Association',
       description: 'LSA Membership Registration Fee',
@@ -305,15 +329,21 @@ function triggerPaymentGateway(orderData) {
     const upiDisplayEl = document.getElementById('upi-id-display');
     if (upiDisplayEl) upiDisplayEl.textContent = upiId;
 
+    const modalHeaderEl = document.getElementById('modal-fee-header-text');
+    if (modalHeaderEl) modalHeaderEl.textContent = `Scan QR to Pay ₹${amountStr} Fee`;
+
+    const modalSummaryEl = document.getElementById('modal-summary-fee-text');
+    if (modalSummaryEl) modalSummaryEl.textContent = `₹${amountStr} INR`;
+
     const qrImgEl = document.getElementById('upi-qr-image');
     if (qrImgEl) {
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Lakshadweep Students Association')}&am=3.00&cu=INR`;
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Lakshadweep Students Association')}&am=${amountStr}&cu=INR`;
       qrImgEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
     }
 
     const upiLinkEl = document.getElementById('btn-upi-app-link');
     const bhimLinkEl = document.getElementById('btn-bhim-app-link');
-    const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Lakshadweep Students Association')}&am=3.00&cu=INR`;
+    const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('Lakshadweep Students Association')}&am=${amountStr}&cu=INR`;
     if (upiLinkEl) upiLinkEl.href = upiDeepLink;
     if (bhimLinkEl) bhimLinkEl.href = upiDeepLink;
 

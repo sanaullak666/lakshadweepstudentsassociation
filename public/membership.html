@@ -183,6 +183,21 @@
               <span class="form-error" id="err-permanent_address"></span>
             </div>
 
+            <!-- PHYSICAL ID CARD CHECKBOX OPTION -->
+            <div class="form-group" style="grid-column:1/-1; margin-top:0.5rem;">
+              <label style="display:flex; align-items:flex-start; gap:0.85rem; background:var(--lsa-light-bg); border:1.5px solid var(--lsa-border-light); padding:1rem 1.25rem; border-radius:var(--lsa-radius-lg); cursor:pointer;">
+                <input type="checkbox" id="wants_physical_card" style="accent-color:var(--lsa-accent); width:20px; height:20px; margin-top:2px;">
+                <div>
+                  <strong style="color:var(--lsa-primary); font-size:1rem; display:block; margin-bottom:0.25rem;">
+                    Request Printed Physical Membership Card (+ ₹147)
+                  </strong>
+                  <span style="font-size:0.85rem; color:var(--lsa-text-secondary); line-height:1.4; display:block;">
+                    Check this box if you want a printed physical plastic ID Card issued & delivered. Total payment will be <strong>₹150.00</strong>. Uncheck to receive instant <strong>Digital ID Card only for ₹3.00</strong>.
+                  </span>
+                </div>
+              </label>
+            </div>
+
           </div>
 
           <div style="margin-top:2.5rem; text-align:right;">
@@ -253,13 +268,13 @@
             <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px dashed var(--lsa-border); display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <div style="font-weight:700; color:var(--lsa-primary); font-size:1rem;">Annual LSA Membership Registration</div>
-                <div style="font-size:0.8rem; color:var(--lsa-success); font-weight:600; display:flex; align-items:center; gap:0.3rem;">
+                <div style="font-size:0.8rem; color:var(--lsa-success); font-weight:600; display:flex; align-items:center; gap:0.3rem;" id="rev-fee-type">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   Includes Digital Membership Card & Verification Pass
                 </div>
               </div>
               <div style="text-align:right;">
-                <div style="font-size:1.6rem; font-weight:800; color:var(--lsa-primary);">₹3.00</div>
+                <div style="font-size:1.6rem; font-weight:800; color:var(--lsa-primary);" id="rev-fee-amount">₹3.00</div>
                 <div style="font-size:0.75rem; color:var(--lsa-text-muted);">INR / Year</div>
               </div>
             </div>
@@ -290,7 +305,7 @@
               256-Bit SSL Encrypted Gateway
             </div>
             <div style="font-size:0.85rem; color:var(--lsa-secondary); font-weight:700; text-transform:uppercase; margin-bottom:0.4rem;">Lakshadweep Students Association</div>
-            <div style="font-size:2rem; font-weight:800; color:var(--lsa-primary); margin-bottom:0.2rem;">₹3.00</div>
+            <div style="font-size:2rem; font-weight:800; color:var(--lsa-primary); margin-bottom:0.2rem;" id="step3-fee-amount">₹3.00</div>
             <div style="font-size:0.85rem; color:var(--lsa-text-muted);">Annual Membership Fee</div>
           </div>
 
@@ -328,7 +343,7 @@
 
       <!-- UPI QR Code & VPA Container -->
       <div style="background:var(--lsa-light-bg); padding:1.25rem; border-radius:var(--lsa-radius-lg); border:1.5px solid var(--lsa-border-light); margin-bottom:1.25rem;">
-        <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Scan QR to Pay ₹3.00 Fee</div>
+        <div style="font-size:0.75rem; color:var(--lsa-text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;" id="modal-fee-header-text">Scan QR to Pay ₹3.00 Fee</div>
         
         <!-- Scannable UPI QR Code -->
         <div style="background:white; padding:0.75rem; border-radius:12px; display:inline-block; border:1px solid var(--lsa-border-light); box-shadow:var(--lsa-shadow-sm); margin-bottom:0.75rem;">
@@ -366,7 +381,7 @@
       <!-- Order Summary line -->
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--lsa-text-muted); margin-bottom:1rem; border-top:1px solid var(--lsa-border-light); padding-top:0.75rem;">
         <span>Order ID: <strong style="font-family:monospace;" id="modal-order-id">order_demo_123</strong></span>
-        <span>Fee: <strong style="color:var(--lsa-primary);">₹3.00 INR</strong></span>
+        <span>Fee: <strong style="color:var(--lsa-primary);" id="modal-summary-fee-text">₹3.00 INR</strong></span>
       </div>
 
       <!-- 12-DIGIT UTR TRANSACTION INPUT -->
