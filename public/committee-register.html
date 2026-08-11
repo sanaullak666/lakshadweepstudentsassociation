@@ -624,7 +624,7 @@
       formData.append('gender', document.getElementById('comm-gender').value.toUpperCase());
       formData.append('island', document.getElementById('comm-island').value.toUpperCase());
       formData.append('contact_number', document.getElementById('comm-contact').value.trim());
-      formData.append('email', document.getElementById('comm-email').value.trim().toUpperCase());
+      formData.append('email', document.getElementById('comm-email').value.trim().toLowerCase());
       formData.append('blood_group', document.getElementById('comm-blood').value.toUpperCase());
       formData.append('present_address', document.getElementById('comm-present-address').value.trim().toUpperCase());
       formData.append('permanent_address', document.getElementById('comm-permanent-address').value.trim().toUpperCase());

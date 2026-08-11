@@ -528,12 +528,16 @@ a:hover {
 }
 
 .login-page-body .form-control,
-#admin-login-form .form-control {
+#admin-login-form .form-control,
+#registration-form input[type="email"],
+#comm-reg-form input[type="email"] {
   text-transform: none !important;
 }
 
 .login-page-body .form-control::placeholder,
-#admin-login-form .form-control::placeholder {
+#admin-login-form .form-control::placeholder,
+#registration-form input[type="email"]::placeholder,
+#comm-reg-form input[type="email"]::placeholder {
   text-transform: none !important;
 }
 

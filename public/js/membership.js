@@ -51,7 +51,7 @@ function initRegistrationForm() {
     const gender = document.getElementById('gender').value.toUpperCase();
     const island = document.getElementById('island').value.toUpperCase();
     const contactNumber = document.getElementById('contact_number').value.trim();
-    const email = document.getElementById('email').value.trim().toUpperCase();
+    const email = document.getElementById('email').value.trim().toLowerCase();
     const bloodGroup = document.getElementById('blood_group').value.toUpperCase();
     const designation = ((document.getElementById('designation')?.value || 'MEMBER').trim() || 'MEMBER').toUpperCase();
     const presentAddress = (document.getElementById('present_address')?.value || '').trim().toUpperCase();
@@ -155,7 +155,7 @@ function populateReviewStep(data) {
   document.getElementById('rev-gender').textContent = (data.gender || '').toUpperCase();
   document.getElementById('rev-island').textContent = (data.island || '').toUpperCase();
   document.getElementById('rev-contact').textContent = data.contact_number;
-  document.getElementById('rev-email').textContent = (data.email || '').toUpperCase();
+  document.getElementById('rev-email').textContent = (data.email || '').toLowerCase();
   document.getElementById('rev-blood').textContent = (data.blood_group || '').toUpperCase();
   if (document.getElementById('rev-designation')) {
     document.getElementById('rev-designation').textContent = (data.designation || 'MEMBER').toUpperCase();

@@ -21,7 +21,7 @@ function initCapsLockInputs() {
     const tag = target.tagName;
     const type = (target.type || '').toLowerCase();
     
-    if ((tag === 'INPUT' && type !== 'file' && type !== 'password' && type !== 'hidden') || tag === 'TEXTAREA') {
+    if ((tag === 'INPUT' && type !== 'file' && type !== 'password' && type !== 'hidden' && type !== 'email') || tag === 'TEXTAREA') {
       const start = target.selectionStart;
       const end = target.selectionEnd;
       target.value = target.value.toUpperCase();
