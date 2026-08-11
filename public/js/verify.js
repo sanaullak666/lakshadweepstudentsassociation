@@ -126,10 +126,10 @@ function initVerification() {
             </div>
 
             <!-- ACTION FOOTER -->
-            <div class="card-action-footer" style="background:var(--lsa-light-bg); padding:1rem 1.5rem; border-top:1px solid var(--lsa-border-light); display:flex; justify-content:flex-end; gap:0.75rem;">
-              <button onclick="downloadCardPdf('${escapeHtml(member.membership_id)}')" class="btn btn-primary btn-sm" id="btn-download-pdf" style="font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:0.4rem;">
+            <div style="background:var(--lsa-light-bg); padding:1rem 1.5rem; border-top:1px solid var(--lsa-border-light); display:flex; justify-content:flex-end; gap:0.75rem;">
+              <button onclick="window.print()" class="btn btn-primary btn-sm" style="font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:0.4rem;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download Card (PDF)
+                Print / Save Pass (PDF)
               </button>
             </div>
           </div>
@@ -152,54 +152,4 @@ function initVerification() {
       btn.innerHTML = 'Verify Membership';
     }
   });
-}
-
-function downloadCardPdf(membershipId) {
-  const cardElement = document.getElementById('printable-membership-card');
-  if (!cardElement) return;
-
-  const btn = document.getElementById('btn-download-pdf');
-  const actionFooter = cardElement.querySelector('.card-action-footer');
-
-  if (actionFooter) actionFooter.style.display = 'none';
-  if (btn) {
-    btn.disabled = true;
-    btn.innerHTML = 'Generating PDF...';
-  }
-
-  const opt = {
-    margin: [0.2, 0.2, 0.2, 0.2],
-    filename: `LSA_Membership_${membershipId || 'Card'}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2.5, useCORS: true, logging: false, backgroundColor: '#ffffff' },
-    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-  };
-
-  if (typeof html2pdf !== 'undefined') {
-    html2pdf().set(opt).from(cardElement).save().then(() => {
-      if (actionFooter) actionFooter.style.display = 'flex';
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Card (PDF)`;
-      }
-      if (typeof showToast === 'function') {
-        showToast('Card PDF downloaded successfully!', 'success');
-      }
-    }).catch(err => {
-      console.error('PDF Generation Error:', err);
-      if (actionFooter) actionFooter.style.display = 'flex';
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Card (PDF)`;
-      }
-      window.print();
-    });
-  } else {
-    if (actionFooter) actionFooter.style.display = 'flex';
-    if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = `Download Card (PDF)`;
-    }
-    window.print();
-  }
 }
