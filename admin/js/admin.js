@@ -174,6 +174,14 @@ async function loadAdminMembers() {
       return;
     }
 
+    res.data.sort((a, b) => {
+      if (!a.membership_id && !b.membership_id) return a.id - b.id;
+      if (!a.membership_id) return 1;
+      if (!b.membership_id) return -1;
+      const seqA = parseInt(a.membership_id.split('-')[2] || '0', 10);
+      const seqB = parseInt(b.membership_id.split('-')[2] || '0', 10);
+      return seqA !== seqB ? seqA - seqB : a.membership_id.localeCompare(b.membership_id, undefined, { numeric: true });
+    });
     window.adminMemberList = res.data;
 
     tableBody.innerHTML = res.data.map(m => {

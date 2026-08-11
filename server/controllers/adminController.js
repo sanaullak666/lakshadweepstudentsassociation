@@ -233,7 +233,7 @@ async function getMembers(req, res) {
       params.push(payment_status.trim());
     }
 
-    sql += ` ORDER BY id DESC`;
+    sql += ` ORDER BY CASE WHEN membership_id IS NULL OR membership_id = '' THEN 1 ELSE 0 END, membership_id ASC, id ASC`;
 
     const result = await db.query(sql, params);
 

@@ -1344,16 +1344,39 @@ select.form-control {
    ============================================ */
 .table-responsive, .admin-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--lsa-white);
   border-radius: var(--lsa-radius-lg);
   border: 1px solid var(--lsa-border-light);
   box-shadow: var(--lsa-shadow-sm);
+  scrollbar-width: thin;
+  scrollbar-color: var(--lsa-primary) var(--lsa-light-bg);
+}
+
+.table-responsive::-webkit-scrollbar, .admin-table-wrap::-webkit-scrollbar {
+  height: 9px;
+}
+
+.table-responsive::-webkit-scrollbar-track, .admin-table-wrap::-webkit-scrollbar-track {
+  background: var(--lsa-light-bg);
+  border-radius: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb, .admin-table-wrap::-webkit-scrollbar-thumb {
+  background: var(--lsa-primary);
+  border-radius: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover, .admin-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: var(--lsa-primary-deep);
 }
 
 .table, .admin-table {
   width: 100%;
+  min-width: 1150px;
   border-collapse: collapse;
   font-size: 0.875rem;
+  white-space: nowrap;
 }
 
 .table th, .admin-table th {
