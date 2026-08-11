@@ -172,7 +172,7 @@ function populateReviewStep(data) {
   const amountStr = isPhysical ? '150.00' : '23.00';
   const cardDesc = isPhysical 
     ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Includes Printed Physical ID Card & Delivery + Digital Card`
-    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Includes Digital Card & Yearly Membership`;
+    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Includes Membership Fee (₹3) & Yearly Fee (₹20)`;
 
   const feeAmountEl = document.getElementById('rev-fee-amount');
   const feeTypeEl = document.getElementById('rev-fee-type');
