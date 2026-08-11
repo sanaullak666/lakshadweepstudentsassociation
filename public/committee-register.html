@@ -227,7 +227,8 @@
             <!-- FULL NAME -->
             <div class="form-group">
               <label for="comm-fullname" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Full Name (as per Official Records) <span class="req">*</span></label>
-              <input type="text" id="comm-fullname" class="form-control" placeholder="Enter your Name" required style="font-weight:600;">
+              <input type="text" id="comm-fullname" class="form-control" placeholder="Enter your Name" required minlength="2" maxlength="100" style="font-weight:600;">
+              <span class="form-error" id="err-comm-fullname"></span>
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
@@ -240,6 +241,7 @@
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
+                <span class="form-error" id="err-comm-gender"></span>
               </div>
 
               <!-- ISLAND -->
@@ -258,6 +260,7 @@
                   <option value="Kiltan">Kiltan</option>
                   <option value="Minicoy">Minicoy</option>
                 </select>
+                <span class="form-error" id="err-comm-island"></span>
               </div>
             </div>
 
@@ -265,7 +268,8 @@
               <!-- CONTACT -->
               <div class="form-group">
                 <label for="comm-contact" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Contact Number (WhatsApp) <span class="req">*</span></label>
-                <input type="tel" id="comm-contact" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required style="font-weight:600;">
+                <input type="tel" id="comm-contact" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" maxlength="10" required style="font-weight:600;">
+                <span class="form-error" id="err-comm-contact"></span>
               </div>
 
               <!-- BLOOD GROUP -->
@@ -282,19 +286,22 @@
                   <option value="AB+">AB+</option>
                   <option value="AB-">AB-</option>
                 </select>
+                <span class="form-error" id="err-comm-blood"></span>
               </div>
             </div>
 
             <!-- EMAIL -->
             <div class="form-group">
               <label for="comm-email" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Email Address <span class="req">*</span></label>
-              <input type="email" id="comm-email" class="form-control" placeholder="e.g. safwan@gmail.com" required style="font-weight:600;">
+              <input type="email" id="comm-email" class="form-control" placeholder="e.g. safwan@gmail.com" required maxlength="255" style="font-weight:600;">
+              <span class="form-error" id="err-comm-email"></span>
             </div>
 
             <!-- PRESENT ADDRESS -->
             <div class="form-group">
               <label for="comm-present-address" class="form-label" style="font-weight:700; color:var(--lsa-primary);">Present Address <span class="req">*</span></label>
-              <textarea id="comm-present-address" class="form-control" rows="2" placeholder="Current / Hostel / Official address" required style="font-weight:600; resize:vertical;"></textarea>
+              <textarea id="comm-present-address" class="form-control" rows="2" placeholder="Current / Hostel / Official address" required minlength="5" style="font-weight:600; resize:vertical;"></textarea>
+              <span class="form-error" id="err-comm-present-address"></span>
             </div>
 
             <!-- PERMANENT ADDRESS & CHECKBOX -->
@@ -306,7 +313,8 @@
                   Permanent address is same as present address
                 </label>
               </div>
-              <textarea id="comm-permanent-address" class="form-control" rows="2" placeholder="Native permanent address" required style="font-weight:600; resize:vertical;"></textarea>
+              <textarea id="comm-permanent-address" class="form-control" rows="2" placeholder="Native permanent address" required minlength="5" style="font-weight:600; resize:vertical;"></textarea>
+              <span class="form-error" id="err-comm-permanent-address"></span>
             </div>
 
             <!-- PHOTO UPLOAD -->
@@ -319,7 +327,8 @@
                 </div>
                 <div style="flex:1;">
                   <input type="file" id="comm-photo-file" class="form-control" accept="image/jpeg,image/png,image/webp" required onchange="previewCommPhoto(event)" style="padding:0.4rem 0.6rem; font-size:0.85rem; height:auto;">
-                  <small style="color:var(--lsa-text-muted); display:block; margin-top:0.3rem;">Clear front face photo (Max 5MB)</small>
+                  <small style="color:var(--lsa-text-muted); display:block; margin-top:0.3rem;">Clear front face photo (Max 500KB)</small>
+                  <span class="form-error" id="err-comm-photo-file"></span>
                 </div>
               </div>
             </div>
@@ -594,12 +603,28 @@
       document.getElementById('error-desc').textContent = desc;
     }
 
+    function clearCommErrors() {
+      document.querySelectorAll('#comm-reg-form .form-error').forEach(el => el.textContent = '');
+      document.querySelectorAll('#comm-reg-form .form-control').forEach(el => el.classList.remove('is-invalid'));
+    }
+
+    function showCommFieldError(fieldId, message) {
+      const errEl = document.getElementById(`err-${fieldId}`);
+      if (errEl) errEl.textContent = message;
+      const inputEl = document.getElementById(fieldId);
+      if (inputEl) inputEl.classList.add('is-invalid');
+    }
+
     function previewCommPhoto(e) {
       const file = e.target.files[0];
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('Image file size cannot exceed 5MB.', 'error');
+      if (file.size > 500 * 1024) {
+        showToast('Image file size cannot exceed 500KB.', 'error');
         e.target.value = '';
+        const img = document.getElementById('comm-photo-preview');
+        const placeholder = document.getElementById('comm-photo-placeholder');
+        if (img) img.style.display = 'none';
+        if (placeholder) placeholder.style.display = 'flex';
         return;
       }
       const reader = new FileReader();
@@ -615,24 +640,97 @@
 
     async function handleCommitteeSubmit(e) {
       e.preventDefault();
+      clearCommErrors();
+
+      const fullName = document.getElementById('comm-fullname').value.trim().toUpperCase();
+      const gender = document.getElementById('comm-gender').value.toUpperCase();
+      const island = document.getElementById('comm-island').value.toUpperCase();
+      const contactNumber = document.getElementById('comm-contact').value.trim();
+      const bloodGroup = document.getElementById('comm-blood').value.toUpperCase();
+      const email = document.getElementById('comm-email').value.trim().toLowerCase();
+      const presentAddress = document.getElementById('comm-present-address').value.trim().toUpperCase();
+      const permanentAddress = document.getElementById('comm-permanent-address').value.trim().toUpperCase();
+      const fileInput = document.getElementById('comm-photo-file');
+
+      let hasError = false;
+
+      // Validate Full Name
+      if (!fullName || fullName.length < 2) {
+        showCommFieldError('comm-fullname', 'Full name must be at least 2 characters.');
+        hasError = true;
+      }
+
+      // Validate Gender
+      if (!gender) {
+        showCommFieldError('comm-gender', 'Please select gender.');
+        hasError = true;
+      }
+
+      // Validate Island
+      if (!island) {
+        showCommFieldError('comm-island', 'Please select native island.');
+        hasError = true;
+      }
+
+      // Validate Contact Number
+      const cleanPhone = contactNumber.replace(/[\s\-\+]/g, '').replace(/^91/, '');
+      if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+        showCommFieldError('comm-contact', 'Please enter a valid 10-digit Indian mobile number.');
+        hasError = true;
+      }
+
+      // Validate Blood Group
+      if (!bloodGroup) {
+        showCommFieldError('comm-blood', 'Please select blood group.');
+        hasError = true;
+      }
+
+      // Validate Email
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showCommFieldError('comm-email', 'Please enter a valid email address.');
+        hasError = true;
+      }
+
+      // Validate Addresses
+      if (!presentAddress || presentAddress.length < 5) {
+        showCommFieldError('comm-present-address', 'Please enter a valid present address (at least 5 characters).');
+        hasError = true;
+      }
+      if (!permanentAddress || permanentAddress.length < 5) {
+        showCommFieldError('comm-permanent-address', 'Please enter a valid permanent address (at least 5 characters).');
+        hasError = true;
+      }
+
+      // Validate Photo File
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        if (fileInput.files[0].size > 500 * 1024) {
+          showCommFieldError('comm-photo-file', 'Photo file size cannot exceed 500KB.');
+          hasError = true;
+        }
+      }
+
+      if (hasError) {
+        showToast('Please fix the errors before proceeding.', 'error');
+        return;
+      }
+
       const btn = document.getElementById('btn-comm-submit');
       const formData = new FormData();
 
       formData.append('positionKey', document.getElementById('pos-key-input').value);
       formData.append('password', document.getElementById('pos-password-input').value);
-      formData.append('full_name', document.getElementById('comm-fullname').value.trim().toUpperCase());
-      formData.append('gender', document.getElementById('comm-gender').value.toUpperCase());
-      formData.append('island', document.getElementById('comm-island').value.toUpperCase());
-      formData.append('contact_number', document.getElementById('comm-contact').value.trim());
-      formData.append('email', document.getElementById('comm-email').value.trim().toLowerCase());
-      formData.append('blood_group', document.getElementById('comm-blood').value.toUpperCase());
-      formData.append('present_address', document.getElementById('comm-present-address').value.trim().toUpperCase());
-      formData.append('permanent_address', document.getElementById('comm-permanent-address').value.trim().toUpperCase());
+      formData.append('full_name', fullName);
+      formData.append('gender', gender);
+      formData.append('island', island);
+      formData.append('contact_number', cleanPhone);
+      formData.append('email', email);
+      formData.append('blood_group', bloodGroup);
+      formData.append('present_address', presentAddress);
+      formData.append('permanent_address', permanentAddress);
 
       const wantsPhysicalCard = document.getElementById('comm-wants-physical-card')?.checked || false;
       formData.append('wants_physical_card', wantsPhysicalCard ? '1' : '0');
 
-      const fileInput = document.getElementById('comm-photo-file');
       if (fileInput.files && fileInput.files[0]) {
         formData.append('photo', fileInput.files[0]);
       }

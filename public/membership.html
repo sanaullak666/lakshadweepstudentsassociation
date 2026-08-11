@@ -89,7 +89,7 @@
             <!-- Full Name (Full Width) -->
             <div class="form-group" style="grid-column:1/-1;">
               <label for="full_name" class="form-label">Full Name <span class="req">*</span></label>
-              <input type="text" id="full_name" class="form-control" placeholder="Enter your Name" required minlength="2" style="font-weight:600;">
+              <input type="text" id="full_name" class="form-control" placeholder="Enter your Name" required minlength="2" maxlength="100" style="font-weight:600;">
               <span class="form-error" id="err-full_name"></span>
             </div>
 
@@ -128,14 +128,14 @@
             <!-- Contact Number -->
             <div class="form-group">
               <label for="contact_number" class="form-label">Mobile Contact Number <span class="req">*</span></label>
-              <input type="tel" id="contact_number" class="form-control" placeholder="10-digit Indian Mobile" required pattern="[0-9]{10}" style="font-weight:600;">
+              <input type="tel" id="contact_number" class="form-control" placeholder="10-digit Indian Mobile" required pattern="[0-9]{10}" maxlength="10" style="font-weight:600;">
               <span class="form-error" id="err-contact_number"></span>
             </div>
 
             <!-- Email Address -->
             <div class="form-group">
               <label for="email" class="form-label">Email Address <span class="req">*</span></label>
-              <input type="email" id="email" class="form-control" placeholder="name@example.com" required style="font-weight:600;">
+              <input type="email" id="email" class="form-control" placeholder="name@example.com" required maxlength="255" style="font-weight:600;">
               <span class="form-error" id="err-email"></span>
             </div>
 
@@ -166,7 +166,7 @@
             <!-- Present Address (Full Width) -->
             <div class="form-group" style="grid-column:1/-1;">
               <label for="present_address" class="form-label">Present Address <span class="req">*</span></label>
-              <textarea id="present_address" class="form-control" rows="2" placeholder="Enter current / hostel / college address" required style="font-weight:600; resize:vertical;"></textarea>
+              <textarea id="present_address" class="form-control" rows="2" placeholder="Enter current / hostel / college address" required minlength="5" style="font-weight:600; resize:vertical;"></textarea>
               <span class="form-error" id="err-present_address"></span>
             </div>
 
@@ -179,7 +179,7 @@
                   Permanent address is same as present address
                 </label>
               </div>
-              <textarea id="permanent_address" class="form-control" rows="2" placeholder="Enter native permanent address" required style="font-weight:600; resize:vertical;"></textarea>
+              <textarea id="permanent_address" class="form-control" rows="2" placeholder="Enter native permanent address" required minlength="5" style="font-weight:600; resize:vertical;"></textarea>
               <span class="form-error" id="err-permanent_address"></span>
             </div>
 

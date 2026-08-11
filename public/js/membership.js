@@ -97,12 +97,12 @@ function initRegistrationForm() {
     }
 
     // Validate Addresses
-    if (!presentAddress) {
-      showFieldError('present_address', 'Please enter present address.');
+    if (!presentAddress || presentAddress.length < 5) {
+      showFieldError('present_address', 'Please enter a valid present address (at least 5 characters).');
       hasError = true;
     }
-    if (!permanentAddress) {
-      showFieldError('permanent_address', 'Please enter permanent address.');
+    if (!permanentAddress || permanentAddress.length < 5) {
+      showFieldError('permanent_address', 'Please enter a valid permanent address (at least 5 characters).');
       hasError = true;
     }
 
