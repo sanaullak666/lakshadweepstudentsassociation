@@ -254,7 +254,7 @@
             <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px dashed var(--lsa-border);">
               <div style="display:flex; flex-direction:column; gap:0.4rem; margin-bottom:1rem; background:white; padding:0.85rem 1rem; border-radius:var(--lsa-radius-md); border:1px solid var(--lsa-border-light);">
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; color:var(--lsa-text-secondary);">
-                  <span>Digital ID Card Fee</span>
+                  <span>Membership Fee</span>
                   <span style="font-weight:700; color:var(--lsa-text-main);">₹3.00</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; color:var(--lsa-text-secondary);">
@@ -267,7 +267,7 @@
                   <div style="font-weight:700; color:var(--lsa-primary); font-size:1rem;">Total Payable Amount</div>
                   <div style="font-size:0.8rem; color:var(--lsa-success); font-weight:600; display:flex; align-items:center; gap:0.3rem;" id="rev-fee-type">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    Includes Digital Membership Card & Yearly Membership
+                    Includes Membership Fee (₹3) & Yearly Fee (₹20)
                   </div>
                 </div>
                 <div style="text-align:right;">
@@ -297,14 +297,17 @@
             <p style="color:var(--lsa-text-secondary); font-size:1rem;">Click below to launch the official LSA Payment Gateway.</p>
           </div>
 
-          <div style="background:var(--lsa-light-bg); border:1.5px solid var(--lsa-border); padding:2rem; border-radius:var(--lsa-radius-lg); max-width:440px; margin:0 auto 2.5rem; box-shadow:var(--lsa-shadow-sm);">
+          <div style="background:var(--lsa-light-bg); border:1.5px solid var(--lsa-border); padding:1.75rem 2rem; border-radius:var(--lsa-radius-lg); max-width:440px; margin:0 auto 2.5rem; box-shadow:var(--lsa-shadow-sm);">
             <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(5, 150, 105, 0.12); color:var(--lsa-success); font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:99px; margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               256-Bit SSL Encrypted Gateway
             </div>
             <div style="font-size:0.85rem; color:var(--lsa-secondary); font-weight:700; text-transform:uppercase; margin-bottom:0.4rem;">Lakshadweep Students Association</div>
-            <div style="font-size:2rem; font-weight:800; color:var(--lsa-primary); margin-bottom:0.2rem;" id="step3-fee-amount">₹23.00</div>
-            <div style="font-size:0.85rem; color:var(--lsa-text-muted);">Total Fee (₹3 Card Fee + ₹20 Yearly Fee)</div>
+            <div style="font-size:2rem; font-weight:800; color:var(--lsa-primary); margin-bottom:0.5rem;" id="step3-fee-amount">₹23.00</div>
+            <div style="background:white; border-radius:8px; padding:0.65rem 0.85rem; border:1px solid var(--lsa-border-light); font-size:0.82rem; color:var(--lsa-text-secondary); display:flex; flex-direction:column; gap:0.25rem; text-align:left;">
+              <div style="display:flex; justify-content:space-between;"><span>Membership Fee:</span><strong style="color:var(--lsa-text-main);">₹3.00</strong></div>
+              <div style="display:flex; justify-content:space-between;"><span>Yearly Fee:</span><strong style="color:var(--lsa-text-main);">₹20.00</strong></div>
+            </div>
           </div>
 
           <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
@@ -377,9 +380,15 @@
       </div>
 
       <!-- Order Summary line -->
-      <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--lsa-text-muted); margin-bottom:1rem; border-top:1px solid var(--lsa-border-light); padding-top:0.75rem;">
-        <span>Order ID: <strong style="font-family:monospace;" id="modal-order-id">order_demo_123</strong></span>
-        <span>Fee: <strong style="color:var(--lsa-primary);" id="modal-summary-fee-text">₹23.00 INR</strong></span>
+      <div style="background:var(--lsa-light-bg); border-radius:8px; padding:0.65rem 0.85rem; border:1px solid var(--lsa-border-light); margin-bottom:1rem; text-align:left; font-size:0.8rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+          <span style="color:var(--lsa-text-muted);">Membership Fee: <strong style="color:var(--lsa-text-main);">₹3.00</strong></span>
+          <span style="color:var(--lsa-text-muted);">Yearly Fee: <strong style="color:var(--lsa-text-main);">₹20.00</strong></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; border-top:1px dashed var(--lsa-border-light); padding-top:0.35rem; margin-top:0.35rem;">
+          <span>Order ID: <strong style="font-family:monospace;" id="modal-order-id">order_demo_123</strong></span>
+          <span>Total Fee: <strong style="color:var(--lsa-primary);" id="modal-summary-fee-text">₹23.00 INR</strong></span>
+        </div>
       </div>
 
       <!-- 12-DIGIT UTR TRANSACTION INPUT -->
