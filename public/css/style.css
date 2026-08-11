@@ -1203,6 +1203,8 @@ select.form-control {
 .admin-layout {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .admin-sidebar {
@@ -1242,15 +1244,20 @@ select.form-control {
 
 .admin-content {
   flex: 1;
+  min-width: 0;
+  width: 100%;
   padding: 2rem 2.5rem;
   background: var(--lsa-light-bg);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .admin-body-wrap {
   flex: 1;
+  min-width: 0;
+  width: 100%;
 }
 
 /* Modern Admin Page Footer */
@@ -1340,10 +1347,12 @@ select.form-control {
 }
 
 /* ============================================
-   18. TABLES - Premium
+   18. TABLES - Premium & Responsive Scroll
    ============================================ */
 .table-responsive, .admin-table-wrap {
-  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
   -webkit-overflow-scrolling: touch;
   background: var(--lsa-white);
   border-radius: var(--lsa-radius-lg);
@@ -1351,6 +1360,7 @@ select.form-control {
   box-shadow: var(--lsa-shadow-sm);
   scrollbar-width: thin;
   scrollbar-color: var(--lsa-primary) var(--lsa-light-bg);
+  display: block;
 }
 
 .table-responsive::-webkit-scrollbar, .admin-table-wrap::-webkit-scrollbar {
@@ -1373,7 +1383,7 @@ select.form-control {
 
 .table, .admin-table {
   width: 100%;
-  min-width: 1150px;
+  min-width: 1100px !important;
   border-collapse: collapse;
   font-size: 0.875rem;
   white-space: nowrap;
