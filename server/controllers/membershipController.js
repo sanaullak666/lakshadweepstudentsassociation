@@ -180,6 +180,9 @@ async function verifyPublic(req, res) {
       success: false,
       message: 'Failed to verify membership.'
     });
+  }
+}
+
 async function checkDuplicate(req, res) {
   try {
     const { email, phone } = req.query;
