@@ -142,7 +142,11 @@ function initRegistrationForm() {
         goToStep(2);
       }
     } catch (err) {
-      showToast(err.message || 'Registration failed. Duplicate email or phone.', 'error');
+      if (err.data && (err.status === 409 || err.data.isDuplicate)) {
+        showDuplicateWarningModal(err.data);
+      } else {
+        showToast(err.message || 'Registration failed. Duplicate email or phone.', 'error');
+      }
     } finally {
       submitBtn.disabled = false;
       submitBtn.innerHTML = 'Continue to Review Step →';

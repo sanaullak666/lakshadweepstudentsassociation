@@ -56,12 +56,50 @@ async function checkAdminAuth() {
   }
 }
 
+const INACTIVITY_LIMIT_MS = 30 * 60 * 1000; // 30 minutes
+let lastActivityTimestamp = Date.now();
+let inactivityCheckInterval = null;
+
+function resetInactivityTimer() {
+  lastActivityTimestamp = Date.now();
+}
+
+function initAdminInactivityTracker() {
+  ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(eventType => {
+    window.addEventListener(eventType, resetInactivityTimer, { passive: true });
+  });
+
+  if (inactivityCheckInterval) clearInterval(inactivityCheckInterval);
+  inactivityCheckInterval = setInterval(() => {
+    const isLoginPage = window.location.pathname.includes('login');
+    if (isLoginPage) return;
+
+    const token = localStorage.getItem('lsa_admin_token');
+    if (token && (Date.now() - lastActivityTimestamp >= INACTIVITY_LIMIT_MS)) {
+      handleAdminInactivityLogout();
+    }
+  }, 15000);
+}
+
+function handleAdminInactivityLogout() {
+  localStorage.removeItem('lsa_admin_token');
+  sessionStorage.clear();
+  if (inactivityCheckInterval) clearInterval(inactivityCheckInterval);
+  window.location.href = '/admin/login?reason=timeout';
+}
+
 function initAdminAuthCheck() {
   const isLoginPage = window.location.pathname.includes('login');
   if (isLoginPage) {
+    if (window.location.search.includes('reason=timeout')) {
+      setTimeout(() => {
+        showToast('Session expired due to 30 minutes of inactivity. Please log in again.', 'error');
+      }, 300);
+    }
     initAdminLoginForm();
   } else {
     checkAdminAuth();
+    initAdminInactivityTracker();
   }
 }
 

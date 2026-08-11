@@ -771,7 +771,11 @@
           }
         }
       } catch (err) {
-        showToast(err.message || 'Profile update failed.', 'error');
+        if (err.data && (err.status === 409 || err.data.isDuplicate)) {
+          showDuplicateWarningModal(err.data);
+        } else {
+          showToast(err.message || 'Profile update failed.', 'error');
+        }
       } finally {
         btn.disabled = false;
         if (isPaidMember) {

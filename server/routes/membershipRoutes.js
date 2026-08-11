@@ -7,6 +7,9 @@ const { validateRegistration } = require('../middleware/validation');
 router.post('/register', validateRegistration, membershipController.register);
 
 
+// GET /api/membership/check-duplicate - Check if email or phone already registered
+router.get('/check-duplicate', membershipController.checkDuplicate);
+
 // GET /api/membership/verify/:membershipId - Public verification endpoint
 router.get('/verify/:membershipId', membershipController.verifyPublic);
 

@@ -21,6 +21,8 @@ async function register(req, res) {
       const match = existingCheck.rows[0];
       return res.status(409).json({
         success: false,
+        isDuplicate: true,
+        membershipId: match.membership_id,
         message: `A registered LSA member already exists with this email or contact number (Membership ID: ${match.membership_id || 'Active'}).`
       });
     }
@@ -178,11 +180,43 @@ async function verifyPublic(req, res) {
       success: false,
       message: 'Failed to verify membership.'
     });
+async function checkDuplicate(req, res) {
+  try {
+    const { email, phone } = req.query;
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanPhone = (phone || '').replace(/[\s\-\+]/g, '').replace(/^91/, '');
+
+    if (!cleanEmail && !cleanPhone) {
+      return res.json({ success: true, exists: false });
+    }
+
+    const check = await db.query(
+      `SELECT id, membership_id, full_name, payment_status, registration_status FROM members 
+       WHERE (email = ? AND ? != '') OR (contact_number = ? AND ? != '') LIMIT 1`,
+      [cleanEmail, cleanEmail, cleanPhone, cleanPhone]
+    );
+
+    if (check.rows && check.rows.length > 0) {
+      const match = check.rows[0];
+      return res.json({
+        success: true,
+        exists: true,
+        membershipId: match.membership_id,
+        fullName: match.full_name,
+        paymentStatus: match.payment_status,
+        message: `An account already exists with this contact information (Membership ID: ${match.membership_id || 'Registered'}).`
+      });
+    }
+
+    return res.json({ success: true, exists: false });
+  } catch (error) {
+    return res.json({ success: true, exists: false });
   }
 }
 
 module.exports = {
   register,
   getMemberById,
-  verifyPublic
+  verifyPublic,
+  checkDuplicate
 };
