@@ -257,11 +257,27 @@ async function getMembers(req, res) {
 async function getPayments(req, res) {
   try {
     const sql = `
-      SELECT p.id, p.member_id, p.order_id, p.payment_id, p.amount, p.currency, p.status, p.payment_method, p.paid_at, p.created_at,
-             m.full_name, m.email, m.contact_number, m.island, m.membership_id
-      FROM payments p
-      LEFT JOIN members m ON p.member_id = m.id
-      ORDER BY p.id DESC
+      SELECT 
+        COALESCE(p.id, 0) as id,
+        m.id as member_id,
+        COALESCE(p.order_id, 'ORDER_PENDING') as order_id,
+        p.payment_id,
+        COALESCE(p.amount, CASE WHEN m.wants_physical_card = 1 THEN 150.00 ELSE 3.00 END) as amount,
+        COALESCE(p.currency, 'INR') as currency,
+        COALESCE(p.status, m.payment_status) as status,
+        COALESCE(p.payment_method, 'upi') as payment_method,
+        p.paid_at,
+        COALESCE(p.created_at, m.created_at) as created_at,
+        m.full_name,
+        m.email,
+        m.contact_number,
+        m.island,
+        m.membership_id,
+        m.wants_physical_card
+      FROM members m
+      LEFT JOIN payments p ON p.member_id = m.id
+      WHERE m.contact_number != '0000000000' AND (p.id IS NOT NULL OR m.payment_status = 'PENDING')
+      ORDER BY COALESCE(p.id, 0) DESC, m.id DESC
     `;
     const result = await db.query(sql, []);
 
@@ -303,7 +319,7 @@ async function approvePayment(req, res) {
 
     // Fetch member
     const memberRes = await db.query(
-      `SELECT id, full_name, email, membership_id, payment_status FROM members WHERE id = ?`,
+      `SELECT id, full_name, email, membership_id, payment_status, wants_physical_card FROM members WHERE id = ?`,
       [targetMemberId]
     );
 
@@ -318,11 +334,21 @@ async function approvePayment(req, res) {
       finalMembershipId = await generateMembershipId();
     }
 
-    // 1. Update payments table
-    await db.query(
-      `UPDATE payments SET status = 'PAID', paid_at = CURRENT_TIMESTAMP WHERE member_id = ? OR id = ?`,
-      [targetMemberId, targetPaymentId || 0]
-    );
+    // 1. Update or Insert payments table
+    const pCheck = await db.query(`SELECT id FROM payments WHERE member_id = ? OR id = ?`, [targetMemberId, targetPaymentId || 0]);
+    if (pCheck.rows && pCheck.rows.length > 0) {
+      await db.query(
+        `UPDATE payments SET status = 'PAID', paid_at = CURRENT_TIMESTAMP WHERE member_id = ? OR id = ?`,
+        [targetMemberId, targetPaymentId || 0]
+      );
+    } else {
+      const amt = (member.wants_physical_card === 1 || member.wants_physical_card === true) ? 150.00 : 3.00;
+      await db.query(
+        `INSERT INTO payments (member_id, order_id, payment_id, amount, currency, status, payment_method, paid_at)
+         VALUES (?, ?, ?, ?, 'INR', 'PAID', 'admin_approved', CURRENT_TIMESTAMP)`,
+        [targetMemberId, `ADMIN_APPROVED_${targetMemberId}_${Date.now()}`, 'ADMIN_VERIFIED', amt]
+      );
+    }
 
     // 2. Update members table
     await db.query(
@@ -367,10 +393,19 @@ async function rejectPayment(req, res) {
       return res.status(400).json({ success: false, message: 'Member ID or Payment ID is required.' });
     }
 
-    await db.query(
-      `UPDATE payments SET status = 'FAILED' WHERE member_id = ? OR id = ?`,
-      [targetMemberId, targetPaymentId || 0]
-    );
+    const pCheck = await db.query(`SELECT id FROM payments WHERE member_id = ? OR id = ?`, [targetMemberId, targetPaymentId || 0]);
+    if (pCheck.rows && pCheck.rows.length > 0) {
+      await db.query(
+        `UPDATE payments SET status = 'FAILED' WHERE member_id = ? OR id = ?`,
+        [targetMemberId, targetPaymentId || 0]
+      );
+    } else {
+      await db.query(
+        `INSERT INTO payments (member_id, order_id, payment_id, amount, currency, status, payment_method)
+         VALUES (?, ?, ?, 3.00, 'INR', 'FAILED', 'admin_rejected')`,
+        [targetMemberId, `ADMIN_REJECTED_${targetMemberId}`, 'REJECTED']
+      );
+    }
 
     await db.query(
       `UPDATE members SET payment_status = 'FAILED', registration_status = 'INACTIVE', updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
