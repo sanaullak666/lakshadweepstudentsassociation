@@ -5,7 +5,27 @@
 document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   highlightActiveNav();
+  initCapsLockInputs();
 });
+
+// Auto CAPS LOCK for input fields & textareas
+function initCapsLockInputs() {
+  document.addEventListener('input', (e) => {
+    const target = e.target;
+    if (!target) return;
+    const tag = target.tagName;
+    const type = (target.type || '').toLowerCase();
+    
+    if ((tag === 'INPUT' && type !== 'file' && type !== 'password' && type !== 'hidden') || tag === 'TEXTAREA') {
+      const start = target.selectionStart;
+      const end = target.selectionEnd;
+      target.value = target.value.toUpperCase();
+      if (start !== null && end !== null) {
+        try { target.setSelectionRange(start, end); } catch (err) {}
+      }
+    }
+  });
+}
 
 // Mobile Navigation Toggle
 function initMobileMenu() {

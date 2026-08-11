@@ -497,6 +497,7 @@ a:hover {
   transition: all var(--lsa-transition-base);
   appearance: none;
   min-height: 48px;
+  text-transform: uppercase;
 }
 
 .form-control:focus {
@@ -511,6 +512,7 @@ a:hover {
 
 .form-control::placeholder {
   color: var(--lsa-text-muted);
+  text-transform: uppercase;
 }
 
 .form-control:disabled {

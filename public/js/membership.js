@@ -47,15 +47,15 @@ function initRegistrationForm() {
     e.preventDefault();
     clearErrors();
 
-    const fullName = document.getElementById('full_name').value.trim();
-    const gender = document.getElementById('gender').value;
-    const island = document.getElementById('island').value;
+    const fullName = document.getElementById('full_name').value.trim().toUpperCase();
+    const gender = document.getElementById('gender').value.toUpperCase();
+    const island = document.getElementById('island').value.toUpperCase();
     const contactNumber = document.getElementById('contact_number').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const bloodGroup = document.getElementById('blood_group').value;
-    const designation = (document.getElementById('designation')?.value || 'Member').trim() || 'Member';
-    const presentAddress = (document.getElementById('present_address')?.value || '').trim();
-    const permanentAddress = (document.getElementById('permanent_address')?.value || '').trim();
+    const email = document.getElementById('email').value.trim().toUpperCase();
+    const bloodGroup = document.getElementById('blood_group').value.toUpperCase();
+    const designation = ((document.getElementById('designation')?.value || 'MEMBER').trim() || 'MEMBER').toUpperCase();
+    const presentAddress = (document.getElementById('present_address')?.value || '').trim().toUpperCase();
+    const permanentAddress = (document.getElementById('permanent_address')?.value || '').trim().toUpperCase();
 
     let hasError = false;
 
@@ -151,20 +151,20 @@ function initRegistrationForm() {
 }
 
 function populateReviewStep(data) {
-  document.getElementById('rev-name').textContent = data.full_name;
-  document.getElementById('rev-gender').textContent = data.gender;
-  document.getElementById('rev-island').textContent = data.island;
+  document.getElementById('rev-name').textContent = (data.full_name || '').toUpperCase();
+  document.getElementById('rev-gender').textContent = (data.gender || '').toUpperCase();
+  document.getElementById('rev-island').textContent = (data.island || '').toUpperCase();
   document.getElementById('rev-contact').textContent = data.contact_number;
-  document.getElementById('rev-email').textContent = data.email;
-  document.getElementById('rev-blood').textContent = data.blood_group;
+  document.getElementById('rev-email').textContent = (data.email || '').toUpperCase();
+  document.getElementById('rev-blood').textContent = (data.blood_group || '').toUpperCase();
   if (document.getElementById('rev-designation')) {
-    document.getElementById('rev-designation').textContent = data.designation || 'Member';
+    document.getElementById('rev-designation').textContent = (data.designation || 'MEMBER').toUpperCase();
   }
   if (document.getElementById('rev-present-address')) {
-    document.getElementById('rev-present-address').textContent = data.present_address || '-';
+    document.getElementById('rev-present-address').textContent = (data.present_address || '-').toUpperCase();
   }
   if (document.getElementById('rev-permanent-address')) {
-    document.getElementById('rev-permanent-address').textContent = data.permanent_address || '-';
+    document.getElementById('rev-permanent-address').textContent = (data.permanent_address || '-').toUpperCase();
   }
 
   // Dynamic fee calculations based on Physical ID Card selection

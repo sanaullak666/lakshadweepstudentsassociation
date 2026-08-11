@@ -620,14 +620,14 @@
 
       formData.append('positionKey', document.getElementById('pos-key-input').value);
       formData.append('password', document.getElementById('pos-password-input').value);
-      formData.append('full_name', document.getElementById('comm-fullname').value.trim());
-      formData.append('gender', document.getElementById('comm-gender').value);
-      formData.append('island', document.getElementById('comm-island').value);
+      formData.append('full_name', document.getElementById('comm-fullname').value.trim().toUpperCase());
+      formData.append('gender', document.getElementById('comm-gender').value.toUpperCase());
+      formData.append('island', document.getElementById('comm-island').value.toUpperCase());
       formData.append('contact_number', document.getElementById('comm-contact').value.trim());
-      formData.append('email', document.getElementById('comm-email').value.trim());
-      formData.append('blood_group', document.getElementById('comm-blood').value);
-      formData.append('present_address', document.getElementById('comm-present-address').value.trim());
-      formData.append('permanent_address', document.getElementById('comm-permanent-address').value.trim());
+      formData.append('email', document.getElementById('comm-email').value.trim().toUpperCase());
+      formData.append('blood_group', document.getElementById('comm-blood').value.toUpperCase());
+      formData.append('present_address', document.getElementById('comm-present-address').value.trim().toUpperCase());
+      formData.append('permanent_address', document.getElementById('comm-permanent-address').value.trim().toUpperCase());
 
       const wantsPhysicalCard = document.getElementById('comm-wants-physical-card')?.checked || false;
       formData.append('wants_physical_card', wantsPhysicalCard ? '1' : '0');
