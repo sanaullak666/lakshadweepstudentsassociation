@@ -1497,12 +1497,18 @@ select.form-control {
   body {
     background: white !important;
   }
-  .header, .navbar, .footer, .admin-sidebar, .no-print, button:not(.print-keep) {
+  .header, .navbar, .footer, .admin-sidebar, .section-header, #verify-form, .no-print, .card-action-footer, button {
     display: none !important;
   }
   .admin-content {
     margin: 0 !important;
     padding: 0 !important;
+  }
+  #printable-membership-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
   }
   .membership-card {
     box-shadow: none !important;
