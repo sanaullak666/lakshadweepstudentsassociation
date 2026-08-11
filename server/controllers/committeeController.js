@@ -598,6 +598,9 @@ async function registerPositionMember(req, res) {
       photo_url = existingCommPhoto;
     }
 
+    const wantsPhysical = req.body.wants_physical_card === true || req.body.wants_physical_card === 1 || req.body.wants_physical_card === '1' || req.body.wants_physical_card === 'true';
+    const wantsPhysicalCardVal = wantsPhysical ? 1 : 0;
+
     // 1. Insert or update in `members` table
     const existingMember = await db.query(
       `SELECT id, payment_status, registration_status FROM members WHERE membership_id = ? OR designation = ? OR email = ? OR contact_number = ? LIMIT 1`,
@@ -615,15 +618,15 @@ async function registerPositionMember(req, res) {
 
       await db.query(
         `UPDATE members 
-         SET membership_id = ?, full_name = ?, gender = ?, island = ?, contact_number = ?, email = ?, blood_group = ?, present_address = ?, permanent_address = ?, designation = ?, updated_at = CURRENT_TIMESTAMP 
+         SET membership_id = ?, full_name = ?, gender = ?, island = ?, contact_number = ?, email = ?, blood_group = ?, present_address = ?, permanent_address = ?, designation = ?, wants_physical_card = ?, updated_at = CURRENT_TIMESTAMP 
          WHERE id = ?`,
-        [reservedId, full_name.trim(), gender, island, contact_number.trim(), email.trim(), blood_group, present_address || null, permanent_address || null, pos.title, memberDbId]
+        [reservedId, full_name.trim(), gender, island, contact_number.trim(), email.trim(), blood_group, present_address || null, permanent_address || null, pos.title, wantsPhysicalCardVal, memberDbId]
       );
     } else {
       const ins = await db.query(
-        `INSERT INTO members (membership_id, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation, payment_status, registration_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', 'PENDING')`,
-        [reservedId, full_name.trim(), gender, island, contact_number.trim(), email.trim(), blood_group, present_address || null, permanent_address || null, pos.title]
+        `INSERT INTO members (membership_id, full_name, gender, island, contact_number, email, blood_group, present_address, permanent_address, designation, wants_physical_card, payment_status, registration_status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', 'PENDING')`,
+        [reservedId, full_name.trim(), gender, island, contact_number.trim(), email.trim(), blood_group, present_address || null, permanent_address || null, pos.title, wantsPhysicalCardVal]
       );
       memberDbId = ins.insertId;
     }
@@ -645,10 +648,11 @@ async function registerPositionMember(req, res) {
     }
 
     const needsPayment = currentPaymentStatus !== 'PAID';
+    const amountRupees = wantsPhysicalCardVal === 1 ? 150.00 : 3.00;
 
     return res.status(200).json({
       success: true,
-      message: needsPayment ? `${pos.title} profile saved! Please complete the ₹3.00 payment to activate your official pass.` : `${pos.title} profile updated successfully!`,
+      message: needsPayment ? `${pos.title} profile saved! Please complete the ₹${amountRupees.toFixed(2)} payment to activate your official pass.` : `${pos.title} profile updated successfully!`,
       data: {
         memberId: memberDbId,
         membership_id: reservedId,
@@ -661,6 +665,8 @@ async function registerPositionMember(req, res) {
         photo_url,
         payment_status: currentPaymentStatus,
         registration_status: currentRegStatus,
+        wants_physical_card: wantsPhysicalCardVal,
+        amount: amountRupees,
         needsPayment
       }
     });
