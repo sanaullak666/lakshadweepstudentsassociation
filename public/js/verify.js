@@ -127,7 +127,7 @@ function initVerification() {
 
             <!-- ACTION FOOTER -->
             <div style="background:var(--lsa-light-bg); padding:1rem 1.5rem; border-top:1px solid var(--lsa-border-light); display:flex; justify-content:flex-end; gap:0.75rem;">
-              <button onclick="window.print()" class="btn btn-primary btn-sm" style="font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:0.4rem;">
+              <button onclick="printCardInNewWindow()" class="btn btn-primary btn-sm" style="font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:0.4rem;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Print / Save Pass (PDF)
               </button>
@@ -152,4 +152,92 @@ function initVerification() {
       btn.innerHTML = 'Verify Membership';
     }
   });
+}
+
+function printCardInNewWindow() {
+  const cardElement = document.getElementById('printable-membership-card');
+  if (!cardElement) return;
+
+  const clone = cardElement.cloneNode(true);
+
+  // Remove action buttons/footer from printed pass clone
+  const footerBtns = clone.querySelectorAll('.btn, button');
+  footerBtns.forEach(b => {
+    const parent = b.closest('div');
+    if (parent && parent.style.borderTop) {
+      parent.remove();
+    } else {
+      b.remove();
+    }
+  });
+
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    if (typeof showToast === 'function') {
+      showToast('Please allow popups to open the print page.', 'error');
+    }
+    window.print();
+    return;
+  }
+
+  const cssUrl = `${window.location.origin}/css/style.css`;
+  const logoUrl = `${window.location.origin}/images/logo.jpg`;
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LSA Official Membership Pass</title>
+      <link rel="stylesheet" href="${cssUrl}">
+      <link rel="icon" href="${logoUrl}">
+      <style>
+        body {
+          background: #F1F5F9;
+          font-family: system-ui, -apple-system, sans-serif;
+          margin: 0;
+          padding: 2rem 1rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          box-sizing: border-box;
+        }
+        #printable-membership-card {
+          width: 100%;
+          max-width: 620px;
+          margin: 0 auto;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        }
+        @media print {
+          body {
+            background: #ffffff !important;
+            padding: 0 !important;
+          }
+          #printable-membership-card {
+            box-shadow: none !important;
+            border: 1px solid #cbd5e1 !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div style="width:100%; max-width:620px;">
+        ${clone.outerHTML}
+      </div>
+      <script>
+        window.onload = function() {
+          setTimeout(function() {
+            window.print();
+          }, 350);
+        };
+      </script>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
 }
