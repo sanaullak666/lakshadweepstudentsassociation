@@ -572,22 +572,47 @@ async function deleteMember(req, res) {
   try {
     const { id } = req.params;
 
-    const current = await db.query(`SELECT id, full_name, designation FROM members WHERE id = ?`, [id]);
+    const current = await db.query(`SELECT id, full_name, designation, membership_id FROM members WHERE id = ?`, [id]);
     if (!current.rows || current.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Member not found.' });
     }
 
-    // Delete linked payments
+    const m = current.rows[0];
+
+    // 1. Delete linked payments
     try {
       await db.query(`DELETE FROM payments WHERE member_id = ?`, [id]);
     } catch (e) {}
 
-    // Delete member
+    // 2. Wipe or reset from central_committee table if this member was in Central Committee
+    try {
+      const commCheck = await db.query(
+        `SELECT id, display_order FROM central_committee WHERE designation = ? OR name = ?`,
+        [m.designation, m.full_name]
+      );
+      if (commCheck.rows && commCheck.rows.length > 0) {
+        for (const c of commCheck.rows) {
+          if (c.display_order >= 1 && c.display_order <= 9) {
+            // Reset core committee position back to default designation title so registration link remains active
+            await db.query(
+              `UPDATE central_committee SET name = designation, photo_url = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+              [c.id]
+            );
+          } else {
+            await db.query(`DELETE FROM central_committee WHERE id = ?`, [c.id]);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[Committee Sync Delete Warning]', e.message);
+    }
+
+    // 3. Delete member record
     await db.query(`DELETE FROM members WHERE id = ?`, [id]);
 
     return res.json({
       success: true,
-      message: 'Member record deleted from database successfully.'
+      message: 'Member record deleted from Members Directory and Committee Management.'
     });
   } catch (error) {
     console.error('[Delete Member Error]', error);
