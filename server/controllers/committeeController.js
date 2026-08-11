@@ -79,6 +79,36 @@ async function getAllCommittee(req, res) {
   }
 }
 
+async function syncCommitteeMemberToMembersTable(name, designation, displayOrder) {
+  if (!name || name === designation) return;
+  try {
+    const { getReservedIdForOrder } = require('../utils/membershipIdGenerator');
+    const reservedId = getReservedIdForOrder(displayOrder);
+
+    const existing = await db.query(
+      `SELECT id FROM members WHERE membership_id = ? OR designation = ? OR full_name = ? LIMIT 1`,
+      [reservedId, designation, name]
+    );
+
+    if (existing.rows && existing.rows.length > 0) {
+      await db.query(
+        `UPDATE members 
+         SET full_name = ?, designation = ?, membership_id = ?, payment_status = 'PAID', registration_status = 'ACTIVE', updated_at = CURRENT_TIMESTAMP 
+         WHERE id = ?`,
+        [name, designation, reservedId, existing.rows[0].id]
+      );
+    } else {
+      await db.query(
+        `INSERT INTO members (membership_id, full_name, gender, island, contact_number, email, blood_group, designation, payment_status, registration_status)
+         VALUES (?, ?, 'Specified', 'Kavaratti', '9999999999', ?, 'O+', ?, 'PAID', 'ACTIVE')`,
+        [reservedId, name, `${designation.toLowerCase().replace(/[^a-z0-9]/g, '')}@lsa.org`, designation]
+      );
+    }
+  } catch (e) {
+    console.warn('[Sync Member Warning]', e.message);
+  }
+}
+
 /**
  * Admin Endpoint: Add new committee member
  */
@@ -107,6 +137,10 @@ async function addMember(req, res) {
       `INSERT INTO central_committee (name, designation, photo_url, display_order, is_active) VALUES (?, ?, ?, ?, ?)`,
       [name.trim(), designation.trim(), photo_url, order, active]
     );
+
+    if (active) {
+      await syncCommitteeMemberToMembersTable(name.trim(), designation.trim(), order);
+    }
 
     return res.status(201).json({
       success: true,
@@ -175,6 +209,10 @@ async function updateMember(req, res) {
       [name.trim(), designation.trim(), photo_url, order, active, id]
     );
 
+    if (active) {
+      await syncCommitteeMemberToMembersTable(name.trim(), designation.trim(), order);
+    }
+
     return res.json({
       success: true,
       message: 'Committee member updated successfully.',
@@ -221,8 +259,8 @@ async function deleteMember(req, res) {
 
     // 2. Delete linked records from `members` and `payments` tables
     const memberRes = await db.query(
-      `SELECT id FROM members WHERE membership_id = ? OR designation = ? OR (full_name = ? AND designation = ?)`,
-      [reservedId, commMember.designation, commMember.name, commMember.designation]
+      `SELECT id FROM members WHERE membership_id = ? OR designation = ? OR full_name = ?`,
+      [reservedId, commMember.designation, commMember.name]
     );
 
     if (memberRes.rows && memberRes.rows.length > 0) {
@@ -234,14 +272,13 @@ async function deleteMember(req, res) {
       }
     } else {
       await db.query(
-        `DELETE FROM members WHERE membership_id = ? OR designation = ? OR (full_name = ? AND designation = ?)`,
-        [reservedId, commMember.designation, commMember.name, commMember.designation]
+        `DELETE FROM members WHERE membership_id = ? OR designation = ? OR full_name = ?`,
+        [reservedId, commMember.designation, commMember.name]
       );
     }
 
-    // 3. Reset or delete from `central_committee` table
+    // 3. Reset core position or delete from `central_committee` table
     if (commMember.display_order >= 1 && commMember.display_order <= 9) {
-      // Reset core role position to default designation title so registration link remains active
       await db.query(
         `UPDATE central_committee SET name = designation, photo_url = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
         [id]
@@ -252,7 +289,7 @@ async function deleteMember(req, res) {
 
     return res.json({
       success: true,
-      message: 'Committee member removed from database successfully.'
+      message: 'Committee member removed from Committee Management and Members Directory.'
     });
   } catch (error) {
     console.error('[Delete Committee Error]', error);

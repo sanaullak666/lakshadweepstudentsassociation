@@ -202,6 +202,39 @@ async function getStats(req, res) {
  */
 async function getMembers(req, res) {
   try {
+    // Auto-sync active Central Committee leadership members into members table if missing
+    try {
+      const comms = await db.query(
+        `SELECT name, designation, display_order FROM central_committee WHERE is_active = 1 AND name IS NOT NULL AND name != '' AND name != designation`
+      );
+      if (comms.rows && comms.rows.length > 0) {
+        const { getReservedIdForOrder } = require('../utils/membershipIdGenerator');
+        for (const c of comms.rows) {
+          const reservedId = getReservedIdForOrder(c.display_order);
+          const mCheck = await db.query(
+            `SELECT id FROM members WHERE membership_id = ? OR designation = ? OR full_name = ? LIMIT 1`,
+            [reservedId, c.designation, c.name]
+          );
+          if (!mCheck.rows || mCheck.rows.length === 0) {
+            await db.query(
+              `INSERT INTO members (membership_id, full_name, gender, island, contact_number, email, blood_group, designation, payment_status, registration_status)
+               VALUES (?, ?, 'Specified', 'Kavaratti', '9999999999', ?, 'O+', ?, 'PAID', 'ACTIVE')`,
+              [reservedId, c.name, `${c.designation.toLowerCase().replace(/[^a-z0-9]/g, '')}@lsa.org`, c.designation]
+            );
+          } else {
+            await db.query(
+              `UPDATE members 
+               SET membership_id = ?, full_name = ?, designation = ?, payment_status = 'PAID', registration_status = 'ACTIVE', updated_at = CURRENT_TIMESTAMP 
+               WHERE id = ?`,
+              [reservedId, c.name, c.designation, mCheck.rows[0].id]
+            );
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[Auto-sync Committee Warning]', e.message);
+    }
+
     const { search, island, blood_group, gender, payment_status } = req.query;
 
     let sql = `SELECT id, membership_id, full_name, gender, island, contact_number, email, blood_group, designation, payment_status, registration_status, created_at FROM members WHERE 1=1`;
