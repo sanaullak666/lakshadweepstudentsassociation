@@ -56,6 +56,8 @@ function validateRegistration(req, res, next) {
   }
 
   // Attach sanitized data to request
+  const wantsPhysical = req.body.wants_physical_card === true || req.body.wants_physical_card === 1 || req.body.wants_physical_card === '1' || req.body.wants_physical_card === 'true';
+
   req.sanitizedBody = {
     full_name: full_name.trim(),
     gender,
@@ -63,7 +65,10 @@ function validateRegistration(req, res, next) {
     contact_number: cleanPhone,
     email: email.trim().toLowerCase(),
     blood_group,
-    designation: (designation || 'Member').trim() || 'Member'
+    designation: (designation || 'Member').trim() || 'Member',
+    present_address: (req.body.present_address || '').trim(),
+    permanent_address: (req.body.permanent_address || '').trim(),
+    wants_physical_card: wantsPhysical ? 1 : 0
   };
 
   next();

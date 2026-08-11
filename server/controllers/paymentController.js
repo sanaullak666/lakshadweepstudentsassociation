@@ -58,6 +58,8 @@ async function createOrder(req, res) {
       data: {
         orderId: razorpayOrder.id,
         amount: razorpayOrder.amount, // in paise
+        amountRupees: amountRupees,
+        wantsPhysicalCard: wantsPhysical,
         currency: razorpayOrder.currency,
         keyId: razorpay.keyId,
         isMock: razorpay.isMockMode,

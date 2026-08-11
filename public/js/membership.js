@@ -267,10 +267,13 @@ function copyUpiIdToClipboard() {
 
 function triggerPaymentGateway(orderData) {
   const upiId = orderData.upiId || 'arushkhan2004-1@oksbi';
-  const rawAmount = orderData.amount || 300;
-  const amountStr = (typeof rawAmount === 'number' && rawAmount > 500) 
-    ? (rawAmount / 100).toFixed(2) 
-    : (rawAmount === 150 ? '150.00' : (rawAmount === 3 ? '3.00' : (rawAmount / 100).toFixed(2)));
+  let amountStr = '3.00';
+  if (orderData.amountRupees) {
+    amountStr = Number(orderData.amountRupees).toFixed(2);
+  } else if (orderData.amount) {
+    const amt = Number(orderData.amount);
+    amountStr = (amt >= 100 ? amt / 100 : amt).toFixed(2);
+  }
 
   // If real Razorpay key is configured and Razorpay SDK loaded
   if (typeof Razorpay !== 'undefined' && orderData.keyId && !orderData.isMock && !orderData.keyId.includes('sample')) {
