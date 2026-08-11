@@ -555,7 +555,7 @@ async function approveAdminPayment(paymentId, memberId) {
 }
 
 async function rejectAdminPayment(paymentId, memberId) {
-  if (!confirm('Are you sure you want to reject this payment / UTR transaction?')) return;
+  if (!confirm('Are you sure you want to reject and delete this payment transaction?')) return;
 
   try {
     const res = await apiFetch('/api/admin/payments/reject', {
@@ -564,7 +564,7 @@ async function rejectAdminPayment(paymentId, memberId) {
     });
 
     if (res.success) {
-      showToast(res.message || 'Payment status updated to REJECTED.', 'info');
+      showToast(res.message || 'Payment rejected and deleted successfully.', 'info');
       loadAdminPayments();
     }
   } catch (err) {

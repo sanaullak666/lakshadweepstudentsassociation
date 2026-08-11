@@ -276,7 +276,10 @@ async function getPayments(req, res) {
         m.wants_physical_card
       FROM members m
       LEFT JOIN payments p ON p.member_id = m.id
-      WHERE m.contact_number != '0000000000' AND (p.id IS NOT NULL OR m.payment_status = 'PENDING')
+      WHERE m.contact_number != '0000000000' 
+        AND (p.id IS NOT NULL OR m.payment_status = 'PENDING')
+        AND (p.status IS NULL OR p.status != 'FAILED') 
+        AND m.payment_status != 'FAILED'
       ORDER BY COALESCE(p.id, 0) DESC, m.id DESC
     `;
     const result = await db.query(sql, []);
@@ -373,7 +376,7 @@ async function approvePayment(req, res) {
 }
 
 /**
- * Admin Endpoint: Reject payment / invalid UTR
+ * Admin Endpoint: Reject payment / invalid UTR (Deletes the rejected record)
  */
 async function rejectPayment(req, res) {
   try {
@@ -389,28 +392,35 @@ async function rejectPayment(req, res) {
       }
     }
 
-    if (!targetMemberId) {
+    if (!targetMemberId && !targetPaymentId) {
       return res.status(400).json({ success: false, message: 'Member ID or Payment ID is required.' });
     }
 
-    const pCheck = await db.query(`SELECT id FROM payments WHERE member_id = ? OR id = ?`, [targetMemberId, targetPaymentId || 0]);
-    if (pCheck.rows && pCheck.rows.length > 0) {
+    // 1. Delete payment records
+    if (targetPaymentId) {
+      await db.query(`DELETE FROM payments WHERE id = ?`, [targetPaymentId]);
+    }
+    if (targetMemberId) {
+      await db.query(`DELETE FROM payments WHERE member_id = ?`, [targetMemberId]);
+    }
+
+    // 2. Delete member record if unapproved / pending
+    if (targetMemberId) {
       await db.query(
-        `UPDATE payments SET status = 'FAILED' WHERE member_id = ? OR id = ?`,
-        [targetMemberId, targetPaymentId || 0]
-      );
-    } else {
-      await db.query(
-        `INSERT INTO payments (member_id, order_id, payment_id, amount, currency, status, payment_method)
-         VALUES (?, ?, ?, 3.00, 'INR', 'FAILED', 'admin_rejected')`,
-        [targetMemberId, `ADMIN_REJECTED_${targetMemberId}`, 'REJECTED']
+        `DELETE FROM members WHERE id = ? AND (membership_id IS NULL OR membership_id LIKE 'PENDING%' OR payment_status != 'PAID')`,
+        [targetMemberId]
       );
     }
 
-    await db.query(
-      `UPDATE members SET payment_status = 'FAILED', registration_status = 'INACTIVE', updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-      [targetMemberId]
-    );
+    return res.json({
+      success: true,
+      message: 'Rejected payment transaction deleted successfully.'
+    });
+  } catch (error) {
+    console.error('[Reject Payment Error]', error);
+    return res.status(500).json({ success: false, message: 'Failed to reject payment.' });
+  }
+}
 
     return res.json({
       success: true,
