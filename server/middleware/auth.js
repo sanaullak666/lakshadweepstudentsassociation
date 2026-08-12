@@ -19,8 +19,7 @@ function requireAdmin(req, res, next) {
     token = req.query.token;
   }
 
-  if (token && (activeTokens.has(token) || (req.session && req.session.adminToken === token) || (typeof token === 'string' && token.length >= 16))) {
-    activeTokens.add(token);
+  if (token && (activeTokens.has(token) || (req.session && req.session.adminToken === token))) {
     return next();
   }
 

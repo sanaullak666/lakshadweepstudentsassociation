@@ -583,8 +583,8 @@ async function registerPositionMember(req, res) {
       }
     }
 
-    if (password && password.trim() !== expectedPassword.trim()) {
-      return res.status(401).json({ success: false, message: 'Invalid access password for this role.' });
+    if (!password || password.trim() !== expectedPassword.trim()) {
+      return res.status(401).json({ success: false, message: 'Invalid or missing access password for this role.' });
     }
 
     const reservedId = getReservedIdForOrder(pos.order);

@@ -100,9 +100,33 @@ async function getMemberById(req, res) {
       });
     }
 
+    const member = result.rows[0];
+    const isAdmin = req.session && req.session.admin;
+
+    // Filter out sensitive PII for public requests
+    const sanitized = {
+      id: member.id,
+      membership_id: member.membership_id,
+      full_name: member.full_name,
+      gender: member.gender,
+      island: member.island,
+      blood_group: member.blood_group,
+      designation: member.designation,
+      payment_status: member.payment_status,
+      registration_status: member.registration_status,
+      wants_physical_card: member.wants_physical_card,
+      created_at: member.created_at,
+      ...(isAdmin ? {
+        contact_number: member.contact_number,
+        email: member.email,
+        present_address: member.present_address,
+        permanent_address: member.permanent_address
+      } : {})
+    };
+
     return res.json({
       success: true,
-      data: result.rows[0]
+      data: sanitized
     });
   } catch (error) {
     console.error('[Get Member Error]', error);

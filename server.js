@@ -18,10 +18,21 @@ const PORT = process.env.PORT || 5000;
 // Enable Trust Proxy for Vercel / Reverse Proxy headers
 app.set('trust proxy', 1);
 
-// Security Headers (Configured to allow Razorpay inline modal & CDNs for icons/fonts)
+// Security Headers (Configured for Razorpay, CDNs & XSS protection)
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://checkout.razorpay.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+        imgSrc: ["'self'", "data:", "blob:", "https://*"],
+        connectSrc: ["'self'", "https://lsa.org.in", "https://api.razorpay.com"],
+        frameSrc: ["'self'", "https://api.razorpay.com"],
+        objectSrc: ["'none'"]
+      }
+    },
     crossOriginEmbedderPolicy: false
   })
 );
@@ -58,6 +69,7 @@ app.use(
     cookie: {
       maxAge: 86400000, // 24 hours
       httpOnly: true,
+      sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production'
     }
   })

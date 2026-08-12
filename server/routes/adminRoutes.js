@@ -6,7 +6,7 @@ const { requireAdmin } = require('../middleware/auth');
 // Auth routes
 router.post('/login', adminController.login);
 router.post('/logout', adminController.logout);
-router.get('/me', adminController.getMe);
+router.get('/me', requireAdmin, adminController.getMe);
 
 // Dashboard & Management routes
 router.get('/stats', requireAdmin, adminController.getStats);

@@ -122,26 +122,14 @@ function getMe(req, res) {
     });
   }
 
-  const authHeader = req.headers.authorization;
-  let token = null;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.split(' ')[1];
-  } else if (req.query && req.query.token) {
-    token = req.query.token;
-  }
-
-  if (token) {
-    return res.json({
-      success: true,
-      data: {
-        email: process.env.ADMIN_EMAIL || 'admin@lsa.org.in',
-        full_name: 'LSA Administrator',
-        role: 'super_admin'
-      }
-    });
-  }
-
-  return res.status(401).json({ success: false, message: 'Not authenticated' });
+  return res.json({
+    success: true,
+    data: {
+      email: process.env.ADMIN_EMAIL || 'lakshadweepstudentsassociation@gmail.com',
+      full_name: 'LSA Administrator',
+      role: 'super_admin'
+    }
+  });
 }
 
 /**

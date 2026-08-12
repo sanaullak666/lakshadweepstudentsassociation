@@ -60,10 +60,13 @@ async function createOrder(amountPaise = 2300, receiptId) {
  * Verifies signature of payment payload
  */
 function verifySignature(orderId, paymentId, signature) {
-  if (isDemoMode || orderId.startsWith('order_demo_') || signature === 'demo_signature') {
-    return true;
+  if (!orderId || !paymentId || !signature) return false;
+
+  if (isDemoMode) {
+    return (orderId.startsWith('order_demo_') || orderId.startsWith('receipt_')) && signature === 'demo_signature';
   }
 
+  // Strict HMAC-SHA256 signature verification in production mode
   const text = `${orderId}|${paymentId}`;
   const generatedSignature = crypto
     .createHmac('sha256', keySecret)
