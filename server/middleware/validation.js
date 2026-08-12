@@ -20,12 +20,14 @@ function validateRegistration(req, res, next) {
   }
 
   // 2. Gender
-  if (!gender || !validGenders.includes(gender)) {
+  const matchedGender = validGenders.find(g => g.toLowerCase() === (gender || '').trim().toLowerCase());
+  if (!gender || !matchedGender) {
     errors.gender = 'Please select a valid gender option.';
   }
 
   // 3. Island
-  if (!island || !validIslands.includes(island)) {
+  const matchedIsland = validIslands.find(i => i.toLowerCase() === (island || '').trim().toLowerCase());
+  if (!island || !matchedIsland) {
     errors.island = 'Please select a valid Lakshadweep island.';
   }
 
@@ -43,7 +45,8 @@ function validateRegistration(req, res, next) {
   }
 
   // 6. Blood Group
-  if (!blood_group || !validBloodGroups.includes(blood_group)) {
+  const matchedBloodGroup = validBloodGroups.find(b => b.toLowerCase() === (blood_group || '').trim().toLowerCase());
+  if (!blood_group || !matchedBloodGroup) {
     errors.blood_group = 'Please select a valid blood group.';
   }
 
@@ -60,11 +63,11 @@ function validateRegistration(req, res, next) {
 
   req.sanitizedBody = {
     full_name: full_name.trim(),
-    gender,
-    island,
+    gender: matchedGender,
+    island: matchedIsland,
     contact_number: cleanPhone,
     email: email.trim().toLowerCase(),
-    blood_group,
+    blood_group: matchedBloodGroup,
     designation: (designation || 'Member').trim() || 'Member',
     present_address: (req.body.present_address || '').trim(),
     permanent_address: (req.body.permanent_address || '').trim(),
