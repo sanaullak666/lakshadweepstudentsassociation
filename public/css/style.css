@@ -1,22 +1,12 @@
 /* ==========================================================================
-   LSA MEMBERSHIP PORTAL - PRODUCTION MASTER DESIGN SYSTEM v4.0
+   LSA MEMBERSHIP PORTAL - PREMIUM MASTER DESIGN SYSTEM v5.0
    Lakshadweep Students Association (LSA) Official Web Application
-   Brand Colors:
-     - Deep Navy: #00005A
-     - Royal Blue: #1428D4
-     - Electric Blue: #244BFF
-     - Light Blue: #EEF2FF
-     - Soft Background: #F8FAFF
-   Typography: Inter (Google Fonts)
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   1. GOOGLE FONTS & DESIGN TOKENS (ROOT & THEMING)
-   -------------------------------------------------------------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  /* Brand Core Colors */
+  /* Core LSA Brand Colors */
   --lsa-primary: #00005A;
   --lsa-primary-rgb: 0, 0, 90;
   --lsa-secondary: #1428D4;
@@ -28,9 +18,8 @@
   --lsa-light-bg: #F8FAFF;
   --lsa-light-bg-rgb: 248, 250, 255;
   --lsa-white: #FFFFFF;
-  --lsa-white-rgb: 255, 255, 255;
 
-  /* Backward Compatibility Aliases */
+  /* Legacy & Helper Tokens */
   --primary-deep: var(--lsa-primary);
   --primary-teal: var(--lsa-secondary);
   --accent-sea: var(--lsa-accent);
@@ -43,22 +32,22 @@
   --warning: #D97706;
   --danger: #DC2626;
 
-  /* Surface & Text Palette (Light Theme Default) */
+  /* Light Theme Surface Scale */
   --lsa-surface: #FFFFFF;
   --lsa-surface-elevated: #FFFFFF;
-  --lsa-surface-glass: rgba(255, 255, 255, 0.78);
+  --lsa-surface-glass: rgba(255, 255, 255, 0.88);
   --lsa-text-main: #0A0F2D;
   --lsa-text-secondary: #475569;
   --lsa-text-muted: #64748B;
   --lsa-text-light: #94A3B8;
 
-  /* Borders & Focus Rings */
+  /* Borders & Dividers */
   --lsa-border: #E2E8F0;
   --lsa-border-light: #F1F5F9;
   --lsa-border-dark: #CBD5E1;
   --lsa-border-focus: rgba(36, 75, 255, 0.4);
 
-  /* Status Colors & Backgrounds */
+  /* Status Colors */
   --lsa-success: #059669;
   --lsa-success-bg: #ECFDF5;
   --lsa-warning: #D97706;
@@ -68,7 +57,7 @@
   --lsa-info: #2563EB;
   --lsa-info-bg: #EFF6FF;
 
-  /* Elevation Shadows */
+  /* Shadows */
   --lsa-shadow-xs: 0 1px 2px rgba(0, 0, 90, 0.04);
   --lsa-shadow-sm: 0 2px 4px rgba(0, 0, 90, 0.05), 0 1px 2px rgba(0, 0, 90, 0.03);
   --lsa-shadow-md: 0 6px 16px rgba(0, 0, 90, 0.07), 0 2px 4px rgba(0, 0, 90, 0.04);
@@ -79,7 +68,7 @@
   --lsa-shadow-blue-lg: 0 14px 40px rgba(36, 75, 255, 0.28);
   --lsa-shadow-glass: 0 8px 32px 0 rgba(0, 0, 90, 0.08);
 
-  /* Border Radii Scale */
+  /* Radii Scale */
   --lsa-radius-xs: 4px;
   --lsa-radius-sm: 8px;
   --lsa-radius-md: 12px;
@@ -92,41 +81,31 @@
   --lsa-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --lsa-transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --lsa-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  --lsa-transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Typography Stack */
+  /* Font Family & Dimensions */
   --lsa-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-  /* Navigation Heights */
   --lsa-nav-height: 76px;
   --lsa-nav-height-scrolled: 66px;
-
-  /* Container Widths */
   --lsa-container: 1280px;
-  --lsa-container-sm: 640px;
-  --lsa-container-md: 768px;
-  --lsa-container-lg: 1024px;
 }
 
 /* --------------------------------------------------------------------------
-   2. DARK THEME SUPPORT ([data-theme="dark"] & prefers-color-scheme)
+   DARK THEME OVERRIDES
    -------------------------------------------------------------------------- */
 [data-theme="dark"] {
   --lsa-light-bg: #060919;
   --lsa-surface: #0E1432;
   --lsa-surface-elevated: #151D42;
-  --lsa-surface-glass: rgba(14, 20, 50, 0.85);
+  --lsa-surface-glass: rgba(14, 20, 50, 0.88);
   --lsa-text-main: #F1F5F9;
   --lsa-text-secondary: #CBD5E1;
   --lsa-text-muted: #94A3B8;
   --lsa-border: #1E295D;
   --lsa-border-light: #18224E;
-  --lsa-border-dark: #2A3875;
   --hero-bg: linear-gradient(160deg, #060919 0%, #0B112C 50%, #0E1538 100%);
   --lsa-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --lsa-shadow-md: 0 6px 18px rgba(0, 0, 0, 0.5);
   --lsa-shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6);
-  --lsa-shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -134,57 +113,18 @@
     --lsa-light-bg: #060919;
     --lsa-surface: #0E1432;
     --lsa-surface-elevated: #151D42;
-    --lsa-surface-glass: rgba(14, 20, 50, 0.85);
+    --lsa-surface-glass: rgba(14, 20, 50, 0.88);
     --lsa-text-main: #F1F5F9;
     --lsa-text-secondary: #CBD5E1;
     --lsa-text-muted: #94A3B8;
     --lsa-border: #1E295D;
     --lsa-border-light: #18224E;
-    --lsa-border-dark: #2A3875;
     --hero-bg: linear-gradient(160deg, #060919 0%, #0B112C 50%, #0E1538 100%);
-    --lsa-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-    --lsa-shadow-md: 0 6px 18px rgba(0, 0, 0, 0.5);
-    --lsa-shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6);
-    --lsa-shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   }
 }
 
 /* --------------------------------------------------------------------------
-   3. BOOTSTRAP 5 INTEGRATION & OVERRIDES
-   -------------------------------------------------------------------------- */
-body, .bs-override {
-  --bs-body-font-family: var(--lsa-font);
-  --bs-body-bg: var(--lsa-light-bg);
-  --bs-body-color: var(--lsa-text-main);
-  --bs-primary: var(--lsa-primary);
-  --bs-primary-rgb: var(--lsa-primary-rgb);
-  --bs-secondary: var(--lsa-secondary);
-  --bs-secondary-rgb: var(--lsa-secondary-rgb);
-  --bs-success: var(--lsa-success);
-  --bs-info: var(--lsa-info);
-  --bs-warning: var(--lsa-warning);
-  --bs-danger: var(--lsa-error);
-  --bs-light: var(--lsa-light-blue);
-  --bs-dark: #000038;
-  --bs-link-color: var(--lsa-accent);
-  --bs-link-hover-color: var(--lsa-secondary);
-  --bs-border-color: var(--lsa-border);
-  --bs-border-radius: var(--lsa-radius-md);
-  --bs-border-radius-lg: var(--lsa-radius-lg);
-  --bs-border-radius-sm: var(--lsa-radius-sm);
-}
-
-.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
-  width: 100%;
-  max-width: var(--lsa-container);
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 20px;
-  padding-left: 20px;
-}
-
-/* --------------------------------------------------------------------------
-   4. BASE RESET & TYPOGRAPHY
+   BASE RESET & TYPOGRAPHY
    -------------------------------------------------------------------------- */
 *, *::before, *::after {
   margin: 0;
@@ -196,7 +136,6 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -206,6 +145,7 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   min-height: 100vh;
+  padding-top: var(--lsa-nav-height);
 }
 
 ::selection {
@@ -227,12 +167,10 @@ h1, h2, h3, h4, h5, h6,
   color: var(--lsa-white);
 }
 
-h1, .h1 { font-size: clamp(2.5rem, 5vw, 4.25rem); font-weight: 800; letter-spacing: -0.035em; }
-h2, .h2 { font-size: clamp(1.85rem, 3.2vw, 2.75rem); font-weight: 800; }
-h3, .h3 { font-size: clamp(1.4rem, 2.2vw, 1.85rem); font-weight: 700; }
+h1, .h1 { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.035em; }
+h2, .h2 { font-size: clamp(1.8rem, 3.2vw, 2.75rem); font-weight: 800; }
+h3, .h3 { font-size: clamp(1.35rem, 2.2vw, 1.85rem); font-weight: 700; }
 h4, .h4 { font-size: clamp(1.15rem, 1.6vw, 1.35rem); font-weight: 600; }
-h5, .h5 { font-size: 1.1rem; font-weight: 600; }
-h6, .h6 { font-size: 0.95rem; font-weight: 600; }
 
 p {
   font-size: 1rem;
@@ -250,19 +188,16 @@ a:hover {
   color: var(--lsa-secondary);
 }
 
-img, svg {
-  max-width: 100%;
-  height: auto;
-  vertical-align: middle;
+/* Container Scale */
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl {
+  width: 100%;
+  max-width: var(--lsa-container);
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 24px;
+  padding-left: 24px;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--lsa-light-bg); }
-::-webkit-scrollbar-thumb { background: rgba(0, 0, 90, 0.2); border-radius: var(--lsa-radius-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--lsa-secondary); }
-
-/* Section Container Layout */
 .section {
   padding: 80px 0;
   position: relative;
@@ -285,25 +220,25 @@ img, svg {
 }
 
 /* --------------------------------------------------------------------------
-   5. PREMIUM GLASSMORPHIC NAVBAR & SCROLL EFFECTS
+   GLASSMORPHIC STICKY NAVBAR
    -------------------------------------------------------------------------- */
-.header, navbar, .navbar {
+.header, navbar, .navbar, .lsa-navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1030;
+  z-index: 1050;
   height: var(--lsa-nav-height);
   background: var(--lsa-surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   transition: all var(--lsa-transition-base);
   display: flex;
   align-items: center;
 }
 
-.header.scrolled, navbar.scrolled, .navbar.scrolled {
+.header.scrolled, navbar.scrolled, .navbar.scrolled, .lsa-navbar.scrolled {
   height: var(--lsa-nav-height-scrolled);
   background: var(--lsa-surface);
   border-bottom: 1px solid rgba(36, 75, 255, 0.15);
@@ -317,14 +252,14 @@ img, svg {
   width: 100%;
 }
 
-.brand-logo {
+.brand-logo, .navbar-brand {
   display: flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
 }
 
-.brand-logo img {
+.brand-logo img, .navbar-brand img {
   width: 44px;
   height: 44px;
   border-radius: var(--lsa-radius-sm);
@@ -333,7 +268,7 @@ img, svg {
   transition: transform var(--lsa-transition-bounce);
 }
 
-.brand-logo:hover img {
+.brand-logo:hover img, .navbar-brand:hover img {
   transform: scale(1.06) rotate(-2deg);
 }
 
@@ -350,9 +285,7 @@ img, svg {
   letter-spacing: -0.02em;
 }
 
-[data-theme="dark"] .brand-title {
-  color: var(--lsa-white);
-}
+[data-theme="dark"] .brand-title { color: var(--lsa-white); }
 
 .brand-subtitle {
   font-size: 0.75rem;
@@ -365,7 +298,7 @@ img, svg {
   font-weight: 700;
 }
 
-.nav-menu {
+.nav-menu, .navbar-nav {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -382,6 +315,7 @@ img, svg {
   border-radius: var(--lsa-radius-sm);
   transition: all var(--lsa-transition-fast);
   position: relative;
+  text-decoration: none;
 }
 
 .nav-link:hover, .nav-link.active {
@@ -406,7 +340,7 @@ img, svg {
   border-radius: var(--lsa-radius-full);
 }
 
-.mobile-toggle {
+.mobile-toggle, .navbar-toggler {
   display: none;
   background: transparent;
   border: none;
@@ -414,24 +348,18 @@ img, svg {
   cursor: pointer;
   padding: 0.5rem;
   border-radius: var(--lsa-radius-sm);
-  transition: background var(--lsa-transition-fast);
 }
 
-[data-theme="dark"] .mobile-toggle {
+[data-theme="dark"] .mobile-toggle, [data-theme="dark"] .navbar-toggler {
   color: var(--lsa-white);
 }
 
-.mobile-toggle:hover {
-  background: var(--lsa-light-blue);
-}
-
 /* --------------------------------------------------------------------------
-   6. ANIMATED HERO SECTION & FLOATING SHAPES
+   ANIMATED HERO SECTION
    -------------------------------------------------------------------------- */
-.hero {
+.hero, .lsa-hero {
   position: relative;
-  padding-top: calc(var(--lsa-nav-height) + 50px);
-  padding-bottom: 80px;
+  padding: 80px 0 100px;
   background: var(--hero-bg);
   overflow: hidden;
 }
@@ -452,42 +380,14 @@ img, svg {
 }
 
 .hero-background .shape:nth-child(1) {
-  top: -10%;
-  left: -5%;
-  width: 420px;
-  height: 420px;
+  top: -10%; left: -5%; width: 420px; height: 420px;
   background: radial-gradient(circle, var(--lsa-accent), rgba(36, 75, 255, 0));
-  animation-duration: 22s;
 }
 
 .hero-background .shape:nth-child(2) {
-  bottom: -15%;
-  right: -5%;
-  width: 500px;
-  height: 500px;
+  bottom: -15%; right: -5%; width: 500px; height: 500px;
   background: radial-gradient(circle, var(--lsa-secondary), rgba(20, 40, 212, 0));
-  animation-duration: 18s;
   animation-delay: -5s;
-}
-
-.hero-background .shape:nth-child(3) {
-  top: 40%;
-  left: 50%;
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, var(--lsa-light-blue), rgba(238, 242, 255, 0));
-  animation-duration: 25s;
-  animation-delay: -10s;
-}
-
-.hero-background .shape:nth-child(4) {
-  top: 15%;
-  right: 25%;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(0, 0, 90, 0.15), rgba(0, 0, 90, 0));
-  animation-duration: 16s;
-  animation-delay: -3s;
 }
 
 .hero-grid {
@@ -499,9 +399,7 @@ img, svg {
   align-items: center;
 }
 
-.hero-content {
-  max-width: 680px;
-}
+.hero-content { max-width: 680px; }
 
 .hero-visual {
   position: relative;
@@ -527,10 +425,7 @@ img, svg {
 }
 
 .hero-visual .logo-display img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 24px;
+  width: 100%; height: 100%; object-fit: contain; border-radius: 24px;
 }
 
 .hero-visual .ring {
@@ -540,9 +435,9 @@ img, svg {
   animation: rotateRing 30s linear infinite;
 }
 
-.hero-visual .ring:nth-child(1) { width: 260px; height: 260px; animation-duration: 25s; }
-.hero-visual .ring:nth-child(2) { width: 340px; height: 340px; animation-duration: 35s; animation-direction: reverse; border-color: rgba(20, 40, 212, 0.18); }
-.hero-visual .ring:nth-child(3) { width: 420px; height: 420px; animation-duration: 45s; border-color: rgba(0, 0, 90, 0.12); }
+.hero-visual .ring:nth-child(1) { width: 260px; height: 260px; }
+.hero-visual .ring:nth-child(2) { width: 340px; height: 340px; animation-duration: 35s; animation-direction: reverse; }
+.hero-visual .ring:nth-child(3) { width: 420px; height: 420px; animation-duration: 45s; }
 
 .hero-animate {
   opacity: 0;
@@ -556,9 +451,9 @@ img, svg {
 .delay-4 { animation-delay: 0.55s; }
 
 /* --------------------------------------------------------------------------
-   7. BUTTONS & BADGES
+   BUTTONS & BADGES
    -------------------------------------------------------------------------- */
-.btn, .btn-primary, .btn-secondary, .btn-outline-primary, .btn-success, .btn-danger {
+.btn, .btn-primary, .btn-secondary, .btn-outline-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -580,7 +475,6 @@ img, svg {
 .btn-primary {
   background: linear-gradient(135deg, var(--lsa-primary) 0%, var(--lsa-secondary) 100%);
   color: var(--lsa-white) !important;
-  border-color: transparent;
   box-shadow: var(--lsa-shadow-blue);
 }
 
@@ -597,28 +491,19 @@ img, svg {
   border-color: var(--lsa-border);
 }
 
-[data-theme="dark"] .btn-secondary {
-  color: var(--lsa-white) !important;
-}
+[data-theme="dark"] .btn-secondary { color: var(--lsa-white) !important; }
 
-.btn-secondary:hover, .btn-secondary:focus {
+.btn-secondary:hover {
   background: var(--lsa-light-blue);
   border-color: var(--lsa-accent);
   color: var(--lsa-accent) !important;
   transform: translateY(-2px);
-  box-shadow: var(--lsa-shadow-md);
 }
 
 .btn-ghost {
   background: transparent;
   color: var(--lsa-secondary);
   border-color: transparent;
-  box-shadow: none;
-}
-
-.btn-ghost:hover {
-  background: var(--lsa-light-blue);
-  color: var(--lsa-accent);
 }
 
 .btn-lg { padding: 0.9rem 2.1rem; font-size: 1.05rem; border-radius: var(--lsa-radius-lg); }
@@ -633,7 +518,6 @@ img, svg {
   border-radius: var(--lsa-radius-full);
   font-size: 0.785rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
 }
 
 .badge {
@@ -651,21 +535,10 @@ img, svg {
   animation: pulseDot 2s infinite;
 }
 
-.lsa-motto-badge {
-  background: rgba(0, 0, 90, 0.06);
-  color: var(--lsa-primary);
-  border: 1px solid rgba(0, 0, 90, 0.15);
-}
-
-[data-theme="dark"] .lsa-motto-badge {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--lsa-white);
-}
-
 /* --------------------------------------------------------------------------
-   8. CARDS & HOVER EFFECTS
+   PREMIUM CARDS & HOVER EFFECTS
    -------------------------------------------------------------------------- */
-.card, .card-hover, .card-glass {
+.card, .card-hover, .lsa-committee-card {
   background: var(--lsa-surface);
   border-radius: var(--lsa-radius-lg);
   border: 1px solid var(--lsa-border);
@@ -675,44 +548,57 @@ img, svg {
   overflow: hidden;
 }
 
-.card-body {
-  padding: 24px;
-}
+.card-body { padding: 24px; }
 
-.card-hover:hover {
+.card-hover:hover, .lsa-committee-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--lsa-shadow-xl);
   border-color: rgba(36, 75, 255, 0.3);
 }
 
-.card-hover::before {
+.card-hover::before, .lsa-committee-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 4px;
   background: linear-gradient(90deg, var(--lsa-primary), var(--lsa-accent));
   opacity: 0;
   transition: opacity var(--lsa-transition-fast);
 }
 
-.card-hover:hover::before {
-  opacity: 1;
+.card-hover:hover::before, .lsa-committee-card:hover::before { opacity: 1; }
+
+.committee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
 }
 
-.card-glass {
-  background: var(--lsa-surface-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: var(--lsa-shadow-glass);
+.committee-card {
+  text-align: center;
+  padding: 24px;
+}
+
+.committee-avatar, .lsa-committee-card .avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  border: 4px solid var(--lsa-light-blue);
+  box-shadow: var(--lsa-shadow-md);
+  transition: transform var(--lsa-transition-bounce);
+}
+
+.committee-card:hover .committee-avatar, .lsa-committee-card:hover .avatar {
+  transform: scale(1.08);
+  border-color: var(--lsa-accent);
 }
 
 /* --------------------------------------------------------------------------
-   9. MULTI-STEP FORM & PROGRESS INDICATORS
+   MULTI-STEP FORM & PROGRESS BAR
    -------------------------------------------------------------------------- */
-.step-wizard {
+.step-progress, .step-wizard {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -721,28 +607,34 @@ img, svg {
   padding: 0 16px;
 }
 
-.step-wizard::before {
+.step-progress::before, .step-wizard::before {
   content: '';
   position: absolute;
-  top: 20px;
-  left: 40px;
-  right: 40px;
+  top: 20px; left: 40px; right: 40px;
   height: 3px;
   background: var(--lsa-border);
   z-index: 0;
 }
 
-.step-node {
-  position: relative;
+.step-line {
+  position: absolute;
+  top: 20px; left: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--lsa-accent), var(--lsa-secondary));
   z-index: 1;
+  transition: width var(--lsa-transition-slow);
+}
+
+.step-item, .step-node {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
 }
 
-.step-circle {
+.step-number, .step-circle {
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -752,19 +644,12 @@ img, svg {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.95rem;
   transition: all var(--lsa-transition-base);
 }
 
-.step-label {
-  font-size: 0.825rem;
-  font-weight: 600;
-  color: var(--lsa-text-muted);
-  transition: color var(--lsa-transition-fast);
-}
-
-.step-node.active .step-circle {
+.step-item.active .step-number, .step-node.active .step-circle {
   border-color: var(--lsa-accent);
   background: var(--lsa-accent);
   color: var(--lsa-white);
@@ -772,24 +657,19 @@ img, svg {
   transform: scale(1.1);
 }
 
-.step-node.active .step-label {
-  color: var(--lsa-primary);
-  font-weight: 700;
-}
-
-[data-theme="dark"] .step-node.active .step-label {
-  color: var(--lsa-white);
-}
-
-.step-node.completed .step-circle {
+.step-item.completed .step-number, .step-node.completed .step-circle {
   border-color: var(--lsa-success);
   background: var(--lsa-success);
   color: var(--lsa-white);
 }
 
-.step-node.completed .step-label {
-  color: var(--lsa-success);
+.step-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--lsa-text-muted);
 }
+
+.step-item.active .step-label { color: var(--lsa-primary); font-weight: 700; }
 
 .form-group, .mb-3 { margin-bottom: 20px; }
 
@@ -801,9 +681,7 @@ img, svg {
   margin-bottom: 8px;
 }
 
-[data-theme="dark"] .form-label {
-  color: var(--lsa-white);
-}
+[data-theme="dark"] .form-label { color: var(--lsa-white); }
 
 .form-control, .form-select {
   width: 100%;
@@ -824,30 +702,29 @@ img, svg {
   background-color: var(--lsa-surface);
 }
 
-.form-control.is-invalid, .form-select.is-invalid {
+.form-control.is-invalid {
   border-color: var(--lsa-error);
   box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15);
 }
 
-.invalid-feedback {
+.form-error, .invalid-feedback {
   display: block;
   font-size: 0.8rem;
   color: var(--lsa-error);
-  margin-top: 0.35rem;
+  margin-top: 4px;
   font-weight: 500;
 }
 
 /* --------------------------------------------------------------------------
-   10. DIGITAL MEMBERSHIP CARD STYLING
+   DIGITAL MEMBERSHIP CARD
    -------------------------------------------------------------------------- */
-.digital-card-container {
-  perspective: 1000px;
+.digital-card-container, .card-wrapper {
   display: flex;
   justify-content: center;
   margin: 2rem 0;
 }
 
-.digital-card {
+.digital-card, .lsa-digital-card {
   width: 100%;
   max-width: 480px;
   aspect-ratio: 1.586;
@@ -861,15 +738,14 @@ img, svg {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin: 0 auto;
 }
 
-.digital-card::before {
+.digital-card::before, .lsa-digital-card::before {
   content: '';
   position: absolute;
-  top: -50%;
-  right: -30%;
-  width: 320px;
-  height: 320px;
+  top: -50%; right: -30%;
+  width: 320px; height: 320px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(36, 75, 255, 0.25), transparent 70%);
   pointer-events: none;
@@ -891,11 +767,6 @@ img, svg {
   color: #FFFFFF;
 }
 
-.card-org-sub {
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.75);
-}
-
 .card-body-grid {
   display: grid;
   grid-template-columns: 80px 1fr 90px;
@@ -905,28 +776,15 @@ img, svg {
 }
 
 .card-avatar {
-  width: 75px;
-  height: 75px;
+  width: 75px; height: 75px;
   border-radius: 12px;
   border: 2px solid rgba(255, 255, 255, 0.8);
   object-fit: cover;
   background: #FFFFFF;
 }
 
-.card-member-name {
-  font-size: 1.15rem;
-  font-weight: 800;
-  line-height: 1.2;
-  color: #FFFFFF;
-}
-
-.card-member-id {
-  font-family: monospace;
-  font-size: 0.9rem;
-  color: #93C5FD;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
+.card-member-name { font-size: 1.15rem; font-weight: 800; color: #FFFFFF; }
+.card-member-id { font-family: monospace; font-size: 0.9rem; color: #93C5FD; font-weight: 700; }
 
 .card-qrcode-box {
   background: #FFFFFF;
@@ -935,29 +793,14 @@ img, svg {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 85px;
-  height: 85px;
+  width: 85px; height: 85px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.card-footer-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.7);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  padding-top: 0.5rem;
-}
-
 /* --------------------------------------------------------------------------
-   11. ADMIN PANEL PORTAL & SIDEBAR STYLING
+   ADMIN PANEL & TABLES
    -------------------------------------------------------------------------- */
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
-}
-
+.admin-layout { display: flex; min-height: 100vh; }
 .admin-sidebar {
   width: 260px;
   background: var(--lsa-primary);
@@ -965,24 +808,7 @@ img, svg {
   padding: 24px;
   flex-shrink: 0;
 }
-
-.admin-sidebar .nav-link {
-  color: rgba(255, 255, 255, 0.8);
-  padding: 0.75rem 1rem;
-  margin-bottom: 4px;
-  border-radius: var(--lsa-radius-md);
-}
-
-.admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--lsa-white);
-}
-
-.admin-main {
-  flex: 1;
-  padding: 32px;
-  background: var(--lsa-light-bg);
-}
+.admin-main { flex: 1; padding: 32px; background: var(--lsa-light-bg); }
 
 .stat-grid {
   display: grid;
@@ -1003,32 +829,16 @@ img, svg {
 }
 
 .stat-icon {
-  width: 52px;
-  height: 52px;
+  width: 52px; height: 52px;
   border-radius: var(--lsa-radius-md);
   background: var(--lsa-light-blue);
   color: var(--lsa-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   font-size: 1.5rem;
 }
 
-.stat-value {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--lsa-primary);
-  line-height: 1.1;
-}
-
+.stat-value { font-size: 1.75rem; font-weight: 800; color: var(--lsa-primary); }
 [data-theme="dark"] .stat-value { color: var(--lsa-white); }
-
-.stat-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--lsa-text-muted);
-  text-transform: uppercase;
-}
 
 .table-responsive {
   border-radius: var(--lsa-radius-lg);
@@ -1062,20 +872,16 @@ img, svg {
   border-bottom: 1px solid var(--lsa-border-light);
   font-size: 0.9rem;
   color: var(--lsa-text-main);
-  vertical-align: middle;
 }
 
-.table tr:hover td {
-  background: rgba(238, 242, 255, 0.4);
-}
+.table tr:hover td { background: rgba(238, 242, 255, 0.4); }
 
 /* --------------------------------------------------------------------------
-   12. TOAST NOTIFICATION & MODALS
+   TOAST NOTIFICATIONS & MODALS
    -------------------------------------------------------------------------- */
 .toast-container {
   position: fixed;
-  top: 90px;
-  right: 24px;
+  top: 90px; right: 24px;
   z-index: 99999;
   display: flex;
   flex-direction: column;
@@ -1085,16 +891,13 @@ img, svg {
 
 .toast {
   pointer-events: auto;
-  min-width: 300px;
-  max-width: 420px;
+  min-width: 300px; max-width: 420px;
   padding: 0.95rem 1.25rem;
   background: var(--lsa-surface);
   border-radius: var(--lsa-radius-md);
   box-shadow: var(--lsa-shadow-xl);
   border-left: 4px solid var(--lsa-accent);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  display: flex; align-items: center; gap: 0.75rem;
   font-size: 0.9rem;
   color: var(--lsa-text-main);
   animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -1102,101 +905,28 @@ img, svg {
 
 .toast-success { border-left-color: var(--lsa-success); }
 .toast-error { border-left-color: var(--lsa-error); }
-.toast-warning { border-left-color: var(--lsa-warning); }
 
 .modal-backdrop {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: rgba(0, 0, 58, 0.55);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 1050;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   padding: 1rem;
 }
 
-.modal-card, .modal-content {
+.modal-card {
   background: var(--lsa-surface);
   border-radius: var(--lsa-radius-xl);
   border: 1px solid var(--lsa-border);
   box-shadow: var(--lsa-shadow-2xl);
-  width: 100%;
-  max-width: 520px;
-  overflow: hidden;
+  width: 100%; max-width: 520px;
   animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* --------------------------------------------------------------------------
-   13. FOOTER STYLING
-   -------------------------------------------------------------------------- */
-.footer {
-  background: var(--lsa-primary);
-  color: rgba(255, 255, 255, 0.85);
-  padding: 64px 0 24px;
-  position: relative;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
-  gap: 40px;
-  margin-bottom: 48px;
-}
-
-.footer-brand h3 {
-  color: var(--lsa-white);
-  font-size: 1.25rem;
-  margin-bottom: 12px;
-}
-
-.footer-brand p {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
-}
-
-.footer-title {
-  color: var(--lsa-white);
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 16px;
-}
-
-.footer-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-links li {
-  margin-bottom: 10px;
-}
-
-.footer-links a {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.9rem;
-  transition: color var(--lsa-transition-fast);
-}
-
-.footer-links a:hover {
-  color: var(--lsa-white);
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  padding-top: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* --------------------------------------------------------------------------
-   14. ANIMATION KEYFRAMES
+   KEYFRAME ANIMATIONS
    -------------------------------------------------------------------------- */
 @keyframes floatShapes {
   0% { transform: translate(0, 0) rotate(0deg); }
@@ -1206,7 +936,7 @@ img, svg {
 
 @keyframes heroPulse {
   0%, 100% { transform: scale(1); box-shadow: var(--lsa-shadow-2xl); }
-  50% { transform: scale(1.04); box-shadow: 0 30px 70px rgba(0, 0, 90, 0.25); }
+  50% { transform: scale(1.04); }
 }
 
 @keyframes rotateRing {
@@ -1234,75 +964,62 @@ img, svg {
 }
 
 /* --------------------------------------------------------------------------
-   15. RESPONSIVE BREAKPOINTS (320px to 1920px)
+   RESPONSIVE BREAKPOINTS
    -------------------------------------------------------------------------- */
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
   .hero-grid { grid-template-columns: 1fr; text-align: center; }
   .hero-content { margin: 0 auto; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 992px) {
   .admin-layout { flex-direction: column; }
   .admin-sidebar { width: 100%; }
 }
 
 @media (max-width: 768px) {
   :root { --lsa-nav-height: 68px; }
-  .mobile-toggle { display: block; }
-  .nav-menu {
+  body { padding-top: var(--lsa-nav-height); }
+  .mobile-toggle, .navbar-toggler { display: block; }
+  .nav-menu, .navbar-nav {
     position: fixed;
     top: var(--lsa-nav-height);
-    left: 0;
-    right: 0;
+    left: 0; right: 0;
     background: var(--lsa-surface);
     flex-direction: column;
-    padding: 24px;
-    gap: 12px;
+    padding: 24px; gap: 12px;
     border-bottom: 1px solid var(--lsa-border);
     box-shadow: var(--lsa-shadow-xl);
     transform: translateY(-150%);
-    opacity: 0;
-    visibility: hidden;
+    opacity: 0; visibility: hidden;
     transition: all var(--lsa-transition-base);
   }
-  .nav-menu.open { transform: translateY(0); opacity: 1; visibility: visible; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .nav-menu.open, .navbar-nav.open {
+    transform: translateY(0); opacity: 1; visibility: visible;
+  }
 }
 
 @media (max-width: 480px) {
   .btn-lg { width: 100%; }
-  .digital-card { padding: 1rem; aspect-ratio: auto; }
+  .digital-card, .lsa-digital-card { padding: 1rem; aspect-ratio: auto; }
 }
 
 /* --------------------------------------------------------------------------
-   16. ACCESSIBILITY (PREFERS-REDUCED-MOTION & FOCUS)
+   ACCESSIBILITY & PRINT
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
   .hero-animate { opacity: 1 !important; transform: none !important; }
 }
 
-:focus-visible {
-  outline: 3px solid var(--lsa-accent);
-  outline-offset: 2px;
-}
+:focus-visible { outline: 3px solid var(--lsa-accent); outline-offset: 2px; }
 
-/* --------------------------------------------------------------------------
-   17. PRINT STYLES
-   -------------------------------------------------------------------------- */
 @media print {
-  header, footer, nav, .mobile-toggle, .btn, .toast-container, .no-print {
+  header, navbar, footer, nav, .mobile-toggle, .btn, .toast-container, .no-print {
     display: none !important;
   }
-  body { background: #FFFFFF !important; color: #000000 !important; }
-  .digital-card {
+  body { background: #FFFFFF !important; color: #000000 !important; padding-top: 0 !important; }
+  .digital-card, .lsa-digital-card {
     box-shadow: none !important;
     border: 2px solid #000000 !important;
     background: #FFFFFF !important;
@@ -1310,6 +1027,4 @@ img, svg {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  .card-org-title, .card-member-name { color: #000000 !important; }
-  .card-member-id { color: #00005A !important; }
 }
